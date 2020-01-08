@@ -1,5 +1,13 @@
-// Messages displayed on the frontend
+/* * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+ *
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
+ */
 
+// Messages displayed on the frontend
 export const MODULE_NAME = 'Visits';
 export const FIELD_REQUIRED = 'This field is required';
 export const SAVE_BUTTON_LABEL = 'Save';
@@ -12,4 +20,9 @@ export const GENERIC_INVALID_FORM = 'Form is invalid. Check fields and send it a
 export const GENERIC_LOADING = 'Loading...';
 
 // Breadcrumb
-export const GENERAL_MODULE_BREADCRUMB = 'MODULE_NAME';
+export const GENERAL_MODULE_BREADCRUMB = 'Visits';
+export const MANAGE_VISITS_BREADCRUMB = 'Manage visits';
+export const SCHEDULE_VISIT_BREADCRUMB = 'Schedule visit';
+
+// Schedule visits
+export const SCHEDULE_VISIT = 'Schedule visit';

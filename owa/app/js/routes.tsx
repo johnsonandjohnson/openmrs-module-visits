@@ -6,19 +6,21 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
+
 import React from 'react'
 import { Route, Switch } from 'react-router-dom';
 import { Header } from '@openmrs/react-components';
 import App from './components/app'
 import BreadCrumb from './components/bread-crumb';
-export default (store) => (
-    
+import { ScheduleVisitWithHeader as ScheduleVisit } from './components/hoc/with-patient-header';
+
+export default (store) => (    
     <div>
         <Header />
         <BreadCrumb />
         <Switch>
+            <Route path="/visits/manage/schedule/:patientUuid" component={ScheduleVisit} />
             <Route path="/visits/" component={App} />
         </Switch>
     </div>
 );
-

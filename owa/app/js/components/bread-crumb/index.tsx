@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { ReactFragment } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,11 +7,16 @@ import UrlPattern from 'url-pattern';
 import './bread-crumb.scss';
 import { UnregisterCallback } from 'history';
 import * as Msg from '../../shared/utils/messages';
+import { getPatient } from '../../reducers/patient.reducer';
+import { IRootState } from '../../reducers';
+
+const SCHEDULE_VISIT_PATTERN = new UrlPattern(`/visits/manage/schedule/:patientUuid*`);
 
 const MODULE_ROUTE = '/';
 const OMRS_ROUTE = '../../';
+const PATIENT_DASHBOARD_ROUTE = patientUuid => `${OMRS_ROUTE}coreapps/clinicianfacing/patient.page?patientId=${patientUuid}`;
 
-interface IBreadCrumbProps extends RouteComponentProps {
+interface IBreadCrumbProps extends DispatchProps, StateProps, RouteComponentProps {
 };
 
 interface IBreadCrumbState {
@@ -47,11 +52,42 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
   }
 
   buildBreadCrumb = () => {
+    const { current } = this.state;
+
     return (
       <div className="breadcrumb">
-        {this.renderCrumbs([this.renderLastCrumb(Msg.GENERAL_MODULE_BREADCRUMB)])}
+        {this.renderCrumbs(this.getCrumbs(current))}
       </div>
     );
+  }
+
+  getCrumbs = (path: string): Array<ReactFragment> => {
+    if (!!SCHEDULE_VISIT_PATTERN.match(path.toLowerCase())) {
+      return this.getScheduleVisitCrumbs(path);
+    } else {
+      return [this.renderLastCrumb(Msg.GENERAL_MODULE_BREADCRUMB)];
+    }
+  }
+
+  getPatientNameCrumb = (path: string) => {
+    const match = SCHEDULE_VISIT_PATTERN.match(path.toLowerCase());
+    const patientUuid = match.patientUuid;
+
+    if (this.props.patient.uuid != patientUuid) {
+      this.props.getPatient(patientUuid);
+    }
+
+    const patientName = this.props.patient.person ? this.props.patient.person.display : '';
+    return this.renderCrumb(PATIENT_DASHBOARD_ROUTE(patientUuid), patientName, true)
+  }
+
+  getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => {
+    return [
+      this.getPatientNameCrumb(path),
+      // it's considered as LastCrumb as the page doeas not exist yet so there should be no link 
+      this.renderLastCrumb(Msg.MANAGE_VISITS_BREADCRUMB), 
+      this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
+    ];
   }
 
   renderCrumbs = (elements: Array<any>) => {
@@ -83,8 +119,14 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
       </a>);
   }
 
-  renderCrumb = (link: string, txt: string) => {
-    return <Link to={link} className="breadcrumb-link-item">{txt}</Link>;
+  renderCrumb = (link: string, txt: string, isAbsolute?: boolean) => {
+    if (isAbsolute) {
+      return (
+        <a href={link} className="breadcrumb-link-item" >{txt}</a>
+      );
+    } else {
+      return <Link to={link} className="breadcrumb-link-item">{txt}</Link>;
+    }
   }
 
   renderLastCrumb = (txt: string) => {
@@ -92,4 +134,18 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
   }
 }
 
-export default withRouter(connect()(BreadCrumb));
+const mapStateToProps = ({ patient }: IRootState) => ({
+  patient: patient.patient
+});
+
+const mapDispatchToProps = ({
+  getPatient
+});
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default withRouter(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BreadCrumb));

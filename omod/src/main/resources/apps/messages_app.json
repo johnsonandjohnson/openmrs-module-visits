@@ -1,0 +1,18 @@
+[
+  {
+    "id": "visitsapp.basicVisits",
+    "label": "Visits module",
+    "description": "Visits management page",
+    "extensions": [
+      {
+        "id": "visitsapp.basicVisits.patientDashboardLink",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "link",
+        "label": "visits.schedule_visit",
+        "icon": "icon-calendar",
+        "order": 1,
+        "url": "owa/visits/index.html#/visits/manage/schedule/{{patient.uuid}}"
+      }
+    ]
+  }
+]
