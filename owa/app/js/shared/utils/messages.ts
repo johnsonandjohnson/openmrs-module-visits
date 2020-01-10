@@ -9,7 +9,6 @@
 
 // Messages displayed on the frontend
 export const MODULE_NAME = 'Visits';
-export const FIELD_REQUIRED = 'This field is required';
 export const SAVE_BUTTON_LABEL = 'Save';
 
 // Generic messages
@@ -26,3 +25,8 @@ export const SCHEDULE_VISIT_BREADCRUMB = 'Schedule visit';
 
 // Schedule visits
 export const SCHEDULE_VISIT = 'Schedule visit';
+export const VISIT_TYPE_LABEL = 'Visit type';
+export const LOCATION_LABEL = 'Visit location';
+
+// Validation
+export const FIELD_REQUIRED = 'This field is required';

@@ -10,13 +10,16 @@
 import { combineReducers } from 'redux';
 import { reducers as openmrs } from '@openmrs/react-components';
 import patient, { PatientState } from './patient.reducer';
+import scheduleVisit, { ScheduleVisitState } from './schedule-visit.reducer';
 
 export interface IRootState {
   readonly openmrs: any;
   readonly patient: PatientState;
+  readonly scheduleVisit: ScheduleVisitState;
 }
 
 export default combineReducers<IRootState>({
   openmrs,
-  patient
+  patient,
+  scheduleVisit
 });

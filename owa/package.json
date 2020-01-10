@@ -7,10 +7,13 @@
     "url": "https://bitbucket.org/soldevelo/omrs-visits"
   },
   "dependencies": {
-    "@bit/soldevelo-omrs.cfl-components.form-entry": "^1.0.7",
-    "@bit/soldevelo-omrs.cfl-components.request-toast-handler": "^1.0.0",
-    "@bit/soldevelo-omrs.cfl-components.validation": "^1.0.1",
     "@bit/soldevelo-omrs.cfl-components.calendar": "1.0.31",
+    "@bit/soldevelo-omrs.cfl-components.form-entry": "^1.0.7",
+    "@bit/soldevelo-omrs.cfl-components.form-label": "^1.0.0",
+    "@bit/soldevelo-omrs.cfl-components.request-toast-handler": "^1.0.0",
+    "@bit/soldevelo-omrs.cfl-components.error-description": "^1.0.0",
+    "@bit/soldevelo-omrs.cfl-components.validation": "^1.0.3",
+    "@bit/soldevelo-omrs.cfl-components.base-model": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "1.2.25",
     "@fortawesome/free-brands-svg-icons": "5.11.2",
     "@fortawesome/free-regular-svg-icons": "5.11.2",
@@ -71,7 +74,9 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "5.11.2",
     "@types/lodash": "^4.14.149",
+    "@types/react-bootstrap": "^0.32.20",
     "@types/react-router-dom": "^5.1.2",
+    "@types/uuid": "^3.4.6",
     "@types/yup": "^0.26.26",
     "archiver": "^3.1.1",
     "awesome-typescript-loader": "^5.2.1",
