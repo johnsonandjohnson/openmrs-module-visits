@@ -19,6 +19,7 @@ import ILocation from '../shared/model/location';
 
 export const ACTION_TYPES = {
   GET_VISIT_TYPES: 'scheduleVisitReducer/GET_VISIT_TYPES',
+  GET_VISIT_TIMES: 'scheduleVisitReducer/GET_VISIT_TIMES',
   GET_LOCATIONS: 'scheduleVisitReducer/GET_LOCATIONS',
   UPDATE_VISIT: 'scheduleVisitReducer/UPDATE_VISIT',
   POST_VISIT: 'scheduleVisitReducer/POST_VISIT',
@@ -28,6 +29,7 @@ export const ACTION_TYPES = {
 const initialState = {
   visit: VisitUI.getNew(),
   visitTypes: [] as Array<IVisitType>,
+  visitTimes: [] as Array<string>,
   locations: [] as Array<ILocation>
 };
 
@@ -40,6 +42,8 @@ export default (state = initialState, action) => {
     case SUCCESS(ACTION_TYPES.POST_VISIT):
     case REQUEST(ACTION_TYPES.GET_VISIT_TYPES):
     case FAILURE(ACTION_TYPES.GET_VISIT_TYPES):
+    case REQUEST(ACTION_TYPES.GET_VISIT_TIMES):
+    case FAILURE(ACTION_TYPES.GET_VISIT_TIMES):
     case REQUEST(ACTION_TYPES.GET_LOCATIONS):
     case FAILURE(ACTION_TYPES.GET_LOCATIONS):
       return {
@@ -49,6 +53,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         visitTypes: action.payload.data.results
+      };
+    case SUCCESS(ACTION_TYPES.GET_VISIT_TIMES):
+      return {
+        ...state,
+        visitTimes: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.GET_LOCATIONS):
       return {
@@ -70,15 +79,25 @@ export default (state = initialState, action) => {
   }
 };
 
-const baseUrl = "/ws/rest/v1/";
-const visitTypeUrl = `${baseUrl}visittype`;
-const visitUrl = `${baseUrl}visit`;
-const locationUrl = `${baseUrl}location`;
+const baseUrl = "/ws";
+const restUrl = `${baseUrl}/rest/v1`;
+const moduleUrl = `${baseUrl}/visits`;
+const visitTypeUrl = `${restUrl}/visittype`;
+const visitUrl = `${restUrl}/visit`;
+const locationUrl = `${restUrl}/location`;
+const visitsTimesUrl = `${moduleUrl}/times`;
 
 export const getVisitTypes = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT_TYPES,
     payload: axiosInstance.get(visitTypeUrl)
+  });
+};
+
+export const getVisitTimes = () => async (dispatch) => {
+  await dispatch({
+    type: ACTION_TYPES.GET_VISIT_TIMES,
+    payload: axiosInstance.get(visitsTimesUrl)
   });
 };
 

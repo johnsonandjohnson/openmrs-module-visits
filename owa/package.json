@@ -14,6 +14,7 @@
     "@bit/soldevelo-omrs.cfl-components.error-description": "^1.0.0",
     "@bit/soldevelo-omrs.cfl-components.validation": "^1.0.3",
     "@bit/soldevelo-omrs.cfl-components.base-model": "^1.0.0",
+    "@bit/soldevelo-omrs.cfl-components.openmrs-date-picker": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "1.2.25",
     "@fortawesome/free-brands-svg-icons": "5.11.2",
     "@fortawesome/free-regular-svg-icons": "5.11.2",

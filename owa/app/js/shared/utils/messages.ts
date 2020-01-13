@@ -25,8 +25,10 @@ export const SCHEDULE_VISIT_BREADCRUMB = 'Schedule visit';
 
 // Schedule visits
 export const SCHEDULE_VISIT = 'Schedule visit';
+export const VISIT_DATE_LABEL = 'Visit date';
 export const VISIT_TYPE_LABEL = 'Visit type';
+export const VISIT_TIME_LABEL = 'Visit time';
 export const LOCATION_LABEL = 'Visit location';
 
 // Validation
-export const FIELD_REQUIRED = 'This field is required';
+export const FIELD_REQUIRED = 'Required';

@@ -7,12 +7,12 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import IAttribute from "./attribute";
+export default class IAttribute {
+  attributeType: string;
+  value: string;
 
-export default class IVisitRequest {
-  patient: string;
-  visitType: string;
-  location?: string;
-  startDatetime?: string;
-  attributes?: Array<IAttribute>;
+  constructor(value: string, attributeType: string) {
+    this.value = value;
+    this.attributeType = attributeType;
+  }
 }

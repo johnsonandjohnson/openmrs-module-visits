@@ -9,10 +9,10 @@
 
 import IAttribute from "./attribute";
 
-export default class IVisitRequest {
-  patient: string;
-  visitType: string;
-  location?: string;
-  startDatetime?: string;
-  attributes?: Array<IAttribute>;
+const VISIT_TIME_ATTRIBUTE_UUID = '0e8e9572-7a4e-44f5-b555-4f5bfd6415b2';
+
+export default class VisitTimeAttribute extends IAttribute {
+  constructor(value: string) {
+    super(value, VISIT_TIME_ATTRIBUTE_UUID);
+  }
 }

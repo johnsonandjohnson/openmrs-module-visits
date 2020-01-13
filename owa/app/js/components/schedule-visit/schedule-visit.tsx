@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getVisitTypes, getLocations, updateVisit, postVisit } from '../../reducers/schedule-visit.reducer';
+import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, FormControl, Col, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
@@ -18,11 +18,14 @@ import FormLabel from '@bit/soldevelo-omrs.cfl-components.form-label';
 import {
   SCHEDULE_VISIT,
   VISIT_TYPE_LABEL,
+  VISIT_TIME_LABEL,
+  VISIT_DATE_LABEL,
   SAVE_BUTTON_LABEL,
   LOCATION_LABEL
 } from '../../shared/utils/messages';
 import _ from 'lodash';
 import './schedule-visit.scss';
+import OpenMrsDatePicker from '@bit/soldevelo-omrs.cfl-components.openmrs-date-picker';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string
@@ -43,6 +46,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
   componentDidMount() {
     this.props.getVisitTypes();
     this.props.getLocations();
+    this.props.getVisitTimes();
     this.handleChange(this.props.match.params.patientUuid, 'patient');
   }
 
@@ -57,9 +61,9 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     this.props.postVisit(this.props.visit, this.props.history.goBack);
   }
 
-  renderDropdown = (errors, label: string, fieldName: string, options: Array<React.ReactFragment>) =>
+  renderDropdown = (errors, label: string, fieldName: string, options: Array<React.ReactFragment>, required?: boolean) =>
     <FormGroup controlId={fieldName}>
-      <FormLabel label={label} mandatory />
+      <FormLabel label={label} mandatory={required} />
       <FormControl componentClass="select" name={fieldName}
         value={this.props.visit[fieldName]}
         onChange={e => this.handleChange((e.target as HTMLInputElement).value, fieldName)}
@@ -69,6 +73,19 @@ class ScheduleVisit extends React.Component<IProps, IState> {
       </FormControl>
       {errors && <ErrorDesc field={errors[fieldName]} />}
     </FormGroup>
+
+  renderDatePicker = (errors, label: string, fieldName: string) =>
+    <FormGroup controlId={fieldName}>
+      <FormLabel label={label} />
+      <OpenMrsDatePicker
+        value={this.props.visit[fieldName]}
+        onChange={isoDate => this.handleChange(isoDate, fieldName)}
+      />
+      {errors && <ErrorDesc field={errors[fieldName]} />}
+    </FormGroup>
+
+  renderVisitDate = (errors) =>
+    this.renderDatePicker(errors, VISIT_DATE_LABEL, 'startDatetime');
 
   renderLocation = (errors) =>
     this.renderDropdown(errors, LOCATION_LABEL, 'location',
@@ -80,6 +97,12 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     this.renderDropdown(errors, VISIT_TYPE_LABEL, 'visitType',
       this.props.visitTypes.map(type =>
         <option value={type.uuid} key={type.uuid}>{type.display}</option>
+      ), true);
+
+  renderVisitTime = (errors) =>
+    this.renderDropdown(errors, VISIT_TIME_LABEL, 'visitTime',
+      this.props.visitTimes.map(time =>
+        <option value={time} key={time}>{time}</option>
       ));
 
   renderSaveButton = () =>
@@ -98,7 +121,9 @@ class ScheduleVisit extends React.Component<IProps, IState> {
           <ControlLabel className="fields-form-title">
             <h2>{SCHEDULE_VISIT}</h2>
           </ControlLabel>
-          <Col md={3} >
+          <Col md={3}>
+            {this.renderVisitDate(errors)}
+            {this.renderVisitTime(errors)}
             {this.renderLocation(errors)}
             {this.renderVisitType(errors)}
           </Col>
@@ -112,11 +137,13 @@ class ScheduleVisit extends React.Component<IProps, IState> {
 const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
   visit: scheduleVisit.visit,
   visitTypes: scheduleVisit.visitTypes,
+  visitTimes: scheduleVisit.visitTimes,
   locations: scheduleVisit.locations
 });
 
 const mapDispatchToProps = ({
   getVisitTypes,
+  getVisitTimes,
   getLocations,
   updateVisit,
   postVisit

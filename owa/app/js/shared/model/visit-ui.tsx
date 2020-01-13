@@ -6,11 +6,14 @@ import _ from 'lodash';
 import * as Msg from '../../shared/utils/messages';
 import { validateFormSafely } from '@bit/soldevelo-omrs.cfl-components.validation';
 import IVisitRequest from "./visit-request";
+import VisitTimeAttribute from "./visit-time-attribute";
 
 export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRequest, IForm {
   patient: string;
   visitType: string;
-  location: string;
+  visitTime?: string;
+  location?: string;
+  startDatetime?: string;
 
   errors: { [key: string]: string; };
   touchedFields: { [key: string]: boolean; };
@@ -26,23 +29,24 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
 
     const validationResult = await validateFormSafely(this, schema);
 
-    const visit = _.clone(this);
+    const visit = _.cloneDeep(this);
     visit.errors = validationResult;
     return visit;
   }
 
-  private static convertToRequest(baseObject: IVisit): IVisitRequest {
+  toModel(): IVisitRequest {
     return {
-      visitType: baseObject.visitType.uuid,
-      location: baseObject.location.uuid,
-      patient: ""
+      patient: this.patient,
+      visitType: this.visitType,
+      location: this.location,
+      startDatetime: this.startDatetime,
+      attributes: this.visitTime ? [new VisitTimeAttribute(this.visitTime)] : undefined
     } as IVisitRequest;
   }
 
   static getNew(): VisitUI {
     return new VisitUI({
-      visitType: {},
-      location: {}
+      visitType: {}
     } as IVisit);
   }
 
@@ -60,5 +64,13 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
       return !!(value && value.trim());
     }
     return true;
+  }
+
+  private static convertToRequest(baseObject: IVisit): IVisitRequest {
+    return {
+      visitType: baseObject.visitType.uuid,
+      location: baseObject.location ? baseObject.location.uuid : undefined,
+      patient: ""
+    } as IVisitRequest;
   }
 }
