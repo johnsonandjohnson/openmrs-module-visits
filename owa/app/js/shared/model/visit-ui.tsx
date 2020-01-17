@@ -7,6 +7,7 @@ import * as Msg from '../../shared/utils/messages';
 import { validateFormSafely } from '@bit/soldevelo-omrs.cfl-components.validation';
 import IVisitRequest from "./visit-request";
 import VisitTimeAttribute from "./visit-time-attribute";
+import VisitStatusAttribute from "./visit-status-attribute";
 
 export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRequest, IForm {
   patient: string;
@@ -40,7 +41,9 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
       visitType: this.visitType,
       location: this.location,
       startDatetime: this.startDatetime,
-      attributes: this.visitTime ? [new VisitTimeAttribute(this.visitTime)] : undefined
+      attributes: this.visitTime ?
+        [new VisitTimeAttribute(this.visitTime), new VisitStatusAttribute('SCHEDULED')]
+        : [new VisitStatusAttribute('SCHEDULED')] // todo: do not hardcode the status 
     } as IVisitRequest;
   }
 
