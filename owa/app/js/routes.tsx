@@ -13,6 +13,7 @@ import { Header } from '@openmrs/react-components';
 import App from './components/app'
 import BreadCrumb from './components/bread-crumb';
 import { ScheduleVisitWithHeader as ScheduleVisit } from './components/hoc/with-patient-header';
+import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
 
 export default (store) => (    
     <div>
@@ -20,7 +21,7 @@ export default (store) => (
         <BreadCrumb />
         <Switch>
             <Route path="/visits/manage/schedule/:patientUuid" component={ScheduleVisit} />
-            <Route path="/visits/" component={App} />
+            <Route path="/visits/manage/:patientUuid" component={ManageVisits} />
         </Switch>
     </div>
 );

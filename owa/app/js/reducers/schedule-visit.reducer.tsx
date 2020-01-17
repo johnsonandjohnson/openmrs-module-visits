@@ -16,8 +16,10 @@ import VisitUI from '../shared/model/visit-ui';
 import * as Msg from '../shared/utils/messages';
 import { handleRequest } from '@bit/soldevelo-omrs.cfl-components.request-toast-handler';
 import ILocation from '../shared/model/location';
+import VisitDetailsUI from '../shared/model/visit-details-ui';
 
 export const ACTION_TYPES = {
+  GET_VISITS: 'scheduleVisitReducer/GET_VISITS',
   GET_VISIT_TYPES: 'scheduleVisitReducer/GET_VISIT_TYPES',
   GET_VISIT_TIMES: 'scheduleVisitReducer/GET_VISIT_TIMES',
   GET_LOCATIONS: 'scheduleVisitReducer/GET_LOCATIONS',
@@ -28,6 +30,8 @@ export const ACTION_TYPES = {
 
 const initialState = {
   visit: VisitUI.getNew(),
+  visits: [] as Array<VisitDetailsUI>,
+  visitsLoading: false,
   visitTypes: [] as Array<IVisitType>,
   visitTimes: [] as Array<string>,
   locations: [] as Array<ILocation>
@@ -48,6 +52,22 @@ export default (state = initialState, action) => {
     case FAILURE(ACTION_TYPES.GET_LOCATIONS):
       return {
         ...state,
+      };
+    case REQUEST(ACTION_TYPES.GET_VISITS):
+      return {
+        ...state,
+        visitsLoading: true
+      };
+    case FAILURE(ACTION_TYPES.GET_VISITS):
+        return {
+          ...state,
+          visitsLoading: false
+        };
+    case SUCCESS(ACTION_TYPES.GET_VISITS):
+      return {
+        ...state,
+        visits: action.payload.data.results.map(r => new VisitDetailsUI(r)),
+        visitsLoading: false
       };
     case SUCCESS(ACTION_TYPES.GET_VISIT_TYPES):
       return {
@@ -132,6 +152,13 @@ export const postVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
       payload: validated
     })
   }
+};
+
+export const getVisits = (patientUuid: string) => async (dispatch) => {
+  await dispatch({
+    type: ACTION_TYPES.GET_VISITS,
+    payload: axiosInstance.get(`${visitUrl}?patient=${patientUuid}&v=custom:(uuid,attributes,startDatetime,visitType,display,location)`)
+  });
 };
 
 export const reset = () => ({

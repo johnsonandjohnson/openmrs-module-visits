@@ -11,6 +11,7 @@ import Header from '../patient-header/header';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import ScheduleVisit from '../schedule-visit/schedule-visit';
+import ManageVisits from '../manage-visits/manage-visits';
 
 interface IWrappedComponentProps extends RouteComponentProps<{ patientUuid: string }> {
   isNew?: boolean;
@@ -31,4 +32,5 @@ const withPatientHeader = (WrappedComponent) => {
   }
 }
 
-export const ScheduleVisitWithHeader = withPatientHeader(ScheduleVisit); 
+export const ScheduleVisitWithHeader = withPatientHeader(ScheduleVisit);
+export const ManageVisitsWithHeader = withPatientHeader(ManageVisits); 

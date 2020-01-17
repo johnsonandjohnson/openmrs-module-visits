@@ -7,16 +7,17 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import IVisitType from "./visit-type";
-import ILocation from "./location";
-import IAttribute from './attribute';
-import IAttributeDetails from './attribute-details';
+ .manage-visits {
+  margin-left: 10px;
 
-export default class IVisit {
-  uuid: string
-  display: string;
-  visitType: IVisitType;
-  location: ILocation;
-  startDatetime?: Date;
-  attributes?: Array<IAttributeDetails>;
+  h2 {
+    font-size: 1.3em;
+    color: #009384;
+  }
+
+  .button-section {
+    flex-flow: row-reverse;
+    display: flex;
+    padding: 20px;
+  }
 }

@@ -11,6 +11,7 @@ import { getPatient } from '../../reducers/patient.reducer';
 import { IRootState } from '../../reducers';
 
 const SCHEDULE_VISIT_PATTERN = new UrlPattern(`/visits/manage/schedule/:patientUuid*`);
+const MANAGE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid*`);
 
 const MODULE_ROUTE = '/';
 const OMRS_ROUTE = '../../';
@@ -64,13 +65,15 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
   getCrumbs = (path: string): Array<ReactFragment> => {
     if (!!SCHEDULE_VISIT_PATTERN.match(path.toLowerCase())) {
       return this.getScheduleVisitCrumbs(path);
+    } else if (!!MANAGE_VISIT_PATTERN.match(path.toLowerCase())) {
+      return this.getManageVisitCrumbs(path);
     } else {
       return [this.renderLastCrumb(Msg.GENERAL_MODULE_BREADCRUMB)];
     }
   }
 
-  getPatientNameCrumb = (path: string) => {
-    const match = SCHEDULE_VISIT_PATTERN.match(path.toLowerCase());
+  getPatientNameCrumb = (path: string, pattern: UrlPattern) => {
+    const match = pattern.match(path.toLowerCase());
     const patientUuid = match.patientUuid;
 
     if (this.props.patient.uuid != patientUuid) {
@@ -83,10 +86,17 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
 
   getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => {
     return [
-      this.getPatientNameCrumb(path),
+      this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
       // it's considered as LastCrumb as the page doeas not exist yet so there should be no link 
       this.renderLastCrumb(Msg.MANAGE_VISITS_BREADCRUMB), 
       this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
+    ];
+  }
+
+  getManageVisitCrumbs = (path: string): Array<ReactFragment> => {
+    return [
+      this.getPatientNameCrumb(path, MANAGE_VISIT_PATTERN),
+      this.renderLastCrumb(Msg.MANAGE_VISITS_BREADCRUMB) 
     ];
   }
 
