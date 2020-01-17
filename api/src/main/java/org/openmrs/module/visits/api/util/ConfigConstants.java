@@ -6,7 +6,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
- 
+
 package org.openmrs.module.visits.api.util;
 
 import org.openmrs.customdatatype.datatype.FreeTextDatatype;
@@ -25,7 +25,8 @@ public final class ConfigConstants {
 
     public static final String VISIT_TIME_ATTRIBUTE_TYPE_NAME = "Visit Time";
 
-    public static final String VISIT_TIME_ATTRIBUTE_TYPE_DESCRIPTION = "Visit Time attribute";
+    public static final String VISIT_TIME_ATTRIBUTE_TYPE_DESCRIPTION = "Visit Time attribute," +
+            " that is used to specify at what the time the visit is scheduled to.";
 
     public static final String VISIT_TIME_ATTRIBUTE_TYPE_DATATYPE = FreeTextDatatype.class.getName();
 
@@ -33,7 +34,8 @@ public final class ConfigConstants {
 
     public static final String VISIT_STATUS_ATTRIBUTE_TYPE_NAME = "Visit Status";
 
-    public static final String VISIT_STATUS_ATTRIBUTE_TYPE_DESCRIPTION = "Visit Status attribute";
+    public static final String VISIT_STATUS_ATTRIBUTE_TYPE_DESCRIPTION = "Visit Status attribute," +
+            " that is used to specify what is the current status of a visit.";
 
     public static final String VISIT_STATUS_ATTRIBUTE_TYPE_DATATYPE = FreeTextDatatype.class.getName();
 

@@ -25,4 +25,6 @@
     <bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
         <property name="moduleId" value="${project.parent.artifactId}"/>
     </bean>
+
+    <bean id="visits.visitService" class="org.openmrs.module.visits.web.service.impl.VisitServiceImpl"/>
 </beans>
