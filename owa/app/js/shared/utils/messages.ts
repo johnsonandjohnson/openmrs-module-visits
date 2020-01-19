@@ -31,7 +31,7 @@ export const VISIT_TIME_LABEL = 'Visit time';
 export const LOCATION_LABEL = 'Visit location';
 
 // Manage visits
-export const VISIT_LIST = 'Manage Visits';
+export const MANAGE_VISITS = 'Manage Visits';
 
 // Validation
 export const FIELD_REQUIRED = 'Required';

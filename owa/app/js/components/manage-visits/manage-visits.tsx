@@ -14,12 +14,13 @@ import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
 import {
-  VISIT_LIST,
+  MANAGE_VISITS,
 } from '../../shared/utils/messages';
 import _ from 'lodash';
 import './manage-visits.scss';
 import Table from '@bit/soldevelo-omrs.cfl-components.table/table';
 import { history } from '../../config/redux-store';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string
@@ -94,7 +95,7 @@ class ManageVisits extends React.Component<IProps, IState> {
           return (
             <span>
               <a href={link}>
-                EDIT
+                <FontAwesomeIcon icon={['fas', 'pencil-alt']} size="1x" />
               </a>
             </span>
           );
@@ -117,7 +118,7 @@ class ManageVisits extends React.Component<IProps, IState> {
       <div className="manage-visits">
         <Form className="fields-form">
           <ControlLabel className="fields-form-title">
-            <h2>{VISIT_LIST}</h2>
+            <h2>{MANAGE_VISITS}</h2>
           </ControlLabel>
           <div className="button-section">
             {this.renderScheduleVisitButton()}

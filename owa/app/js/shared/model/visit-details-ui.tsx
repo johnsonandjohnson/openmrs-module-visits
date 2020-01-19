@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { VISIT_TIME_ATTRIBUTE_UUID } from "./visit-time-attribute";
 import IAttributeDetails from './attribute-details';
 import { getCommaSeparatedDateString } from '../utils/date-util';
+import { VISIT_STATUS_ATTRIBUTE_UUID } from './visit-status-attribute';
 
 export default class VisitDetailsUI {
   private _uuid: string;
@@ -20,7 +21,9 @@ export default class VisitDetailsUI {
     this._visitTime = _.get(timeAttributes, 'value', '');
     this._location = baseObject.location.display;
     this._visitType = baseObject.visitType.display;
-    this._status = 'WIP';
+    const statusAttribute = _.findLast(baseObject.attributes,
+      (a: IAttributeDetails) => a.attributeType.uuid === VISIT_STATUS_ATTRIBUTE_UUID);
+    this._status = _.get(statusAttribute, 'value', 'Unknown');
   }
 
   get uuid() { return this._uuid };

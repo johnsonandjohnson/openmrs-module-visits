@@ -15,6 +15,7 @@ const MANAGE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid*`);
 
 const MODULE_ROUTE = '/';
 const OMRS_ROUTE = '../../';
+const MANAGE_VISITS_ROUTE = patientUuid => `/visits/manage/${patientUuid}`;
 const PATIENT_DASHBOARD_ROUTE = patientUuid => `${OMRS_ROUTE}coreapps/clinicianfacing/patient.page?patientId=${patientUuid}`;
 
 interface IBreadCrumbProps extends DispatchProps, StateProps, RouteComponentProps {
@@ -84,11 +85,18 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     return this.renderCrumb(PATIENT_DASHBOARD_ROUTE(patientUuid), patientName, true)
   }
 
+  getManageVisitsCrumb = (path: string, pattern: UrlPattern) => {
+    const match = pattern.match(path.toLowerCase());
+    return this.renderCrumb(
+      MANAGE_VISITS_ROUTE(match.patientUuid),
+      Msg.MANAGE_VISITS_BREADCRUMB
+    );
+  }
+
   getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => {
     return [
       this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
-      // it's considered as LastCrumb as the page doeas not exist yet so there should be no link 
-      this.renderLastCrumb(Msg.MANAGE_VISITS_BREADCRUMB), 
+      this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN), 
       this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
     ];
   }

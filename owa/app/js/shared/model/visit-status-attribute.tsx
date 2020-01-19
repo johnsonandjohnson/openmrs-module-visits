@@ -9,10 +9,10 @@
 
 import IAttribute from "./attribute";
 
-const VISIT_TIME_ATTRIBUTE_UUID = '70ca70ac-53fd-49e4-9abe-663d4785fe62';
+export const VISIT_STATUS_ATTRIBUTE_UUID = '70ca70ac-53fd-49e4-9abe-663d4785fe62';
 
 export default class VisitStatusAttribute extends IAttribute {
   constructor(value: string) {
-    super(value, VISIT_TIME_ATTRIBUTE_UUID);
+    super(value, VISIT_STATUS_ATTRIBUTE_UUID);
   }
 }
