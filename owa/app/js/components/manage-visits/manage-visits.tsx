@@ -91,10 +91,9 @@ class ManageVisits extends React.Component<IProps, IState> {
           };
         },
         Cell: props => {
-          const link = `#${this.props.location.pathname}/schedule/${props.value}`;
           return (
             <span>
-              <a href={link}>
+              <a>
                 <FontAwesomeIcon icon={['fas', 'pencil-alt']} size="1x" />
               </a>
             </span>
