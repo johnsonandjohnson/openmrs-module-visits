@@ -23,4 +23,10 @@ public class VisitController extends BaseRestController {
     public List<String> getVisitTimes() {
         return visitService.getVisitTimes();
     }
+
+    @RequestMapping(value = "/statuses", method = RequestMethod.GET)
+    @ResponseBody
+    public List<String> getVisitStatuses() {
+        return visitService.getVisitStatuses();
+    }
 }

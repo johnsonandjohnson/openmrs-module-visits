@@ -14,4 +14,6 @@ import java.util.List;
 public interface VisitService {
 
     List<String> getVisitTimes();
+
+    List<String> getVisitStatuses();
 }

@@ -22,6 +22,7 @@ export const ACTION_TYPES = {
   GET_VISITS: 'scheduleVisitReducer/GET_VISITS',
   GET_VISIT_TYPES: 'scheduleVisitReducer/GET_VISIT_TYPES',
   GET_VISIT_TIMES: 'scheduleVisitReducer/GET_VISIT_TIMES',
+  GET_VISIT_STATUSES: 'scheduleVisitReducer/GET_VISIT_STATUSES',
   GET_LOCATIONS: 'scheduleVisitReducer/GET_LOCATIONS',
   GET_VISIT: 'scheduleVisitReducer/GET_VISIT',
   UPDATE_VISIT: 'scheduleVisitReducer/UPDATE_VISIT',
@@ -35,6 +36,7 @@ const initialState = {
   visitsLoading: false,
   visitTypes: [] as Array<IVisitType>,
   visitTimes: [] as Array<string>,
+  visitStatuses: [] as Array<string>,
   locations: [] as Array<ILocation>
 };
 
@@ -49,6 +51,8 @@ export default (state = initialState, action) => {
     case FAILURE(ACTION_TYPES.GET_VISIT_TYPES):
     case REQUEST(ACTION_TYPES.GET_VISIT_TIMES):
     case FAILURE(ACTION_TYPES.GET_VISIT_TIMES):
+    case REQUEST(ACTION_TYPES.GET_VISIT_STATUSES):
+    case FAILURE(ACTION_TYPES.GET_VISIT_STATUSES):
     case REQUEST(ACTION_TYPES.GET_LOCATIONS):
     case FAILURE(ACTION_TYPES.GET_LOCATIONS):
     case REQUEST(ACTION_TYPES.GET_VISIT):
@@ -87,6 +91,12 @@ export default (state = initialState, action) => {
         ...state,
         visitTimes: action.payload.data
       };
+    case SUCCESS(ACTION_TYPES.GET_VISIT_STATUSES):
+      return {
+        ...state,
+        visitStatuses: action.payload.data,
+        visit: _.assign(state.visit, { visitStatus: action.payload.data[0] })
+      };
     case SUCCESS(ACTION_TYPES.GET_LOCATIONS):
       return {
         ...state,
@@ -114,6 +124,7 @@ const visitTypeUrl = `${restUrl}/visittype`;
 const visitUrl = `${restUrl}/visit`;
 const locationUrl = `${restUrl}/location`;
 const visitsTimesUrl = `${moduleUrl}/times`;
+const visitsStatusesUrl = `${moduleUrl}/statuses`;
 
 export const getVisitTypes = () => async (dispatch) => {
   await dispatch({
@@ -126,6 +137,13 @@ export const getVisitTimes = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT_TIMES,
     payload: axiosInstance.get(visitsTimesUrl)
+  });
+};
+
+export const getVisitStatuses = () => async (dispatch) => {
+  await dispatch({
+    type: ACTION_TYPES.GET_VISIT_STATUSES,
+    payload: axiosInstance.get(visitsStatusesUrl)
   });
 };
 
@@ -148,7 +166,7 @@ export const postVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
   if (_.isEmpty(validated.errors)) {
     const body = {
       type: ACTION_TYPES.POST_VISIT,
-      payload: axiosInstance.post(visitUrl, visit.toModel())
+      payload: axiosInstance.post(visit.uuid ? `${visitUrl}/${visit.uuid}` : visitUrl, visit.toModel())
     }
     await handleRequest(dispatch, body, Msg.GENERIC_SUCCESS, Msg.GENERIC_FAILURE);
     if (successCallback) {
@@ -162,7 +180,7 @@ export const postVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
   }
 };
 
-const visitRepresentation = 'custom:(uuid,attributes,startDatetime,visitType,display,location,patient)'; 
+const visitRepresentation = 'custom:(uuid,attributes,startDatetime,visitType,display,location,patient)';
 
 export const getVisit = (visitUuid: string) => async (dispatch) => {
   await dispatch({

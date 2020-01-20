@@ -9,14 +9,15 @@ import IVisitRequest from "./visit-request";
 import VisitTimeAttribute, { VISIT_TIME_ATTRIBUTE_UUID } from "./visit-time-attribute";
 import { convertToUtcString } from '../utils/time-util';
 import moment from "moment";
-import VisitStatusAttribute from "./visit-status-attribute";
+import VisitStatusAttribute, { VISIT_STATUS_ATTRIBUTE_UUID } from "./visit-status-attribute";
 import IAttributeDetails from "./attribute-details";
-import patientReducer from "../../reducers/patient.reducer";
 
 export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRequest, IForm {
+  uuid?: string;
   patient: string;
   visitType: string;
   visitTime?: string;
+  visitStatus: string;
   location?: string;
   startDatetime?: string;
 
@@ -41,13 +42,13 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
 
   toModel(): IVisitRequest {
     return {
-      patient: this.patient,
+      patient: this.uuid ? undefined : this.patient,
       visitType: this.visitType,
       location: this.location,
       startDatetime: convertToUtcString(this.startDatetime ? this.startDatetime : moment.now()),
       attributes: this.visitTime ?
-        [new VisitTimeAttribute(this.visitTime), new VisitStatusAttribute('SCHEDULED')]
-        : [new VisitStatusAttribute('SCHEDULED')] // todo: do not hardcode the status 
+        [new VisitTimeAttribute(this.visitTime), new VisitStatusAttribute(this.visitStatus)]
+        : [new VisitStatusAttribute(this.visitStatus)]
     } as IVisitRequest;
   }
 
@@ -60,7 +61,9 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
   getValidationSchema(validateNotTouched: boolean): Yup.ObjectSchema {
     const validators = {
       visitType: Yup.string().test('mandatory check', Msg.FIELD_REQUIRED,
-        v => this.validateRequiredField('visitType', v, validateNotTouched))
+        v => this.validateRequiredField('visitType', v, validateNotTouched)),
+      visitStatus: Yup.string().test('mandatory check', Msg.FIELD_REQUIRED,
+        v => this.validateRequiredField('visitStatus', v, validateNotTouched))
     };
 
     return Yup.object().shape(validators);
@@ -79,10 +82,13 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
 
   private static convertToRequest(baseObject: IVisit): IVisitRequest {
     const visitTime = this.findAttribute(VISIT_TIME_ATTRIBUTE_UUID, baseObject.attributes);
+    const visitStatus = this.findAttribute(VISIT_STATUS_ATTRIBUTE_UUID, baseObject.attributes);
     return {
+      uuid: baseObject.uuid,
       visitType: baseObject.visitType.uuid,
       location: baseObject.location ? baseObject.location.uuid : undefined,
       visitTime: visitTime ? visitTime.value : undefined,
+      visitStatus: visitStatus ? visitStatus.value : "",
       patient: baseObject.patient ? baseObject.patient.uuid : ""
     } as IVisitRequest;
   }

@@ -13,15 +13,24 @@ import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 
 public final class ConfigConstants {
 
+    public static final String COMMA_SEPARATOR = ",";
+
     public static final String VISIT_TIMES_KEY = "visits.visit-times";
 
     public static final String VISIT_TIMES_DEFAULT_VALUE = "Morning,Afternoon,Evening";
 
-    public static final String VISIT_TIMES_SEPARATOR = ",";
-
     public static final String VISIT_TIMES_DESCRIPTION = "Coma separated list of visit types used to schedule a visit."
             + " Example of usage: "
-            + "'Morning,Afternoon,Evening'";
+            + "'" + VISIT_TIMES_DEFAULT_VALUE + "'";
+
+    public static final String VISIT_STATUSES_KEY = "visits.visit-statuses";
+
+    public static final String VISIT_STATUSES_DEFAULT_VALUE = "SCHEDULED,OCCURRED,MISSED";
+
+    public static final String VISIT_STATUSES_DESCRIPTION = "Coma separated list of visit statuses used to "
+            + "schedule a visit. IMPORTANT: Status of newly created visits is always set to the first element of the "
+            + " list. Example of usage: "
+            + "'" + VISIT_STATUSES_DEFAULT_VALUE + "'";
 
     public static final String VISIT_TIME_ATTRIBUTE_TYPE_NAME = "Visit Time";
 

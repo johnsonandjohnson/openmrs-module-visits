@@ -10,6 +10,7 @@
 import IAttribute from "./attribute";
 
 export default class IVisitRequest {
+  uuid?: string;
   patient: string;
   visitType: string;
   location?: string;

@@ -34,6 +34,8 @@ public class VisitsActivator extends BaseModuleActivator {
         LOGGER.info("Started Visits Module");
         createGlobalSettingIfNotExists(ConfigConstants.VISIT_TIMES_KEY,
                 ConfigConstants.VISIT_TIMES_DEFAULT_VALUE, ConfigConstants.VISIT_TIMES_DESCRIPTION);
+        createGlobalSettingIfNotExists(ConfigConstants.VISIT_STATUSES_KEY,
+                ConfigConstants.VISIT_STATUSES_DEFAULT_VALUE, ConfigConstants.VISIT_STATUSES_DESCRIPTION);
         createVisitTimeAttributeType();
         createVisitStatusAttributeType();
     }

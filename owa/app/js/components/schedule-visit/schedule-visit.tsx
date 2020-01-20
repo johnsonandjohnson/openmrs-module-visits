@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes, getVisit } from '../../reducers/schedule-visit.reducer';
+import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes, getVisit, getVisitStatuses } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, FormControl, Col, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
@@ -19,6 +19,7 @@ import {
   SCHEDULE_VISIT,
   EDIT_VISIT,
   VISIT_TYPE_LABEL,
+  VISIT_STATUS_LABEL,
   VISIT_TIME_LABEL,
   VISIT_DATE_LABEL,
   SAVE_BUTTON_LABEL,
@@ -54,6 +55,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     this.props.getVisitTypes();
     this.props.getLocations();
     this.props.getVisitTimes();
+    this.props.getVisitStatuses();
     this.handleChange(this.props.match.params.patientUuid, 'patient');
   }
 
@@ -112,6 +114,12 @@ class ScheduleVisit extends React.Component<IProps, IState> {
         <option value={type.uuid} key={type.uuid}>{type.display}</option>
       ), true);
 
+  renderVisitStatus = (errors) =>
+    this.renderDropdown(errors, VISIT_STATUS_LABEL, 'visitStatus',
+      this.props.visitStatuses.map(status =>
+        <option value={status} key={status}>{status}</option>
+      ), true);
+
   renderVisitTime = (errors) =>
     this.renderDropdown(errors, VISIT_TIME_LABEL, 'visitTime',
       this.props.visitTimes.map(time =>
@@ -150,6 +158,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
             {this.renderVisitTime(errors)}
             {this.renderLocation(errors)}
             {this.renderVisitType(errors)}
+            {this.isEdit() && this.renderVisitStatus(errors)}
           </Col>
         </Form>
         {this.renderSaveButton()}
@@ -161,6 +170,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
 const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
   visit: scheduleVisit.visit,
   visitTypes: scheduleVisit.visitTypes,
+  visitStatuses: scheduleVisit.visitStatuses,
   visitTimes: scheduleVisit.visitTimes,
   locations: scheduleVisit.locations
 });
@@ -171,7 +181,8 @@ const mapDispatchToProps = ({
   getLocations,
   updateVisit,
   postVisit,
-  getVisit
+  getVisit,
+  getVisitStatuses
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

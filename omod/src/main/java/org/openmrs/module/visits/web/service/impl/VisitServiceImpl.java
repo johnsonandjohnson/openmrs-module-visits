@@ -11,23 +11,33 @@ package org.openmrs.module.visits.web.service.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.util.ConfigConstants;
 import org.openmrs.module.visits.web.service.VisitService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_TIMES_KEY;
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_TIMES_SEPARATOR;
-
 public class VisitServiceImpl implements VisitService {
 
     @Override
     public List<String> getVisitTimes() {
-        String visitTimesProperty = Context.getAdministrationService().getGlobalProperty(VISIT_TIMES_KEY);
+        String visitTimesProperty = Context.getAdministrationService()
+                .getGlobalProperty(ConfigConstants.VISIT_TIMES_KEY);
         List<String> results = new ArrayList<>();
         if (StringUtils.isNotBlank(visitTimesProperty)) {
-            results.addAll(Arrays.asList(visitTimesProperty.split(VISIT_TIMES_SEPARATOR)));
+            results.addAll(Arrays.asList(visitTimesProperty.split(ConfigConstants.COMMA_SEPARATOR)));
+        }
+        return results;
+    }
+
+    @Override
+    public List<String> getVisitStatuses() {
+        String visitTimesProperty = Context.getAdministrationService()
+                .getGlobalProperty(ConfigConstants.VISIT_STATUSES_KEY);
+        List<String> results = new ArrayList<>();
+        if (StringUtils.isNotBlank(visitTimesProperty)) {
+            results.addAll(Arrays.asList(visitTimesProperty.split(ConfigConstants.COMMA_SEPARATOR)));
         }
         return results;
     }

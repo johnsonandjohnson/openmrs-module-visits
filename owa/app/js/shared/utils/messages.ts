@@ -29,6 +29,7 @@ export const SCHEDULE_VISIT = 'Schedule visit';
 export const EDIT_VISIT = 'Edit visit';
 export const VISIT_DATE_LABEL = 'Visit date';
 export const VISIT_TYPE_LABEL = 'Visit type';
+export const VISIT_STATUS_LABEL = 'Visit status';
 export const VISIT_TIME_LABEL = 'Visit time';
 export const LOCATION_LABEL = 'Visit location';
 
