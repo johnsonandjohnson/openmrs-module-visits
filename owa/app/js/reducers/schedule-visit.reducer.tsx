@@ -23,6 +23,7 @@ export const ACTION_TYPES = {
   GET_VISIT_TYPES: 'scheduleVisitReducer/GET_VISIT_TYPES',
   GET_VISIT_TIMES: 'scheduleVisitReducer/GET_VISIT_TIMES',
   GET_LOCATIONS: 'scheduleVisitReducer/GET_LOCATIONS',
+  GET_VISIT: 'scheduleVisitReducer/GET_VISIT',
   UPDATE_VISIT: 'scheduleVisitReducer/UPDATE_VISIT',
   POST_VISIT: 'scheduleVisitReducer/POST_VISIT',
   RESET: 'scheduleVisitReducer/RESET'
@@ -50,6 +51,8 @@ export default (state = initialState, action) => {
     case FAILURE(ACTION_TYPES.GET_VISIT_TIMES):
     case REQUEST(ACTION_TYPES.GET_LOCATIONS):
     case FAILURE(ACTION_TYPES.GET_LOCATIONS):
+    case REQUEST(ACTION_TYPES.GET_VISIT):
+    case FAILURE(ACTION_TYPES.GET_VISIT):
       return {
         ...state,
       };
@@ -59,10 +62,10 @@ export default (state = initialState, action) => {
         visitsLoading: true
       };
     case FAILURE(ACTION_TYPES.GET_VISITS):
-        return {
-          ...state,
-          visitsLoading: false
-        };
+      return {
+        ...state,
+        visitsLoading: false
+      };
     case SUCCESS(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
@@ -73,6 +76,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         visitTypes: action.payload.data.results
+      };
+    case SUCCESS(ACTION_TYPES.GET_VISIT):
+      return {
+        ...state,
+        visit: new VisitUI(action.payload.data)
       };
     case SUCCESS(ACTION_TYPES.GET_VISIT_TIMES):
       return {
@@ -154,10 +162,19 @@ export const postVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
   }
 };
 
+const visitRepresentation = 'custom:(uuid,attributes,startDatetime,visitType,display,location,patient)'; 
+
+export const getVisit = (visitUuid: string) => async (dispatch) => {
+  await dispatch({
+    type: ACTION_TYPES.GET_VISIT,
+    payload: axiosInstance.get(`${visitUrl}/${visitUuid}?v=${visitRepresentation}`)
+  });
+};
+
 export const getVisits = (patientUuid: string) => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISITS,
-    payload: axiosInstance.get(`${visitUrl}?patient=${patientUuid}&v=custom:(uuid,attributes,startDatetime,visitType,display,location)`)
+    payload: axiosInstance.get(`${visitUrl}?patient=${patientUuid}&v=${visitRepresentation}`)
   });
 };
 

@@ -9,14 +9,15 @@
 
 import IVisitType from "./visit-type";
 import ILocation from "./location";
-import IAttribute from './attribute';
 import IAttributeDetails from './attribute-details';
+import IPatient from "./patient";
 
 export default class IVisit {
   uuid: string
   display: string;
   visitType: IVisitType;
   location: ILocation;
+  patient: IPatient;
   startDatetime?: Date;
   attributes?: Array<IAttributeDetails>;
 }

@@ -20,7 +20,7 @@ export default (store) => (
         <Header />
         <BreadCrumb />
         <Switch>
-            <Route path="/visits/manage/schedule/:patientUuid" component={ScheduleVisit} />
+            <Route path="/visits/manage/:patientUuid/schedule/:visitUuid?" component={ScheduleVisit} />
             <Route path="/visits/manage/:patientUuid" component={ManageVisits} />
         </Switch>
     </div>

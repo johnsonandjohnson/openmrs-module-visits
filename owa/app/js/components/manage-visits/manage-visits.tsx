@@ -41,7 +41,7 @@ class ManageVisits extends React.Component<IProps, IState> {
   }
 
   handleScheduleVisitButton= () => {
-    history.push(`/visits/manage/schedule/${this.props.match.params.patientUuid}`);
+    history.push(`/visits/manage/${this.props.match.params.patientUuid}/schedule`);
   }
 
   renderScheduleVisitButton() {
@@ -91,7 +91,7 @@ class ManageVisits extends React.Component<IProps, IState> {
           };
         },
         Cell: props => {
-          const link = `#${this.props.location.pathname}/edit/${props.value}`; //TODO: edit
+          const link = `#${this.props.location.pathname}/schedule/${props.value}`;
           return (
             <span>
               <a href={link}>

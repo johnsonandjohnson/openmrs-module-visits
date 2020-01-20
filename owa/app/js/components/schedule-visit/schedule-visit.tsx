@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes } from '../../reducers/schedule-visit.reducer';
+import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes, getVisit } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, FormControl, Col, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
@@ -17,6 +17,7 @@ import ErrorDesc from '@bit/soldevelo-omrs.cfl-components.error-description';
 import FormLabel from '@bit/soldevelo-omrs.cfl-components.form-label';
 import {
   SCHEDULE_VISIT,
+  EDIT_VISIT,
   VISIT_TYPE_LABEL,
   VISIT_TIME_LABEL,
   VISIT_DATE_LABEL,
@@ -30,7 +31,8 @@ import OpenMrsDatePicker from '@bit/soldevelo-omrs.cfl-components.openmrs-date-p
 import { history } from '../../config/redux-store';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
-  patientUuid: string
+  patientUuid: string,
+  visitUuid?: string
 }> { }
 
 interface IState {
@@ -46,11 +48,16 @@ class ScheduleVisit extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
+    if (this.isEdit()) {
+      this.props.getVisit(this.props.match.params.visitUuid!);
+    }
     this.props.getVisitTypes();
     this.props.getLocations();
     this.props.getVisitTimes();
     this.handleChange(this.props.match.params.patientUuid, 'patient');
   }
+
+  isEdit = () => !!this.props.match.params.visitUuid
 
   handleChange = (newValue: string, prop: string) => {
     const cloned = _.cloneDeep(this.props.visit);
@@ -133,7 +140,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
       <div className="scheduled-visit">
         <Form className="fields-form">
           <ControlLabel className="fields-form-title">
-            <h2>{SCHEDULE_VISIT}</h2>
+            <h2>{this.isEdit() ? EDIT_VISIT : SCHEDULE_VISIT}</h2>
           </ControlLabel>
           <FormGroup>
             {this.renderManageVisitsButton()}
@@ -163,7 +170,8 @@ const mapDispatchToProps = ({
   getVisitTimes,
   getLocations,
   updateVisit,
-  postVisit
+  postVisit,
+  getVisit
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

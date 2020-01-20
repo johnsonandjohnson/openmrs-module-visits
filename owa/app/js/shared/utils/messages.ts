@@ -22,9 +22,11 @@ export const GENERIC_LOADING = 'Loading...';
 export const GENERAL_MODULE_BREADCRUMB = 'Visits';
 export const MANAGE_VISITS_BREADCRUMB = 'Manage visits';
 export const SCHEDULE_VISIT_BREADCRUMB = 'Schedule visit';
+export const EDIT_VISIT_BREADCRUMB = 'Edit visit';
 
 // Schedule visits
 export const SCHEDULE_VISIT = 'Schedule visit';
+export const EDIT_VISIT = 'Edit visit';
 export const VISIT_DATE_LABEL = 'Visit date';
 export const VISIT_TYPE_LABEL = 'Visit type';
 export const VISIT_TIME_LABEL = 'Visit time';

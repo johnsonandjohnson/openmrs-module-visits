@@ -10,7 +10,8 @@ import * as Msg from '../../shared/utils/messages';
 import { getPatient } from '../../reducers/patient.reducer';
 import { IRootState } from '../../reducers';
 
-const SCHEDULE_VISIT_PATTERN = new UrlPattern(`/visits/manage/schedule/:patientUuid*`);
+const EDIT_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid/schedule/:visitUuid`);
+const SCHEDULE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid/schedule`);
 const MANAGE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid*`);
 
 const MODULE_ROUTE = '/';
@@ -66,6 +67,8 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
   getCrumbs = (path: string): Array<ReactFragment> => {
     if (!!SCHEDULE_VISIT_PATTERN.match(path.toLowerCase())) {
       return this.getScheduleVisitCrumbs(path);
+    } if (!!EDIT_VISIT_PATTERN.match(path.toLowerCase())) {
+      return this.getEditVisitCrumbs(path);
     } else if (!!MANAGE_VISIT_PATTERN.match(path.toLowerCase())) {
       return this.getManageVisitCrumbs(path);
     } else {
@@ -98,6 +101,14 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
       this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
       this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN), 
       this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
+    ];
+  }
+
+  getEditVisitCrumbs = (path: string): Array<ReactFragment> => {
+    return [
+      this.getPatientNameCrumb(path, EDIT_VISIT_PATTERN),
+      this.getManageVisitsCrumb(path, EDIT_VISIT_PATTERN), 
+      this.renderLastCrumb(Msg.EDIT_VISIT_BREADCRUMB)
     ];
   }
 

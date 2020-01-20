@@ -8,10 +8,10 @@
         "id": "visitsapp.basicVisits.patientDashboardLink",
         "extensionPointId": "patientDashboard.overallActions",
         "type": "link",
-        "label": "visits.schedule_visit",
+        "label": "visits.visits",
         "icon": "icon-calendar",
         "order": 1,
-        "url": "owa/visits/index.html#/visits/manage/schedule/{{patient.uuid}}"
+        "url": "owa/visits/index.html#/visits/manage/{{patient.uuid}}"
       }
     ]
   }

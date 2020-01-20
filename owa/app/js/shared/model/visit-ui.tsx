@@ -6,10 +6,12 @@ import _ from 'lodash';
 import * as Msg from '../../shared/utils/messages';
 import { validateFormSafely } from '@bit/soldevelo-omrs.cfl-components.validation';
 import IVisitRequest from "./visit-request";
-import VisitTimeAttribute from "./visit-time-attribute";
+import VisitTimeAttribute, { VISIT_TIME_ATTRIBUTE_UUID } from "./visit-time-attribute";
 import { convertToUtcString } from '../utils/time-util';
 import moment from "moment";
 import VisitStatusAttribute from "./visit-status-attribute";
+import IAttributeDetails from "./attribute-details";
+import patientReducer from "../../reducers/patient.reducer";
 
 export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRequest, IForm {
   patient: string;
@@ -71,11 +73,17 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
     return true;
   }
 
+  private static findAttribute(typeUuid: string, attributes?: Array<IAttributeDetails>) {
+    return attributes ? _.find(attributes, (a) => a.attributeType.uuid === typeUuid) : undefined;
+  }
+
   private static convertToRequest(baseObject: IVisit): IVisitRequest {
+    const visitTime = this.findAttribute(VISIT_TIME_ATTRIBUTE_UUID, baseObject.attributes);
     return {
       visitType: baseObject.visitType.uuid,
       location: baseObject.location ? baseObject.location.uuid : undefined,
-      patient: ""
+      visitTime: visitTime ? visitTime.value : undefined,
+      patient: baseObject.patient ? baseObject.patient.uuid : ""
     } as IVisitRequest;
   }
 }
