@@ -19,8 +19,8 @@ export default class VisitDetailsUI {
     const timeAttributes = _.findLast(baseObject.attributes,
       (a: IAttributeDetails) => a.attributeType.uuid === VISIT_TIME_ATTRIBUTE_UUID);
     this._visitTime = _.get(timeAttributes, 'value', '');
-    this._location = baseObject.location.display;
-    this._visitType = baseObject.visitType.display;
+    this._location = _.get(baseObject, 'location.display', '');
+    this._visitType = _.get(baseObject, 'visitType.display', '');
     const statusAttribute = _.findLast(baseObject.attributes,
       (a: IAttributeDetails) => a.attributeType.uuid === VISIT_STATUS_ATTRIBUTE_UUID);
     this._status = _.get(statusAttribute, 'value', 'Unknown');
