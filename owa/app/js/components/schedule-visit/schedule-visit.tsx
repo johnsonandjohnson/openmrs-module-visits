@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes, getVisit, getVisitStatuses } from '../../reducers/schedule-visit.reducer';
+import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes, getVisit, getVisitStatuses, reset } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, FormControl, Col, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
@@ -50,8 +50,14 @@ class ScheduleVisit extends React.Component<IProps, IState> {
 
   componentDidMount() {
     if (this.isEdit()) {
+      this.loadComponent();
       this.props.getVisit(this.props.match.params.visitUuid!);
+    } else {
+      this.props.reset(this.loadComponent);
     }
+  }
+
+  loadComponent = () => {
     this.props.getVisitTypes();
     this.props.getLocations();
     this.props.getVisitTimes();
@@ -182,7 +188,8 @@ const mapDispatchToProps = ({
   updateVisit,
   postVisit,
   getVisit,
-  getVisitStatuses
+  getVisitStatuses,
+  reset
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

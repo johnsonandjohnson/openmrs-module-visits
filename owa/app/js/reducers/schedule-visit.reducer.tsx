@@ -196,6 +196,11 @@ export const getVisits = (patientUuid: string) => async (dispatch) => {
   });
 };
 
-export const reset = () => ({
-  type: ACTION_TYPES.RESET
-});
+export const reset = (successCallback?) => async (dispatch) => {
+  await dispatch({
+    type: ACTION_TYPES.RESET
+  });
+  if (successCallback) {
+    successCallback();
+  }
+}

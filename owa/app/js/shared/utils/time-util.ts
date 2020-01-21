@@ -9,6 +9,12 @@
 
 import moment from "moment";
 
+const DATE_FORMAT = 'YYYY-MM-DD';
+
 export const convertToUtcString = (time?: string | number): string | undefined => {
-  return !!time ? moment.utc(time).format('YYYY-MM-DD') : undefined;
+  return !!time ? moment.utc(time).format(DATE_FORMAT) : undefined;
+}
+
+export const convertToLocalString = (time?: Date | number): string | undefined => {
+  return !!time ? moment.utc(time).local().format(DATE_FORMAT) : undefined;
 }

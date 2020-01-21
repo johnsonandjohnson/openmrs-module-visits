@@ -7,7 +7,7 @@ import * as Msg from '../../shared/utils/messages';
 import { validateFormSafely } from '@bit/soldevelo-omrs.cfl-components.validation';
 import IVisitRequest from "./visit-request";
 import VisitTimeAttribute, { VISIT_TIME_ATTRIBUTE_UUID } from "./visit-time-attribute";
-import { convertToUtcString } from '../utils/time-util';
+import { convertToUtcString, convertToLocalString } from '../utils/time-util';
 import moment from "moment";
 import VisitStatusAttribute, { VISIT_STATUS_ATTRIBUTE_UUID } from "./visit-status-attribute";
 import IAttributeDetails from "./attribute-details";
@@ -86,6 +86,7 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
     return {
       uuid: baseObject.uuid,
       visitType: baseObject.visitType.uuid,
+      startDatetime: convertToLocalString(baseObject.startDatetime),
       location: baseObject.location ? baseObject.location.uuid : undefined,
       visitTime: visitTime ? visitTime.value : undefined,
       visitStatus: visitStatus ? visitStatus.value : "",

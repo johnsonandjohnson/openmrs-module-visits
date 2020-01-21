@@ -14,6 +14,7 @@ import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
 import {
+  SCHEDULE_VISIT,
   MANAGE_VISITS,
 } from '../../shared/utils/messages';
 import _ from 'lodash';
@@ -40,7 +41,7 @@ class ManageVisits extends React.Component<IProps, IState> {
     this.props.getVisits(this.props.match.params.patientUuid);
   }
 
-  handleScheduleVisitButton= () => {
+  handleScheduleVisitButton = () => {
     history.push(`/visits/manage/${this.props.match.params.patientUuid}/schedule`);
   }
 
@@ -49,7 +50,7 @@ class ManageVisits extends React.Component<IProps, IState> {
       <Button
         className="btn btn-success btn-md"
         onClick={this.handleScheduleVisitButton}>
-        Schedule Visit
+        {SCHEDULE_VISIT}
       </Button>
     );
   }
@@ -91,9 +92,10 @@ class ManageVisits extends React.Component<IProps, IState> {
           };
         },
         Cell: props => {
+          const link = `#${this.props.location.pathname}/schedule/${props.value}`;
           return (
             <span>
-              <a>
+              <a href={link}>
                 <FontAwesomeIcon icon={['fas', 'pencil-alt']} size="1x" />
               </a>
             </span>
