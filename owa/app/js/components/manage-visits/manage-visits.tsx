@@ -124,7 +124,7 @@ class ManageVisits extends React.Component<IProps, IState> {
 const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
   visits: scheduleVisit.visits,
   visitsPagesCount: scheduleVisit.visitsPagesCount,
-  loading: scheduleVisit.visitsLoading || scheduleVisit.visitsPagesCount === 0,
+  loading: scheduleVisit.visitsLoading
 });
 
 const mapDispatchToProps = ({
