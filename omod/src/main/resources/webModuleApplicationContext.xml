@@ -22,9 +22,20 @@
 
     <context:component-scan base-package="org.openmrs.module.visits.web.controller" />
 
+    <bean id="visitsModuleExceptionHandler"
+          class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver" p:order="1">
+        <property name="messageConverters">
+            <list>
+                <bean id="visitsModuleStringConverter"
+                      class="org.springframework.http.converter.StringHttpMessageConverter" />
+                <bean id="visitsModuleJsonConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+                <!-- This bean is defined in the core 'openmrs-servlet.xml' file -->
+                <ref bean="xmlMarshallingHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+
     <bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
         <property name="moduleId" value="${project.parent.artifactId}"/>
     </bean>
-
-    <bean id="visits.visitService" class="org.openmrs.module.visits.web.service.impl.VisitServiceImpl"/>
 </beans>

@@ -16,10 +16,11 @@ import VisitUI from '../shared/model/visit-ui';
 import * as Msg from '../shared/utils/messages';
 import { handleRequest } from '@bit/soldevelo-omrs.cfl-components.request-toast-handler';
 import ILocation from '../shared/model/location';
-import VisitDetailsUI from '../shared/model/visit-details-ui';
+import IVisitDetails from '../shared/model/visit-details.model';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'scheduleVisitReducer/GET_VISITS',
+  GET_VISITS_PAGES_COUNT: 'scheduleVisitReducer/GET_VISITS_PAGES_COUNT',
   GET_VISIT_TYPES: 'scheduleVisitReducer/GET_VISIT_TYPES',
   GET_VISIT_TIMES: 'scheduleVisitReducer/GET_VISIT_TIMES',
   GET_VISIT_STATUSES: 'scheduleVisitReducer/GET_VISIT_STATUSES',
@@ -32,12 +33,13 @@ export const ACTION_TYPES = {
 
 const initialState = {
   visit: VisitUI.getNew(),
-  visits: [] as Array<VisitDetailsUI>,
+  visits: [] as Array<IVisitDetails>,
   visitsLoading: false,
   visitTypes: [] as Array<IVisitType>,
   visitTimes: [] as Array<string>,
   visitStatuses: [] as Array<string>,
-  locations: [] as Array<ILocation>
+  locations: [] as Array<ILocation>,
+  visitsPagesCount: 0
 };
 
 export type ScheduleVisitState = Readonly<typeof initialState>;
@@ -73,8 +75,14 @@ export default (state = initialState, action) => {
     case SUCCESS(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
-        visits: action.payload.data.results.map(r => new VisitDetailsUI(r)),
+        visits: action.payload.data.content,
+        visitsPagesCount: action.payload.data.pageCount,
         visitsLoading: false
+      };
+    case SUCCESS(ACTION_TYPES.GET_VISITS_PAGES_COUNT):
+      return {
+        ...state,
+        visitsPagesCount: Math.ceil((action.payload.data.results.length / action.meta))
       };
     case SUCCESS(ACTION_TYPES.GET_VISIT_TYPES):
       return {
@@ -195,6 +203,30 @@ export const getVisits = (patientUuid: string) => async (dispatch) => {
     payload: axiosInstance.get(`${visitUrl}?patient=${patientUuid}&v=${visitRepresentation}`)
   });
 };
+
+export const getVisitsPage = (page: number, size: number, patientUuid: string) => async (dispatch) => {
+  const url = `${moduleUrl}/patient/${patientUuid}`;
+  await dispatch({
+    type: ACTION_TYPES.GET_VISITS,
+    payload: axiosInstance.get(url, {
+      params: {
+        page: page + 1,
+        rows: size,
+      }
+    })
+  });
+};
+
+export const getVisitsPagesCount = (size: number, patientUuid: string) => async (dispatch) => {
+  const url = `${visitUrl}?patient=${patientUuid}&v=custom:(uuid)`;
+  await dispatch({
+    type: ACTION_TYPES.GET_VISITS_PAGES_COUNT,
+    payload: axiosInstance.get(url),
+    meta: size
+  });
+};
+
+
 
 export const reset = (successCallback?) => async (dispatch) => {
   await dispatch({

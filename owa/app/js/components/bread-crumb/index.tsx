@@ -46,23 +46,14 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     });
   }
 
-  componentWillUnmount = () => {
-    this.unlisten();
-  }
+  componentWillUnmount = () => this.unlisten();
 
-  render = () => {
-    return this.buildBreadCrumb();
-  }
 
-  buildBreadCrumb = () => {
-    const { current } = this.state;
+  buildBreadCrumb = () =>
+    <div className="breadcrumb">
+      {this.renderCrumbs(this.getCrumbs(this.state.current))}
+    </div>
 
-    return (
-      <div className="breadcrumb">
-        {this.renderCrumbs(this.getCrumbs(current))}
-      </div>
-    );
-  }
 
   getCrumbs = (path: string): Array<ReactFragment> => {
     if (!!SCHEDULE_VISIT_PATTERN.match(path.toLowerCase())) {
@@ -96,28 +87,23 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     );
   }
 
-  getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => {
-    return [
-      this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
-      this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN), 
-      this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
-    ];
-  }
+  getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => [
+    this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
+    this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN),
+    this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
+  ];
 
-  getEditVisitCrumbs = (path: string): Array<ReactFragment> => {
-    return [
-      this.getPatientNameCrumb(path, EDIT_VISIT_PATTERN),
-      this.getManageVisitsCrumb(path, EDIT_VISIT_PATTERN), 
-      this.renderLastCrumb(Msg.EDIT_VISIT_BREADCRUMB)
-    ];
-  }
 
-  getManageVisitCrumbs = (path: string): Array<ReactFragment> => {
-    return [
-      this.getPatientNameCrumb(path, MANAGE_VISIT_PATTERN),
-      this.renderLastCrumb(Msg.MANAGE_VISITS_BREADCRUMB) 
-    ];
-  }
+  getEditVisitCrumbs = (path: string): Array<ReactFragment> => [
+    this.getPatientNameCrumb(path, EDIT_VISIT_PATTERN),
+    this.getManageVisitsCrumb(path, EDIT_VISIT_PATTERN),
+    this.renderLastCrumb(Msg.EDIT_VISIT_BREADCRUMB)
+  ];
+
+  getManageVisitCrumbs = (path: string): Array<ReactFragment> => [
+    this.getPatientNameCrumb(path, MANAGE_VISIT_PATTERN),
+    this.renderLastCrumb(Msg.MANAGE_VISITS_BREADCRUMB)
+  ];
 
   renderCrumbs = (elements: Array<any>) => {
     const delimiter = this.renderDelimiter();
@@ -134,19 +120,15 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     );
   }
 
-  renderDelimiter = () => {
-    return (
-      <span className="breadcrumb-link-item">
-        <FontAwesomeIcon size="xs" icon={['fas', 'chevron-right']} />
-      </span>);
-  }
+  renderDelimiter = () =>
+    <span className="breadcrumb-link-item">
+      <FontAwesomeIcon size="xs" icon={['fas', 'chevron-right']} />
+    </span>
 
-  renderHomeCrumb = () => {
-    return (
-      <a href={OMRS_ROUTE} className="breadcrumb-link-item">
-        <FontAwesomeIcon icon={['fas', 'home']} />
-      </a>);
-  }
+  renderHomeCrumb = () =>
+    <a href={OMRS_ROUTE} className="breadcrumb-link-item">
+      <FontAwesomeIcon icon={['fas', 'home']} />
+    </a>
 
   renderCrumb = (link: string, txt: string, isAbsolute?: boolean) => {
     if (isAbsolute) {
@@ -158,9 +140,10 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     }
   }
 
-  renderLastCrumb = (txt: string) => {
-    return <span className="breadcrumb-last-item">{txt}</span>;
-  }
+  renderLastCrumb = (txt: string) =>
+    <span className="breadcrumb-last-item">{txt}</span>
+
+  render = () => this.buildBreadCrumb();
 }
 
 const mapStateToProps = ({ patient }: IRootState) => ({

@@ -35,6 +35,14 @@ export const LOCATION_LABEL = 'Visit location';
 
 // Manage visits
 export const MANAGE_VISITS = 'Manage Visits';
+export const MANAGE_VISITS_COLUMNS = [
+  { Header: 'Date', accessor: 'startDate'},
+  { Header: 'Time', accessor: 'time'},
+  { Header: 'Location', accessor: 'location'},
+  { Header: 'Type', accessor: 'type'},
+  { Header: 'Status', accessor: 'status' }
+];
+export const ACTIONS_COLUMN_LABEL = 'Actions';
 
 // Validation
 export const FIELD_REQUIRED = 'Required';

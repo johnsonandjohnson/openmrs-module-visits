@@ -7,13 +7,17 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-package org.openmrs.module.visits.web.service;
+package org.openmrs.module.visits.api.service;
 
 import java.util.List;
+import org.openmrs.Visit;
+import org.openmrs.module.visits.domain.PagingInfo;
 
-public interface VisitService {
+public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
 
     List<String> getVisitTimes();
 
     List<String> getVisitStatuses();
+
+    List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo);
 }

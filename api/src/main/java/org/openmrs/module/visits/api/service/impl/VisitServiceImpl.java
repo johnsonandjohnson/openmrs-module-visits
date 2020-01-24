@@ -7,18 +7,26 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-package org.openmrs.module.visits.web.service.impl;
+package org.openmrs.module.visits.api.service.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.util.ConfigConstants;
-import org.openmrs.module.visits.web.service.VisitService;
+import org.openmrs.module.visits.api.service.VisitService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.openmrs.module.visits.domain.PagingInfo;
+import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 
-public class VisitServiceImpl implements VisitService {
+public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements VisitService {
+
+    private PatientService patientService;
 
     @Override
     public List<String> getVisitTimes() {
@@ -40,5 +48,20 @@ public class VisitServiceImpl implements VisitService {
             results.addAll(Arrays.asList(visitTimesProperty.split(ConfigConstants.COMMA_SEPARATOR)));
         }
         return results;
+    }
+
+    @Override
+    public List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo) {
+        Patient patient = patientService.getPatientByUuid(patientUuid);
+        if (patient == null) {
+            throw new ValidationException(String.format("Patient with uuid %s does not exist",
+                patientUuid));
+        }
+        return findAllByCriteria(new VisitCriteria(patient), pagingInfo);
+    }
+
+    public VisitServiceImpl setPatientService(PatientService patientService) {
+        this.patientService = patientService;
+        return this;
     }
 }

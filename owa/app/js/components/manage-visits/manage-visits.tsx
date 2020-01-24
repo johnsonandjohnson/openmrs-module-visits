@@ -9,19 +9,23 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getVisits } from '../../reducers/schedule-visit.reducer';
-import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
-import {
-  SCHEDULE_VISIT,
-  MANAGE_VISITS,
-} from '../../shared/utils/messages';
-import _ from 'lodash';
-import './manage-visits.scss';
 import Table from '@bit/soldevelo-omrs.cfl-components.table/table';
-import { history } from '../../config/redux-store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import _ from 'lodash';
+
+import { getVisitsPage, getVisitsPagesCount } from '../../reducers/schedule-visit.reducer';
+import { IRootState } from '../../reducers';
+import {
+  MANAGE_VISITS,
+  SCHEDULE_VISIT,
+  MANAGE_VISITS_COLUMNS,
+  ACTIONS_COLUMN_LABEL
+} from '../../shared/utils/messages';
+import { history } from '../../config/redux-store';
+import './manage-visits.scss';
+import moment from 'moment';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string
@@ -30,22 +34,46 @@ interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
 interface IState {
 }
 
-//TODO: CFLM-145: General class refactor
 class ManageVisits extends React.Component<IProps, IState> {
 
-  constructor(props: IProps) {
-    super(props);
-  }
-
   componentDidMount() {
-    this.props.getVisits(this.props.match.params.patientUuid);
   }
 
-  handleScheduleVisitButton = () => {
+  private getVisits = (activePage: number, itemsPerPage: number, sort: string, order: string, filters: {}) => {
+    this.props.getVisitsPage(activePage, itemsPerPage, this.props.match.params.patientUuid);
+  }
+
+  private handleScheduleVisitButton = () => {
     history.push(`/visits/manage/${this.props.match.params.patientUuid}/schedule`);
   }
 
-  renderScheduleVisitButton() {
+  private getActionsColumn = () => {
+    return {
+      Header: ACTIONS_COLUMN_LABEL,
+      accessor: 'uuid',
+      getProps: () => {
+        return {
+          style: {
+            maxWidth: 30,
+            textAlign: 'center',
+            margin: 'auto'
+          },
+        };
+      },
+      Cell: props => {
+        const editLink = `#${this.props.location.pathname}/schedule/${props.value}`;
+        return (
+          <span>
+            <a href={editLink}>
+              <FontAwesomeIcon icon={['fas', 'pencil-alt']} size="1x" />
+            </a>
+          </span>
+        );
+      }
+    };
+  }
+
+  private renderScheduleVisitButton = () => {
     return (
       <Button
         className="btn btn-success btn-md"
@@ -55,66 +83,26 @@ class ManageVisits extends React.Component<IProps, IState> {
     );
   }
 
-  //TODO: CFLM-145: Refactor columns
-  renderTable = () => {
-    const data = this.props.visits;
-    const columns = [
-      {
-        Header: 'Date',
-        accessor: 'visitDate',
-      },
-      {
-        Header: 'Time',
-        accessor: 'visitTime',
-      },
-      {
-        Header: 'Location',
-        accessor: 'location',
-      },
-      {
-        Header: 'Type',
-        accessor: 'visitType',
-      },
-      {
-        Header: 'Status',
-        accessor: 'status',
-      },
-      {
-        Header: 'Actions',
-        accessor: 'uuid',
-        getProps: () => {
-          return {
-            style: {
-              maxWidth: 30,
-              textAlign: 'center',
-              margin: 'auto'
-            },
-          };
-        },
-        Cell: props => {
-          const link = `#${this.props.location.pathname}/schedule/${props.value}`;
-          return (
-            <span>
-              <a href={link}>
-                <FontAwesomeIcon icon={['fas', 'pencil-alt']} size="1x" />
-              </a>
-            </span>
-          );
-        }
-      }
-    ];
-    return (
-      <Table
-        data={data}
-        columns={columns}
-        loading={this.props.loading}
-        pages={0}
-        fetchDataCallback={() => { }} //TODO: CFLM-145: Deal with it
-      />
-    );
-  }
+  private renderTable = () =>
+    <Table
+      data={this.props.visits.map(visit => {
+        return {
+        ...visit,
+        startDate: visit.startDate ? moment(visit.startDate).format("DD.MM.YYYY") : visit.startDate
+      }})}
+      columns={[
+        ...MANAGE_VISITS_COLUMNS,
+        this.getActionsColumn()
+      ]}
+      loading={this.props.loading}
+      pages={this.props.visitsPagesCount}
+      fetchDataCallback={this.getVisits}
+      sortable={false}
+      multiSort={false}
+      showPagination={true}
+    />
 
-  render = () => {
+  render() {
     return (
       <div className="manage-visits">
         <Form className="fields-form">
@@ -135,11 +123,13 @@ class ManageVisits extends React.Component<IProps, IState> {
 
 const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
   visits: scheduleVisit.visits,
-  loading: scheduleVisit.visitsLoading,
+  visitsPagesCount: scheduleVisit.visitsPagesCount,
+  loading: scheduleVisit.visitsLoading || scheduleVisit.visitsPagesCount === 0,
 });
 
 const mapDispatchToProps = ({
-  getVisits
+  getVisitsPage,
+  getVisitsPagesCount
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

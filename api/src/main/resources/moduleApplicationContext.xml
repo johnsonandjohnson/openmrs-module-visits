@@ -10,4 +10,31 @@
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+    <bean id="visits.visitDao" class="org.openmrs.module.visits.api.dao.impl.VisitDaoImpl">
+        <property name="dbSessionFactory">
+            <ref bean="dbSessionFactory"/>
+        </property>
+    </bean>
+
+    <bean id="visits.visitService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.visits.api.service.impl.VisitServiceImpl">
+                <property name="daoBeanName" value="visits.visitDao"/>
+                <property name="patientService">
+                    <ref bean="patientService"/>
+                </property>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
+    <bean id="visits.visitMapper" class="org.openmrs.module.visits.api.mapper.VisitMapper"/>
 </beans>
