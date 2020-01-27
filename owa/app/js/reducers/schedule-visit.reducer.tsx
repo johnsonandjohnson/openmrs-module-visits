@@ -208,7 +208,7 @@ export const getVisits = (patientUuid: string) => async (dispatch) => {
 };
 
 export const getVisitsPage = (page: number, size: number, patientUuid: string) => async (dispatch) => {
-  const url = `${moduleUrl}/${patientUuid}/patient`;
+  const url = `${moduleUrl}/patient/${patientUuid}`;
   await dispatch({
     type: ACTION_TYPES.GET_VISITS,
     payload: axiosInstance.get(url, {
