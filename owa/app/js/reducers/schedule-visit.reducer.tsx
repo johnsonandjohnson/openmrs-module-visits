@@ -16,7 +16,7 @@ import VisitUI from '../shared/model/visit-ui';
 import * as Msg from '../shared/utils/messages';
 import { handleRequest } from '@bit/soldevelo-omrs.cfl-components.request-toast-handler';
 import ILocation from '../shared/model/location';
-import IVisitDetails from '../shared/model/visit-details.model';
+import IVisitDetails from '../shared/model/visit-details';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'scheduleVisitReducer/GET_VISITS',
@@ -169,12 +169,15 @@ export const updateVisit = (visit: VisitUI) => async (dispatch) => {
   })
 };
 
-export const postVisit = (visit: VisitUI, successCallback?) => async (dispatch) => {
+export const saveVisit = (visit: VisitUI, successCallback?) => async (dispatch) => {
   const validated = await visit.validate(true);
   if (_.isEmpty(validated.errors)) {
+    const payload = visit.uuid ?
+      axiosInstance.put(`${moduleUrl}/${visit.uuid}`, visit.toVisitDetails())
+      : axiosInstance.post(visitUrl, visit.toVisitRequest())
     const body = {
       type: ACTION_TYPES.POST_VISIT,
-      payload: axiosInstance.post(visit.uuid ? `${visitUrl}/${visit.uuid}` : visitUrl, visit.toModel())
+      payload
     }
     await handleRequest(dispatch, body, Msg.GENERIC_SUCCESS, Msg.GENERIC_FAILURE);
     if (successCallback) {
@@ -205,7 +208,7 @@ export const getVisits = (patientUuid: string) => async (dispatch) => {
 };
 
 export const getVisitsPage = (page: number, size: number, patientUuid: string) => async (dispatch) => {
-  const url = `${moduleUrl}/patient/${patientUuid}`;
+  const url = `${moduleUrl}/${patientUuid}/patient`;
   await dispatch({
     type: ACTION_TYPES.GET_VISITS,
     payload: axiosInstance.get(url, {

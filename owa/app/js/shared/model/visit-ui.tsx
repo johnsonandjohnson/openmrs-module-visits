@@ -8,9 +8,11 @@ import { validateFormSafely } from '@bit/soldevelo-omrs.cfl-components.validatio
 import IVisitRequest from "./visit-request";
 import VisitTimeAttribute, { VISIT_TIME_ATTRIBUTE_UUID } from "./visit-time-attribute";
 import { convertToUtcString, convertToLocalString } from '../utils/time-util';
+import { parseOrNow } from '../utils/date-util';
 import moment from "moment";
 import VisitStatusAttribute, { VISIT_STATUS_ATTRIBUTE_UUID } from "./visit-status-attribute";
 import IAttributeDetails from "./attribute-details";
+import IVisitDetails from "./visit-details";
 
 export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRequest, IForm {
   uuid?: string;
@@ -40,7 +42,7 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
     return visit;
   }
 
-  toModel(): IVisitRequest {
+  toVisitRequest(): IVisitRequest {
     return {
       patient: this.uuid ? undefined : this.patient,
       visitType: this.visitType,
@@ -50,6 +52,17 @@ export default class VisitUI extends ObjectUI<IVisitRequest> implements IVisitRe
         [new VisitTimeAttribute(this.visitTime), new VisitStatusAttribute(this.visitStatus)]
         : [new VisitStatusAttribute(this.visitStatus)]
     } as IVisitRequest;
+  }
+
+  toVisitDetails(): IVisitDetails {
+    return {
+      uuid: this.uuid,
+      startDate: parseOrNow(this.startDatetime),
+      time: this.visitTime,
+      location: this.location,
+      type: this.visitType,
+      status: this.visitStatus
+    } as IVisitDetails;
   }
 
   static getNew(): VisitUI {

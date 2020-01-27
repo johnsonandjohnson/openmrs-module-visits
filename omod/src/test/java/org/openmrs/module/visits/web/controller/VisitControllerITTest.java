@@ -138,15 +138,6 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveTest {
     }
 
     @Test
-    public void shouldReturnBadRequestStatusForNoUuidProvided() throws Exception {
-        prepareVisitForPatient(PATIENT_1_UUID);
-        prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/patient/"))
-            .andExpect(status().is(HttpStatus.NOT_FOUND.value()))
-            .andReturn();
-    }
-
-    @Test
     public void shouldReturnBadRequestForBadPageNumber() throws Exception {
         prepareVisitForPatient(PATIENT_1_UUID);
         prepareVisitForPatient(PATIENT_1_UUID);

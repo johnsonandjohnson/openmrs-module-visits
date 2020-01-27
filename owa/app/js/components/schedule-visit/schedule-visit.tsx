@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getVisitTypes, getLocations, updateVisit, postVisit, getVisitTimes, getVisit, getVisitStatuses, reset } from '../../reducers/schedule-visit.reducer';
+import { getVisitTypes, getLocations, updateVisit, saveVisit, getVisitTimes, getVisit, getVisitStatuses, reset } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import { Form, ControlLabel, FormGroup, FormControl, Col, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
@@ -75,7 +75,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
   }
 
   handleSave = () => {
-    this.props.postVisit(this.props.visit, this.props.history.goBack);
+    this.props.saveVisit(this.props.visit, this.props.history.goBack);
   }
 
   handleManageVisitsButton = () => {
@@ -186,7 +186,7 @@ const mapDispatchToProps = ({
   getVisitTimes,
   getLocations,
   updateVisit,
-  postVisit,
+  saveVisit,
   getVisit,
   getVisitStatuses,
   reset

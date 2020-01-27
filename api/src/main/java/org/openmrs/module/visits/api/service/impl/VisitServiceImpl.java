@@ -14,7 +14,9 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
+import org.openmrs.module.visits.api.mapper.VisitMapper;
 import org.openmrs.module.visits.api.util.ConfigConstants;
 import org.openmrs.module.visits.api.service.VisitService;
 
@@ -27,6 +29,8 @@ import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements VisitService {
 
     private PatientService patientService;
+
+    private VisitMapper visitMapper;
 
     @Override
     public List<String> getVisitTimes() {
@@ -54,10 +58,18 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
     public List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo) {
         Patient patient = patientService.getPatientByUuid(patientUuid);
         if (patient == null) {
-            throw new ValidationException(String.format("Patient with uuid %s does not exist",
-                patientUuid));
+            throw new ValidationException(String.format("Patient with uuid %s does not exist", patientUuid));
         }
         return findAllByCriteria(new VisitCriteria(patient), pagingInfo);
+    }
+
+    @Override
+    public void updateVisit(String visitUuid, VisitDTO visitDTO) {
+        saveOrUpdate(visitMapper.fromDto(visitDTO.setUuid(visitUuid)));
+    }
+
+    public void setVisitMapper(VisitMapper visitMapper) {
+        this.visitMapper = visitMapper;
     }
 
     public VisitServiceImpl setPatientService(PatientService patientService) {

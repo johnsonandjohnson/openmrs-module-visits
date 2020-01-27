@@ -26,6 +26,9 @@
                 <property name="patientService">
                     <ref bean="patientService"/>
                 </property>
+                <property name="visitMapper">
+                    <ref bean="visits.visitMapper"/>
+                </property>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -36,5 +39,12 @@
         </property>
     </bean>
 
-    <bean id="visits.visitMapper" class="org.openmrs.module.visits.api.mapper.VisitMapper"/>
+    <bean id="visits.visitMapper" class="org.openmrs.module.visits.api.mapper.VisitMapper">
+        <property name="visitService">
+            <ref bean="visitService"/>
+        </property>
+        <property name="locationService">
+            <ref bean="locationService"/>
+        </property>
+    </bean>
 </beans>
