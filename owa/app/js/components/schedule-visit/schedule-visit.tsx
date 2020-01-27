@@ -11,7 +11,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getVisitTypes, getLocations, updateVisit, saveVisit, getVisitTimes, getVisit, getVisitStatuses, reset } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
-import { Form, ControlLabel, FormGroup, FormControl, Col, Button } from 'react-bootstrap';
+import { Form, ControlLabel, FormGroup, FormControl, Col, Button, Row } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
 import ErrorDesc from '@bit/soldevelo-omrs.cfl-components.error-description';
 import FormLabel from '@bit/soldevelo-omrs.cfl-components.form-label';
@@ -153,21 +153,25 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     return (
       <div className="scheduled-visit">
         <Form className="fields-form">
-          <ControlLabel className="fields-form-title">
-            <h2>{this.isEdit() ? EDIT_VISIT : SCHEDULE_VISIT}</h2>
-          </ControlLabel>
-          <FormGroup>
-            {this.renderManageVisitsButton()}
-          </FormGroup>
-          <Col md={3}>
-            {this.renderVisitDate(errors)}
-            {this.renderVisitTime(errors)}
-            {this.renderLocation(errors)}
-            {this.renderVisitType(errors)}
-            {this.isEdit() && this.renderVisitStatus(errors)}
-          </Col>
+          <Row>
+            <ControlLabel className="fields-form-title">
+              <h2>{this.isEdit() ? EDIT_VISIT : SCHEDULE_VISIT}</h2>
+            </ControlLabel>
+            <FormGroup>
+              {this.renderManageVisitsButton()}
+            </FormGroup>
+            <Col md={3}>
+              {this.renderVisitDate(errors)}
+              {this.renderVisitTime(errors)}
+              {this.renderLocation(errors)}
+              {this.renderVisitType(errors)}
+              {this.isEdit() && this.renderVisitStatus(errors)}
+            </Col>
+          </Row>
+          <Row>
+            {this.renderSaveButton()}
+          </Row>
         </Form>
-        {this.renderSaveButton()}
       </div>
     );
   };
