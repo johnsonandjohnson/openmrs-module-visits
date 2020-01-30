@@ -22,5 +22,7 @@ public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
 
     List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo);
 
+    List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo);
+
     void updateVisit(String visitUuid, VisitDTO visitDTO);
 }

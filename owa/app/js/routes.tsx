@@ -10,18 +10,19 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom';
 import { Header } from '@openmrs/react-components';
-import App from './components/app'
 import BreadCrumb from './components/bread-crumb';
 import { ScheduleVisitWithHeader as ScheduleVisit } from './components/hoc/with-patient-header';
 import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
+import OverviewVisits from './components/overview-visits';
 
-export default (store) => (    
+export default (store) => (
     <div>
         <Header />
         <BreadCrumb />
         <Switch>
             <Route path="/visits/manage/:patientUuid/schedule/:visitUuid?" component={ScheduleVisit} />
             <Route path="/visits/manage/:patientUuid" component={ManageVisits} />
+            <Route exact path="/visits/overview" component={OverviewVisits} />
         </Switch>
     </div>
 );

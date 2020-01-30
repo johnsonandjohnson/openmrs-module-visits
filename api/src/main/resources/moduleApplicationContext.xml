@@ -29,6 +29,9 @@
                 <property name="visitMapper">
                     <ref bean="visits.visitMapper"/>
                 </property>
+                <property name="locationService">
+                    <ref bean="locationService"/>
+                </property>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -47,4 +50,5 @@
             <ref bean="locationService"/>
         </property>
     </bean>
+    <bean id="visits.overviewMapper" class="org.openmrs.module.visits.api.mapper.OverviewMapper"/>
 </beans>

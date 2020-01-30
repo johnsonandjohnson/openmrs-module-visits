@@ -11,11 +11,13 @@ import { getPatient } from '../../reducers/patient.reducer';
 import { IRootState } from '../../reducers';
 
 const EDIT_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid/schedule/:visitUuid`);
+const OVERVIEW_VISIT_PATTERN = new UrlPattern(`/visits/overview`);
 const SCHEDULE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid/schedule`);
 const MANAGE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid*`);
 
 const MODULE_ROUTE = '/';
 const OMRS_ROUTE = '../../';
+const OVERVIEW_VISITS_ROUTE = `/visits/overview`;
 const MANAGE_VISITS_ROUTE = patientUuid => `/visits/manage/${patientUuid}`;
 const PATIENT_DASHBOARD_ROUTE = patientUuid => `${OMRS_ROUTE}coreapps/clinicianfacing/patient.page?patientId=${patientUuid}`;
 
@@ -56,7 +58,9 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
 
 
   getCrumbs = (path: string): Array<ReactFragment> => {
-    if (!!SCHEDULE_VISIT_PATTERN.match(path.toLowerCase())) {
+    if (!!OVERVIEW_VISIT_PATTERN.match(path.toLowerCase())) {
+      return this.getOverviewVisitCrumbs();
+    } if (!!SCHEDULE_VISIT_PATTERN.match(path.toLowerCase())) {
       return this.getScheduleVisitCrumbs(path);
     } if (!!EDIT_VISIT_PATTERN.match(path.toLowerCase())) {
       return this.getEditVisitCrumbs(path);
@@ -87,12 +91,15 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     );
   }
 
+  getOverviewVisitCrumbs = (): Array<ReactFragment> => [
+    this.renderLastCrumb(Msg.OVERVIEW_VISIT_BREADCRUMB)
+  ];
+
   getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
     this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN),
     this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
   ];
-
 
   getEditVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientNameCrumb(path, EDIT_VISIT_PATTERN),
@@ -111,6 +118,7 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     return (
       <React.Fragment>
         {this.renderHomeCrumb()}
+        { (0 < elements.length) && delimiter}
         {elements.map((e, i) =>
           <React.Fragment key={`crumb-${i}`}>
             {e}

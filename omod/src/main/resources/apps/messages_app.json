@@ -14,5 +14,22 @@
         "url": "owa/visits/index.html#/visits/manage/{{patient.uuid}}"
       }
     ]
+  },
+  {
+    "id": "visitsapp.visitsOverview",
+    "label": "Visit Overview",
+    "description": "List of visits per facility",
+    "extensions": [
+      {
+        "id": "visitsapp.visitsOverview.homepageLink",
+        "extensionPointId": "systemAdministration.apps",
+        "type": "link",
+        "order": 5,
+        "label": "visits.overview",
+        "url": "owa/visits/index.html#/visits/overview",
+        "icon": "icon-calendar",
+        "requiredPrivilege": "View Visits"
+      }
+    ]
   }
 ]

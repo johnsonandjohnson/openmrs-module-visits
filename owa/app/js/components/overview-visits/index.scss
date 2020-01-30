@@ -7,16 +7,20 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import moment from "moment";
+ .overview-visits {
+  margin-left: 10px;
 
-export const TABLE_VISIT_DATE_FORMAT = 'DD.MM.YYYY';
+  h2 {
+    font-size: 1.3em;
+    color: #009384;
+  }
 
-const DATE_FORMAT = 'YYYY-MM-DD';
+  .td-cell {
+    text-align: center;
+    margin: auto;
+  }
 
-export const convertToUtcString = (time?: string | number): string | undefined => {
-  return !!time ? moment.utc(time).format(DATE_FORMAT) : undefined;
-}
-
-export const convertToLocalString = (time?: Date | number): string | undefined => {
-  return !!time ? moment.utc(time).local().format(DATE_FORMAT) : undefined;
+  .search-bar {
+    margin-bottom: 0.5em;
+  }
 }

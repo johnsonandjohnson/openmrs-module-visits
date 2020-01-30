@@ -10,8 +10,10 @@
 package org.openmrs.module.visits.api.service.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.dto.VisitDTO;
@@ -24,11 +26,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.openmrs.module.visits.domain.PagingInfo;
+import org.openmrs.module.visits.domain.criteria.OverviewCriteria;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 
 public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements VisitService {
 
     private PatientService patientService;
+
+    private LocationService locationService;
 
     private VisitMapper visitMapper;
 
@@ -72,8 +77,22 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
         this.visitMapper = visitMapper;
     }
 
+    @Override
+    public List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo) {
+        Location location = locationService.getLocationByUuid(locationUuid);
+        if (location == null) {
+            throw new ValidationException(String.format("Location with uuid %s does not exist",
+                    locationUuid));
+        }
+        return findAllByCriteria(new OverviewCriteria(location), pagingInfo);
+    }
+
     public VisitServiceImpl setPatientService(PatientService patientService) {
         this.patientService = patientService;
         return this;
+    }
+
+    public void setLocationService(LocationService locationService) {
+        this.locationService = locationService;
     }
 }

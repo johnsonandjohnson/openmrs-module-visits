@@ -33,4 +33,4 @@ const withPatientHeader = (WrappedComponent) => {
 }
 
 export const ScheduleVisitWithHeader = withPatientHeader(ScheduleVisit);
-export const ManageVisitsWithHeader = withPatientHeader(ManageVisits); 
+export const ManageVisitsWithHeader = withPatientHeader(ManageVisits);

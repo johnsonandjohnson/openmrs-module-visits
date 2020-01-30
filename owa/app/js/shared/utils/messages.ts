@@ -21,6 +21,7 @@ export const GENERIC_LOADING = 'Loading...';
 // Breadcrumb
 export const GENERAL_MODULE_BREADCRUMB = 'Visits';
 export const MANAGE_VISITS_BREADCRUMB = 'Manage visits';
+export const OVERVIEW_VISIT_BREADCRUMB = 'Visit Overview';
 export const SCHEDULE_VISIT_BREADCRUMB = 'Schedule visit';
 export const EDIT_VISIT_BREADCRUMB = 'Edit visit';
 
@@ -46,3 +47,14 @@ export const ACTIONS_COLUMN_LABEL = 'Actions';
 
 // Validation
 export const FIELD_REQUIRED = 'Required';
+
+//Overview
+export const OVERVIEW_TITLE = 'Visit Overview';
+export const OVERVIEW_PATIENT_ID_HEADER = 'Patient ID';
+export const OVERVIEW_NAME_HEADER = 'Name';
+export const OVERVIEW_DATE_HEADER = 'Date';
+export const OVERVIEW_TIME_HEADER = 'Time';
+export const OVERVIEW_TYPE_HEADER = 'Type';
+export const OVERVIEW_STATUS_HEADER = 'Status';
+export const OVERVIEW_PATIEND_ID_PREFIX = 'OpenMRS ID:';
+export const OVERVIEW_SEARCH_TITLE = 'Search';
