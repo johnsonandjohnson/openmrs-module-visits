@@ -36,12 +36,14 @@ import org.springframework.web.context.WebApplicationContext;
 public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithActivatorTest {
 
     private static final String XML_DATA_SET_PATH = "datasets/";
+    private static final String QUERY_PARAM = "query";
     private static final String PATIENT_1_UUID = "42c9cb97-894a-47e6-8321-f0120576a545";
     private static final String PATIENT_2_UUID = "007037a0-0500-11e3-8ffd-0800200c9a66";
     private static final int PAGE_1 = 1;
     private static final int PAGE_2 = 2;
     private static final int PAGE_SIZE_1 = 1;
     private static final int PAGE_SIZE_2 = 2;
+    private static final int PAGE_SIZE_4 = 4;
     private static final int FOUR = 4;
     private static final int DEFAULT_ROWS_COUNT = 10;
     private static final int DEFAULT_PAGE_NUMBER = 1;
@@ -216,6 +218,165 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                 .andExpect(jsonPath("$.content.[*].location")
                         .value(hasItem(LOCATION_1_NAME)))
                 .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_1))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllWithGivenNameContainingSearchTerm() throws Exception {
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Another";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllWithMiddleNameContainingSearchTerm() throws Exception {
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Sick";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllWithFamilyNameContainingSearchTerm() throws Exception {
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Person";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllWithPartOfAGivenNameContainingSearchTerm() throws Exception {
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Anot";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllWithIdentifierContainingSearchTerm() throws Exception {
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "BBC123ABC123";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    public void shouldReturnAllWithPartOfIdentifierContainingSearchTerm() throws Exception {
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "123AB";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnPatientSecondWithGivenNameContainingSearchTerm() throws Exception {
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Anot";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllPatientsWithFamilyNameContainingSearchTerm() throws Exception {
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        Visit visit3 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit4 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Person";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit3.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit4.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_4))
                 .andReturn();
     }
 

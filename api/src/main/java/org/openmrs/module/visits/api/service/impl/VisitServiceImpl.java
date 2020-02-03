@@ -78,13 +78,13 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
     }
 
     @Override
-    public List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo) {
+    public List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo, String query) {
         Location location = locationService.getLocationByUuid(locationUuid);
         if (location == null) {
             throw new ValidationException(String.format("Location with uuid %s does not exist",
                     locationUuid));
         }
-        return findAllByCriteria(new OverviewCriteria(location), pagingInfo);
+        return findAllByCriteria(new OverviewCriteria(location, query), pagingInfo);
     }
 
     public VisitServiceImpl setPatientService(PatientService patientService) {

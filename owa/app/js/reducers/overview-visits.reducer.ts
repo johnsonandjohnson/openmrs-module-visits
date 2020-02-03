@@ -12,19 +12,21 @@ import _ from 'lodash';
 import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axiosInstance from '../config/axios';
 import IVisitOverview from '../shared/model/visit-overview.model';
+import { ISession } from '../shared/model/session.model';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'overviewVisitReducer/GET_VISITS',
-  GET_VISITS_PAGES_COUNT: 'overviewVisitReducer/GET_VISITS_PAGES_COUNT',
   UPDATE_SEARCH_TEXT: 'overviewVisitReducer/UPDATE_SEARCH_TEXT',
+  GET_LOCATION: 'overviewVisitReducer/GET_LOCATION',
   RESET: 'overviewVisitReducer/RESET'
 };
 
 const initialState = {
   visits: [] as Array<IVisitOverview>,
-  visitsLoading: false,
-  visitsPagesCount: 0,
-  search: ''
+  loading: false,
+  search: '',
+  pages: 0,
+  locationUuid: null as string | null
 };
 
 export type OverviewVisitState = Readonly<typeof initialState>;
@@ -34,30 +36,38 @@ export default (state = initialState, action) => {
     case REQUEST(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
-        visitsLoading: true
+        loading: true
       };
-    case FAILURE(ACTION_TYPES.GET_VISITS):
+    case REQUEST(ACTION_TYPES.GET_LOCATION):
       return {
         ...state,
-        visitsLoading: false
+        loading: true
+      };
+    case FAILURE(ACTION_TYPES.GET_VISITS):
+    case FAILURE(ACTION_TYPES.GET_LOCATION):
+      return {
+        ...state,
+        loading: false
       };
     case SUCCESS(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
         visits: action.payload.data.content,
-        visitsPagesCount: action.payload.data.pageCount,
-        visitsLoading: false
+        pages: action.payload.data.pageCount,
+        loading: false
       };
-    case SUCCESS(ACTION_TYPES.GET_VISITS_PAGES_COUNT):
+    case SUCCESS(ACTION_TYPES.GET_LOCATION):
+      const session: ISession = action.payload.data;
       return {
         ...state,
-        visitsPagesCount: Math.ceil((action.payload.data.results.length / action.meta))
+        locationUuid: session.sessionLocation.uuid,
+        loading: false
       };
     case ACTION_TYPES.UPDATE_SEARCH_TEXT:
-        return {
-          ...state,
+      return {
+        ...state,
         search: action.payload
-        };
+      };
     case ACTION_TYPES.RESET:
       return {
         ..._.cloneDeep(initialState)
@@ -67,48 +77,49 @@ export default (state = initialState, action) => {
   }
 };
 
-const baseUrl = "/ws";
-const restUrl = `${baseUrl}/rest/v1`;
-const moduleUrl = `${baseUrl}/visits`;
-const visitUrl = `${restUrl}/visit`;
+const moduleUrl = `/ws/visits`;
 
-export const getOverviewPage = (page: number, size: number, locationUuid: string) => async (dispatch) => {
-  const url = `${moduleUrl}/overview/${locationUuid}`;
-  await dispatch({
-    type: ACTION_TYPES.GET_VISITS,
-    payload: axiosInstance.get(url, {
-      params: {
-        page: page + 1,
-        rows: size
-      }
-    })
-  });
-};
-
-export const getOverviewPagesCount = (size: number, locationUuid: string) => async (dispatch) => {
-  const url = `${visitUrl}?location=${locationUuid}&v=custom:(uuid)`;
-  await dispatch({
-    type: ACTION_TYPES.GET_VISITS_PAGES_COUNT,
-    payload: axiosInstance.get(url),
-    meta: size
-  });
-};
-
-export const updateSearch = (search: string, successCallback?) => async (dispatch) => {
-  await dispatch({
-    type: ACTION_TYPES.UPDATE_SEARCH_TEXT,
-    payload: search
-  });
-  if (successCallback) {
-    successCallback();
-  }
+const getPageParams = (page: number, size: number, search?: string) => {
+  const pageParams = {
+    page: page + 1,
+    rows: size
+  };
+  return (!search) ? pageParams : {
+    ...pageParams,
+    query: search
+  };
 }
 
-export const reset = (successCallback?) => async (dispatch) => {
+export const getOverviewPage = (page: number, size: number, locationUuid: string, search?: string) => async (dispatch) => {
+  const url = `${moduleUrl}/overview/${locationUuid}`;
+  const params = getPageParams(page, size, search);
   await dispatch({
-    type: ACTION_TYPES.RESET
+    type: ACTION_TYPES.GET_VISITS,
+    payload: axiosInstance.get(url, { params })
   });
-  if (successCallback) {
-    successCallback();
-  }
+};
+
+export const getLocation = (page: number, size: number, search?: string) => async (dispatch) => {
+  const url = '/ws/rest/v1/appui/session';
+  let result = await dispatch({
+    type: ACTION_TYPES.GET_LOCATION,
+    payload: axiosInstance.get(url)
+  });
+  const session: ISession = result.value.data;
+  dispatch(
+    getOverviewPage(page, size, session.sessionLocation.uuid, search)
+  );
+};
+
+export const updateSearch = (search: string) => {
+  return {
+    type: ACTION_TYPES.UPDATE_SEARCH_TEXT,
+    payload: search
+  };
+}
+
+export const reset = () => {
+  return {
+    type: ACTION_TYPES.RESET
+  };
 }

@@ -22,7 +22,7 @@ public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
 
     List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo);
 
-    List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo);
+    List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo, String query);
 
     void updateVisit(String visitUuid, VisitDTO visitDTO);
 }

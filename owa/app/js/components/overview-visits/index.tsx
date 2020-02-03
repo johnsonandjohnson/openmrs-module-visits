@@ -28,8 +28,8 @@ import {
 } from '../../shared/utils/messages';
 import {
   getOverviewPage,
-  getOverviewPagesCount,
-  updateSearch
+  updateSearch,
+  getLocation
 } from '../../reducers/overview-visits.reducer';
 import { IRootState } from '../../reducers';
 import './index.scss';
@@ -49,9 +49,14 @@ interface IState {
 
 class OverviewVisits extends React.Component<IProps, IState> {
 
-  private getVisits = (activePage: number, itemsPerPage: number, sort: string, order: string, filters: {}) => {
-    if (!!this.props.location && !!this.props.location.uuid) {
-      this.props.getOverviewPage(activePage, itemsPerPage, this.props.location.uuid);
+  private getVisits = (activePage: number, itemsPerPage: number, sort: string, order: string, filters: {}, query?: string) => {
+    if (!!this.props.locationUuid) {
+      this.props.getOverviewPage(activePage,
+                                  itemsPerPage,
+                                  this.props.locationUuid,
+                                  query);
+    } else {
+      this.props.getLocation(activePage, itemsPerPage, query);
     }
   }
 
@@ -133,8 +138,9 @@ class OverviewVisits extends React.Component<IProps, IState> {
           this.getCell(OVERVIEW_TYPE_HEADER, TYPE_ACCESSOR),
           this.getCell(OVERVIEW_STATUS_HEADER, STATUS_ACCESSOR)
         ]}
+        query={this.props.search}
+        pages={this.props.pages}
         loading={this.props.loading}
-        pages={this.props.visitsPagesCount}
         fetchDataCallback={this.getVisits}
         sortable={false}
         multiSort={false}
@@ -166,16 +172,19 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
 const mapStateToProps = ({ overview, openmrs }: IRootState) => ({
   visits: overview.visits,
-  visitsPagesCount: overview.visitsPagesCount,
-  loading: overview.visitsLoading,
+  pages: overview.pages,
+  loading: overview.loading,
   search: overview.search,
-  location: openmrs.session.sessionLocation
+  locationUuid: overview.locationUuid
+  // ToDo: When CFLM-626 will be fixed please use
+  // location: openmrs.session.sessionLocation
+  // instead of locationUuid: overview.locationUuid
 });
 
 const mapDispatchToProps = ({
   getOverviewPage,
-  getOverviewPagesCount,
-  updateSearch
+  updateSearch,
+  getLocation
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

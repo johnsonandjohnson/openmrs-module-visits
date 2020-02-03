@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -32,9 +33,10 @@ public class OverviewController extends BaseRestController {
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public PageDTO<OverviewDTO> getVisitsForLocation(@PathVariable("uuid") String locationUuid,
-                                                     PageableParams pageableParams) {
+                                                     PageableParams pageableParams,
+                                                     @RequestParam(required = false) String query) {
         PagingInfo pagingInfo = pageableParams.getPagingInfo();
-        List<Visit> visits = visitService.getVisitsForLocation(locationUuid, pagingInfo);
+        List<Visit> visits = visitService.getVisitsForLocation(locationUuid, pagingInfo, query);
         return new PageDTO<>(overviewMapper.toDtos(visits), pagingInfo);
     }
 }
