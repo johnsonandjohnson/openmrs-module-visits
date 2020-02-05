@@ -11,21 +11,29 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Form, ControlLabel, FormGroup, Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
-import Table from '@bit/soldevelo-omrs.cfl-components.table/table';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
-import { getVisitsPage, getVisitsPagesCount } from '../../reducers/schedule-visit.reducer';
+import {
+  getVisitsPage,
+  getVisitsPagesCount,
+  deleteVisit,
+  openModal,
+  closeModal
+} from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import {
   MANAGE_VISITS,
-  SCHEDULE_VISIT,
-  MANAGE_VISITS_COLUMNS,
-  ACTIONS_COLUMN_LABEL
+  SCHEDULE_VISIT
 } from '../../shared/utils/messages';
 import { history } from '../../config/redux-store';
+import RemoveVisitModal from './remove-visit-modal';
+import ManageVisitTable from './table';
+import IModalParams from './modal-params';
+import ITableParams from './table-params';
 import './manage-visits.scss';
-import moment from 'moment';
+import { formatDateIfDefined } from '../../shared/utils/date-util';
+
+const MANAGE_DATE_FORMAT = 'DD.MM.YYYY';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string
@@ -36,41 +44,16 @@ interface IState {
 
 class ManageVisits extends React.Component<IProps, IState> {
 
-  componentDidMount() {
+  private getVisits = (tableParams: ITableParams) => {
+    this.props.getVisitsPage(tableParams.activePage, tableParams.itemsPerPage, this.props.match.params.patientUuid);
   }
 
-  private getVisits = (activePage: number, itemsPerPage: number, sort: string, order: string, filters: {}) => {
-    this.props.getVisitsPage(activePage, itemsPerPage, this.props.match.params.patientUuid);
+  private removeVisit = (modalParams: IModalParams) => {
+    this.props.openModal(modalParams);
   }
 
   private handleScheduleVisitButton = () => {
     history.push(`/visits/manage/${this.props.match.params.patientUuid}/schedule`);
-  }
-
-  private getActionsColumn = () => {
-    return {
-      Header: ACTIONS_COLUMN_LABEL,
-      accessor: 'uuid',
-      getProps: () => {
-        return {
-          style: {
-            maxWidth: 30,
-            textAlign: 'center',
-            margin: 'auto'
-          },
-        };
-      },
-      Cell: props => {
-        const editLink = `#${this.props.location.pathname}/schedule/${props.value}`;
-        return (
-          <span>
-            <a href={editLink}>
-              <FontAwesomeIcon icon={['fas', 'pencil-alt']} size="1x" />
-            </a>
-          </span>
-        );
-      }
-    };
   }
 
   private renderScheduleVisitButton = () => {
@@ -84,16 +67,15 @@ class ManageVisits extends React.Component<IProps, IState> {
   }
 
   private renderTable = () =>
-    <Table
+    <ManageVisitTable
       data={this.props.visits.map(visit => {
         return {
-        ...visit,
-        startDate: visit.startDate ? moment(visit.startDate).format("DD.MM.YYYY") : visit.startDate
-      }})}
-      columns={[
-        ...MANAGE_VISITS_COLUMNS,
-        this.getActionsColumn()
-      ]}
+          ...visit,
+          startDate: formatDateIfDefined(MANAGE_DATE_FORMAT, visit.startDate)
+        }
+      })}
+      removeCallback={this.removeVisit}
+      createPathname={this.props.location.pathname}
       loading={this.props.loading}
       pages={this.props.visitsPagesCount}
       fetchDataCallback={this.getVisits}
@@ -102,9 +84,26 @@ class ManageVisits extends React.Component<IProps, IState> {
       showPagination={true}
     />
 
+  confirm = (modalParams: IModalParams | null) => {
+    if (!!modalParams) {
+      const { uuid, params } = modalParams;
+      this.props.deleteVisit(uuid, params.activePage, params.itemsPerPage, this.props.match.params.patientUuid);
+    }
+  }
+
+  renderModal = () => {
+    return (
+      <RemoveVisitModal
+        show={this.props.showModal}
+        modalParams={this.props.toRemove}
+        confirm={this.confirm}
+        cancel={this.props.closeModal} />);
+  }
+
   render() {
     return (
       <div className="manage-visits">
+        {this.renderModal()}
         <Form className="fields-form">
           <ControlLabel className="fields-form-title">
             <h2>{MANAGE_VISITS}</h2>
@@ -124,12 +123,17 @@ class ManageVisits extends React.Component<IProps, IState> {
 const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
   visits: scheduleVisit.visits,
   visitsPagesCount: scheduleVisit.visitsPagesCount,
-  loading: scheduleVisit.visitsLoading
+  loading: scheduleVisit.visitsLoading,
+  showModal: scheduleVisit.showModal,
+  toRemove: scheduleVisit.toRemove
 });
 
 const mapDispatchToProps = ({
   getVisitsPage,
-  getVisitsPagesCount
+  getVisitsPagesCount,
+  deleteVisit,
+  openModal,
+  closeModal
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

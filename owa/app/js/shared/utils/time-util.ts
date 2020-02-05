@@ -9,8 +9,6 @@
 
 import moment from "moment";
 
-export const TABLE_VISIT_DATE_FORMAT = 'DD.MM.YYYY';
-
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export const convertToUtcString = (time?: string | number): string | undefined => {

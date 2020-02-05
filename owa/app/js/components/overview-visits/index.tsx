@@ -13,7 +13,6 @@ import { Form, ControlLabel, FormGroup, Row, Col } from 'react-bootstrap';
 import _ from 'lodash';
 import Table from '@bit/soldevelo-omrs.cfl-components.table/table';
 import { history } from '../../config/redux-store';
-import moment from 'moment';
 
 import {
   OVERVIEW_TITLE,
@@ -31,9 +30,9 @@ import {
   updateSearch,
   getLocation
 } from '../../reducers/overview-visits.reducer';
+import { formatDateIfDefined } from '../../shared/utils/date-util';
 import { IRootState } from '../../reducers';
 import './index.scss';
-import { TABLE_VISIT_DATE_FORMAT } from '../../shared/utils/time-util';
 
 const IDENTIFIER_ACCESSOR = 'patientIdentifier';
 const NAME_URL_ACCESSOR = 'nameUrl';
@@ -41,6 +40,7 @@ const START_DATE_ACCESSOR = 'startDate';
 const TIME_ACCESSOR = 'time';
 const TYPE_ACCESSOR = 'type';
 const STATUS_ACCESSOR = 'status';
+const OVERVIEW_DATE_FORMAT = 'DD.MM.YYYY';
 
 interface IProps extends DispatchProps, StateProps { }
 
@@ -127,7 +127,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
         data={this.props.visits.map(visit => {
           return {
             ...visit,
-            startDate: visit.startDate ? moment(visit.startDate).format(TABLE_VISIT_DATE_FORMAT) : visit.startDate
+            startDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.startDate)
           }
         })}
         columns={[

@@ -17,6 +17,7 @@ import * as Msg from '../shared/utils/messages';
 import { handleRequest } from '@bit/soldevelo-omrs.cfl-components.request-toast-handler';
 import ILocation from '../shared/model/location';
 import IVisitDetails from '../shared/model/visit-details';
+import IModalParams from '../components/manage-visits/modal-params';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'scheduleVisitReducer/GET_VISITS',
@@ -26,8 +27,11 @@ export const ACTION_TYPES = {
   GET_VISIT_STATUSES: 'scheduleVisitReducer/GET_VISIT_STATUSES',
   GET_LOCATIONS: 'scheduleVisitReducer/GET_LOCATIONS',
   GET_VISIT: 'scheduleVisitReducer/GET_VISIT',
+  DELETE_VISIT: 'scheduleVisitReducer/DELETE_VISIT',
   UPDATE_VISIT: 'scheduleVisitReducer/UPDATE_VISIT',
   POST_VISIT: 'scheduleVisitReducer/POST_VISIT',
+  OPEN_MODAL: 'scheduleVisitReducer/OPEN_MODAL',
+  CLOSE_MODAL: 'scheduleVisitReducer/CLOSE_MODAL',
   RESET: 'scheduleVisitReducer/RESET'
 };
 
@@ -39,7 +43,9 @@ const initialState = {
   visitTimes: [] as Array<string>,
   visitStatuses: [] as Array<string>,
   locations: [] as Array<ILocation>,
-  visitsPagesCount: 0
+  visitsPagesCount: 0,
+  showModal: false,
+  toRemove: null as IModalParams | null
 };
 
 export type ScheduleVisitState = Readonly<typeof initialState>;
@@ -59,8 +65,10 @@ export default (state = initialState, action) => {
     case FAILURE(ACTION_TYPES.GET_LOCATIONS):
     case REQUEST(ACTION_TYPES.GET_VISIT):
     case FAILURE(ACTION_TYPES.GET_VISIT):
+    case REQUEST(ACTION_TYPES.DELETE_VISIT):
+    case FAILURE(ACTION_TYPES.DELETE_VISIT):
       return {
-        ...state,
+        ...state
       };
     case REQUEST(ACTION_TYPES.GET_VISITS):
       return {
@@ -94,6 +102,10 @@ export default (state = initialState, action) => {
         ...state,
         visit: new VisitUI(action.payload.data)
       };
+    case SUCCESS(ACTION_TYPES.DELETE_VISIT):
+      return {
+        ...state
+      };
     case SUCCESS(ACTION_TYPES.GET_VISIT_TIMES):
       return {
         ...state,
@@ -114,6 +126,20 @@ export default (state = initialState, action) => {
       return {
         ...state,
         visit: action.payload
+      };
+    }
+    case ACTION_TYPES.OPEN_MODAL: {
+      return {
+        ...state,
+        showModal: true,
+        toRemove: action.payload
+      };
+    }
+    case ACTION_TYPES.CLOSE_MODAL: {
+      return {
+        ...state,
+        showModal: false,
+        toRemove: null
       };
     }
     case ACTION_TYPES.RESET:
@@ -229,7 +255,25 @@ export const getVisitsPagesCount = (size: number, patientUuid: string) => async 
   });
 };
 
+export const deleteVisit = (uuid: string, activePage: number, itemsPerPage: number, patientUuid: string) => async (dispatch) => {
+  const url = `/ws/rest/v1/visit/${uuid}`;
+  const body = {
+    type: ACTION_TYPES.DELETE_VISIT,
+    payload: axiosInstance.delete(url)
+  };
+  await handleRequest(dispatch, body, Msg.GENERIC_SUCCESS, Msg.GENERIC_FAILURE);
+  dispatch(getVisitsPage(activePage, itemsPerPage, patientUuid));
+  dispatch(closeModal());
+};
 
+export const openModal = (modalParams: IModalParams) => ({
+  type: ACTION_TYPES.OPEN_MODAL,
+  payload: modalParams
+});
+
+export const closeModal = () => ({
+  type: ACTION_TYPES.CLOSE_MODAL
+});
 
 export const reset = (successCallback?) => async (dispatch) => {
   await dispatch({

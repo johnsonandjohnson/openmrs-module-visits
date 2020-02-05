@@ -7,27 +7,11 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-.manage-visits {
-  margin-left: 10px;
-
-  h2 {
-    font-size: 1.3em;
-    color: #009384;
-  }
-
-  .button-section {
-    flex-flow: row-reverse;
-    display: flex;
-    padding: 20px;
-  }
-
-  .action-column {
-    max-width: 30;
-    text-align: center;
-    margin: auto;
-
-    .action-button {
-      margin-right: 5px;
-    }
-  }
+export default class ITableParams {
+  activePage: number;
+  itemsPerPage: number;
+  sort?: string;
+  order?: string;
+  filters?: {};
+  query?: string;
 }
