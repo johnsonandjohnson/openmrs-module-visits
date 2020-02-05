@@ -9,6 +9,8 @@ import org.hibernate.sql.JoinType;
 import org.openmrs.Location;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OverviewCriteria extends BaseCriteria implements Serializable {
 
@@ -58,11 +60,22 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
             c.createAlias(PATIENT_PATH, PATIENT_ALIAS, JoinType.LEFT_OUTER_JOIN);
             c.createAlias(NAMES_PATH, NAMES_ALIAS, JoinType.LEFT_OUTER_JOIN);
             c.createAlias(IDENTIFIERS_PATH, IDENTIFIERS_ALIAS, JoinType.LEFT_OUTER_JOIN);
-            c.add(Restrictions.or(getIdentifierCriterion(), getNameCriterion()));
+            c.add(Restrictions.or(getIdentifierCriterion(), getNameCriteria()));
         }
     }
 
-    private Criterion getNameCriterion() {
+    private Criterion getNameCriteria() {
+        QuerySplitter splitter = new QuerySplitter(query);
+        String[] queries = splitter.splitQuery();
+        List<Criterion> criteria = new ArrayList<>();
+        for (String q : queries) {
+            criteria.add(getNameCriterion(q));
+        }
+        Criterion[] array = criteria.toArray(new Criterion[0]);
+        return Restrictions.and(array);
+    }
+
+    private Criterion getNameCriterion(String query) {
         return Restrictions.and(
                 Restrictions.eq(NAMES_PREFERRED_PATH, true),
                 Restrictions.or(

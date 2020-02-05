@@ -316,6 +316,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                 .andReturn();
     }
 
+    @Test
     public void shouldReturnAllWithPartOfIdentifierContainingSearchTerm() throws Exception {
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
@@ -377,6 +378,50 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                 .andExpect(jsonPath("$.content.[*].uuid")
                         .value(hasItem(visit4.getUuid())))
                 .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_4))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnPatientSecondWithGivenNameAndMiddleNameAndFamilyNameContainingSearchTerm()
+            throws Exception {
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Another Sick Person";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnPatientSecondWithGivenNameAndMiddleNameAndFamilyNameContainingSearchTermManySpaces()
+            throws Exception {
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Another   Sick  Person";
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit2.getUuid())))
+                .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
                 .andReturn();
     }
 
