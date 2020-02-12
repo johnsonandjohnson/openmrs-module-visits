@@ -24,7 +24,8 @@ import {
   VISIT_DATE_LABEL,
   SAVE_BUTTON_LABEL,
   MANAGE_VISITS,
-  LOCATION_LABEL
+  LOCATION_LABEL,
+  CANCEL_BUTTON_LABEL
 } from '../../shared/utils/messages';
 import _ from 'lodash';
 import './schedule-visit.scss';
@@ -63,7 +64,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     this.props.getVisitTimes();
     this.props.getVisitStatuses();
     this.handleChange(this.props.match.params.patientUuid, 'patient');
-  }
+  };
 
   isEdit = () => !!this.props.match.params.visitUuid
 
@@ -72,15 +73,19 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     cloned[prop] = newValue;
     cloned.touchedFields[prop] = true;
     this.props.updateVisit(cloned);
-  }
+  };
 
   handleSave = () => {
     this.props.saveVisit(this.props.visit, this.props.history.goBack);
-  }
+  };
+
+  handleCancel = () => {
+    this.props.history.goBack();
+  };
 
   handleManageVisitsButton = () => {
     history.push(`/visits/manage/${this.props.match.params.patientUuid}`);
-  }
+  };
 
   renderDropdown = (errors, label: string, fieldName: string, options: Array<React.ReactFragment>, required?: boolean) =>
     <FormGroup controlId={fieldName}>
@@ -89,11 +94,11 @@ class ScheduleVisit extends React.Component<IProps, IState> {
         value={this.props.visit[fieldName]}
         onChange={e => this.handleChange((e.target as HTMLInputElement).value, fieldName)}
         className={errors && errors[fieldName] ? ERROR_FORM_CLASS : FORM_CLASS}>
-        <option value=""></option>
+        <option value="" />
         {options}
       </FormControl>
       {errors && <ErrorDesc field={errors[fieldName]} />}
-    </FormGroup>
+    </FormGroup>;
 
   renderDatePicker = (errors, label: string, fieldName: string) =>
     <FormGroup controlId={fieldName}>
@@ -103,7 +108,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
         onChange={isoDate => this.handleChange(isoDate, fieldName)}
       />
       {errors && <ErrorDesc field={errors[fieldName]} />}
-    </FormGroup>
+    </FormGroup>;
 
   renderVisitDate = (errors) =>
     this.renderDatePicker(errors, VISIT_DATE_LABEL, 'startDatetime');
@@ -134,18 +139,28 @@ class ScheduleVisit extends React.Component<IProps, IState> {
 
   renderManageVisitsButton = () =>
     <Button
+      id="schedule-visit-manage"
       className="btn btn-secondary btn-md pull-right"
       onClick={this.handleManageVisitsButton}>
       {MANAGE_VISITS}
-    </Button>
+    </Button>;
 
 
   renderSaveButton = () =>
     <Button
-      className="btn btn-success btn-md"
+      id="schedule-visit-save"
+      className="btn btn-success btn-md pull-right"
       onClick={this.handleSave}>
       {SAVE_BUTTON_LABEL}
-    </Button>
+    </Button>;
+
+  renderCancelButton = () =>
+    <Button
+      id="schedule-visit-cancel"
+      className="btn btn-danger btn-md"
+      onClick={this.handleCancel}>
+      {CANCEL_BUTTON_LABEL}
+    </Button>;
 
   render = () => {
     const { errors } = this.props.visit;
@@ -169,7 +184,10 @@ class ScheduleVisit extends React.Component<IProps, IState> {
             </Col>
           </Row>
           <Row>
-            {this.renderSaveButton()}
+            <FormGroup className="control-buttons">
+              {this.renderCancelButton()}
+              {this.renderSaveButton()}
+            </FormGroup>
           </Row>
         </Form>
       </div>

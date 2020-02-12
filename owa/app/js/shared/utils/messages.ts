@@ -9,6 +9,7 @@
 
 // Messages displayed on the frontend
 export const MODULE_NAME = 'Visits';
+export const CANCEL_BUTTON_LABEL = 'Cancel';
 export const SAVE_BUTTON_LABEL = 'Save';
 
 // Generic messages
