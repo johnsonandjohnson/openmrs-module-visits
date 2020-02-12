@@ -23,14 +23,12 @@ import {
   VISIT_TIME_LABEL,
   VISIT_DATE_LABEL,
   SAVE_BUTTON_LABEL,
-  MANAGE_VISITS,
   LOCATION_LABEL,
   CANCEL_BUTTON_LABEL
 } from '../../shared/utils/messages';
 import _ from 'lodash';
 import './schedule-visit.scss';
 import OpenMrsDatePicker from '@bit/soldevelo-omrs.cfl-components.openmrs-date-picker';
-import { history } from '../../config/redux-store';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string,
@@ -83,10 +81,6 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     this.props.history.goBack();
   };
 
-  handleManageVisitsButton = () => {
-    history.push(`/visits/manage/${this.props.match.params.patientUuid}`);
-  };
-
   renderDropdown = (errors, label: string, fieldName: string, options: Array<React.ReactFragment>, required?: boolean) =>
     <FormGroup controlId={fieldName}>
       <FormLabel label={label} mandatory={required} />
@@ -137,15 +131,6 @@ class ScheduleVisit extends React.Component<IProps, IState> {
         <option value={time} key={time}>{time}</option>
       ));
 
-  renderManageVisitsButton = () =>
-    <Button
-      id="schedule-visit-manage"
-      className="btn btn-secondary btn-md pull-right"
-      onClick={this.handleManageVisitsButton}>
-      {MANAGE_VISITS}
-    </Button>;
-
-
   renderSaveButton = () =>
     <Button
       id="schedule-visit-save"
@@ -172,9 +157,6 @@ class ScheduleVisit extends React.Component<IProps, IState> {
             <ControlLabel className="fields-form-title">
               <h2>{this.isEdit() ? EDIT_VISIT : SCHEDULE_VISIT}</h2>
             </ControlLabel>
-            <FormGroup>
-              {this.renderManageVisitsButton()}
-            </FormGroup>
             <Col md={3}>
               {this.renderVisitDate(errors)}
               {this.renderVisitTime(errors)}
