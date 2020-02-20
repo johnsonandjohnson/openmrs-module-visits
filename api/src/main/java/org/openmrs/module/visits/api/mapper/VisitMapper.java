@@ -1,15 +1,20 @@
 package org.openmrs.module.visits.api.mapper;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttribute;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.VisitDTO;
+import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.util.ConfigConstants;
 
 public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
+
+    private static final Log LOGGER = LogFactory.getLog(VisitMapper.class);
 
     private VisitService visitService;
 
@@ -18,14 +23,21 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
     @Override
     public VisitDTO toDto(Visit visit) {
         VisitDecorator visitDecorator = new VisitDecorator(visit);
-        return new VisitDTO(
-                visit.getUuid(),
-                visit.getStartDatetime(),
-                visitDecorator.getTime(),
-                visit.getLocation() == null ? null : visit.getLocation().getName(),
-                visit.getVisitType() == null ? null : visit.getVisitType().getName(),
-                visitDecorator.getStatus()
-        );
+        String stringUri = null;
+        try {
+            stringUri = VisitFormUriHelper.getVisitFormUri(visit.getPatient(), visit);
+        } catch (ValidationException e) {
+            LOGGER.error(e.getMessage());
+        }
+
+        return new VisitDTO()
+                .setUuid(visit.getUuid())
+                .setStartDate(visit.getStartDatetime())
+                .setTime(visitDecorator.getTime())
+                .setLocation(visit.getLocation() == null ? null : visit.getLocation().getName())
+                .setType(visit.getVisitType() == null ? null : visit.getVisitType().getName())
+                .setStatus(visitDecorator.getStatus())
+                .setFormUri(stringUri);
     }
 
     @Override

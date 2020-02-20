@@ -13,17 +13,9 @@ public class VisitDTO implements Serializable {
     private String location;
     private String type;
     private String status;
+    private String formUri;
 
-    public VisitDTO() { }
-
-    public VisitDTO(String uuid, Date startDate, String time, String location, String type,
-                    String status) {
-        this.uuid = uuid;
-        this.startDate = startDate;
-        this.time = time;
-        this.location = location;
-        this.type = type;
-        this.status = status;
+    public VisitDTO() {
     }
 
     public String getUuid() {
@@ -77,6 +69,15 @@ public class VisitDTO implements Serializable {
 
     public VisitDTO setStatus(String status) {
         this.status = status;
+        return this;
+    }
+
+    public String getFormUri() {
+        return formUri;
+    }
+
+    public VisitDTO setFormUri(String formUri) {
+        this.formUri = formUri;
         return this;
     }
 }

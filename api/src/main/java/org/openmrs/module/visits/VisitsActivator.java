@@ -36,6 +36,8 @@ public class VisitsActivator extends BaseModuleActivator {
                 ConfigConstants.VISIT_TIMES_DEFAULT_VALUE, ConfigConstants.VISIT_TIMES_DESCRIPTION);
         createGlobalSettingIfNotExists(ConfigConstants.VISIT_STATUSES_KEY,
                 ConfigConstants.VISIT_STATUSES_DEFAULT_VALUE, ConfigConstants.VISIT_STATUSES_DESCRIPTION);
+        createGlobalSettingIfNotExists(ConfigConstants.VISIT_FORM_URI_KEY,
+                ConfigConstants.VISIT_FORM_URI_DEFAULT_VALUE, ConfigConstants.VISIT_FORM_URI_DESCRIPTION);
         createVisitTimeAttributeType();
         createVisitStatusAttributeType();
     }

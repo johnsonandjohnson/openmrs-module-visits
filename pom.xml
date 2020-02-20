@@ -51,6 +51,11 @@
 				<version>${uiframeworkVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>${commonsValidatorVersion}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -291,5 +296,6 @@
 		<surefireVersion>2.17</surefireVersion>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<uiframeworkVersion>3.9</uiframeworkVersion>
+		<commonsValidatorVersion>1.6</commonsValidatorVersion>
 	</properties>
 </project>

@@ -50,6 +50,20 @@ public final class ConfigConstants {
 
     public static final String VISIT_STATUS_ATTRIBUTE_TYPE_UUID = "70ca70ac-53fd-49e4-9abe-663d4785fe62";
 
+    public static final String PATIENT_UUID_PARAM = "patientId";
+
+    public static final String VISIT_UUID_PARAM = "visitId";
+
+    public static final String VISIT_FORM_URI_KEY = "visits.visit-form-uri";
+
+    public static final String VISIT_FORM_URI_DEFAULT_VALUE = "/htmlformentryui/htmlform/" +
+            "enterHtmlFormWithStandardUi.page?" + PATIENT_UUID_PARAM + "={{" + PATIENT_UUID_PARAM + "}}" +
+            "&" + VISIT_UUID_PARAM + "={{" + VISIT_UUID_PARAM + "}}" +
+            "&definitionUiResource=referenceapplication:htmlforms/simpleVisitNote.xml";
+
+    public static final String VISIT_FORM_URI_DESCRIPTION = "The URI which leads to current visit form," +
+            " which consists of patient and visit uuid. Example of usage: '" + VISIT_FORM_URI_DEFAULT_VALUE + "'";
+
     private ConfigConstants() {
     }
 }

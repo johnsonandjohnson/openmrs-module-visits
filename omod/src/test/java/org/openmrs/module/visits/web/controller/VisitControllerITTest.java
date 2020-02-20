@@ -2,6 +2,8 @@ package org.openmrs.module.visits.web.controller;
 
 import static org.hamcrest.Matchers.hasItem;
 
+import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
+import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
 import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
 import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -17,7 +19,7 @@ import org.openmrs.VisitType;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.db.VisitDAO;
 import org.openmrs.module.visits.api.service.VisitService;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
+import org.openmrs.module.visits.web.BaseModuleWebContextSensitiveWithActivatorTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @WebAppConfiguration
-public class VisitControllerITTest extends BaseModuleWebContextSensitiveTest {
+public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActivatorTest {
 
     private static final String XML_DATA_SET_PATH = "datasets/";
     private static final String PATIENT_1_UUID = "42c9cb97-894a-47e6-8321-f0120576a545";
@@ -158,6 +160,21 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveTest {
             .andReturn();
     }
 
+    @Test
+    public void shouldReturnValidVisitFormUriAlongWithDTO() throws Exception {
+        Visit visit = prepareVisitForPatient(PATIENT_1_UUID);
+        mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT)))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visit.getUuid())))
+                .andExpect(jsonPath("$.content.[*].formUri")
+                        .value(hasItem(getExpectedUri(visit.getPatient().getUuid(), visit.getUuid()))))
+                .andReturn();
+    }
+
     private Visit prepareVisitForPatient(String patientUuid) {
         VisitType visitType = new VisitType("type", "type");
         visitType = visitDAO.saveVisitType(visitType);
@@ -166,5 +183,12 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveTest {
             visitType,
             new Date())
         );
+    }
+
+    private static String getExpectedUri(String patientUuid, String visitUuid) {
+        return "/htmlformentryui/htmlform/" +
+                "enterHtmlFormWithStandardUi.page?" + PATIENT_UUID_PARAM + "=" + patientUuid +
+                "&" + VISIT_UUID_PARAM + "=" + visitUuid +
+                "&definitionUiResource=referenceapplication:htmlforms/simpleVisitNote.xml";
     }
 }
