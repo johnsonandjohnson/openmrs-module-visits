@@ -51,4 +51,22 @@
         </property>
     </bean>
     <bean id="visits.overviewMapper" class="org.openmrs.module.visits.api.mapper.OverviewMapper"/>
+
+    <bean id="cfl.jobSchedulerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.visits.api.service.impl.JobSchedulerServiceImpl">
+                <property name="schedulerService" ref="schedulerService"/>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
 </beans>

@@ -13,6 +13,8 @@ import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 
 public final class ConfigConstants {
 
+    public static final String MODULE_ID = "visits";
+
     public static final String COMMA_SEPARATOR = ",";
 
     public static final String VISIT_TIMES_KEY = "visits.visit-times";

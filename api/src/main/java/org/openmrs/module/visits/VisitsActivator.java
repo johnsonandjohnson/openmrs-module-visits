@@ -14,17 +14,28 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.GlobalProperty;
 import org.openmrs.VisitAttributeType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.DaemonToken;
+import org.openmrs.module.DaemonTokenAware;
+import org.openmrs.module.Module;
+import org.openmrs.module.ModuleFactory;
+import org.openmrs.module.visits.api.exception.VisitsRuntimeException;
+import org.openmrs.module.visits.api.scheduler.job.JobRepeatInterval;
+import org.openmrs.module.visits.api.scheduler.job.MissedVisitsStatusChangerJobDefinition;
+import org.openmrs.module.visits.api.service.JobSchedulerService;
 import org.openmrs.module.visits.api.util.ConfigConstants;
 
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
  */
-public class VisitsActivator extends BaseModuleActivator {
+public class VisitsActivator extends BaseModuleActivator implements DaemonTokenAware {
 
     private static final Log LOGGER = LogFactory.getLog(VisitsActivator.class);
+
+    private JobSchedulerService schedulerService;
 
     /**
      * @see #started()
@@ -32,14 +43,20 @@ public class VisitsActivator extends BaseModuleActivator {
     @Override
     public void started() {
         LOGGER.info("Started Visits Module");
-        createGlobalSettingIfNotExists(ConfigConstants.VISIT_TIMES_KEY,
-                ConfigConstants.VISIT_TIMES_DEFAULT_VALUE, ConfigConstants.VISIT_TIMES_DESCRIPTION);
-        createGlobalSettingIfNotExists(ConfigConstants.VISIT_STATUSES_KEY,
-                ConfigConstants.VISIT_STATUSES_DEFAULT_VALUE, ConfigConstants.VISIT_STATUSES_DESCRIPTION);
-        createGlobalSettingIfNotExists(ConfigConstants.VISIT_FORM_URI_KEY,
-                ConfigConstants.VISIT_FORM_URI_DEFAULT_VALUE, ConfigConstants.VISIT_FORM_URI_DESCRIPTION);
-        createVisitTimeAttributeType();
-        createVisitStatusAttributeType();
+        try {
+            createGlobalSettingIfNotExists(ConfigConstants.VISIT_TIMES_KEY,
+                    ConfigConstants.VISIT_TIMES_DEFAULT_VALUE, ConfigConstants.VISIT_TIMES_DESCRIPTION);
+            createGlobalSettingIfNotExists(ConfigConstants.VISIT_STATUSES_KEY,
+                    ConfigConstants.VISIT_STATUSES_DEFAULT_VALUE, ConfigConstants.VISIT_STATUSES_DESCRIPTION);
+            createGlobalSettingIfNotExists(ConfigConstants.VISIT_FORM_URI_KEY,
+                    ConfigConstants.VISIT_FORM_URI_DEFAULT_VALUE, ConfigConstants.VISIT_FORM_URI_DESCRIPTION);
+            createVisitTimeAttributeType();
+            createVisitStatusAttributeType();
+            scheduleMissedVisitsStatusChangerJob();
+        } catch (APIException e) {
+            safeShutdownModule();
+            throw new VisitsRuntimeException("Failed to setup the required modules", e);
+        }
     }
 
     /**
@@ -55,6 +72,12 @@ public class VisitsActivator extends BaseModuleActivator {
     @Override
     public void stopped() {
         LOGGER.info("Stopped Visits Module");
+    }
+
+    @Override
+    public void setDaemonToken(DaemonToken token) {
+        LOGGER.info("Set daemon token to Visits Module event listeners");
+        getSchedulerService().setDaemonToken(token);
     }
 
     private void createVisitStatusAttributeType() {
@@ -92,5 +115,25 @@ public class VisitsActivator extends BaseModuleActivator {
                 LOGGER.debug(String.format("Visits Module created '%s' global property with value - %s", key, value));
             }
         }
+    }
+
+    private void scheduleMissedVisitsStatusChangerJob() {
+        getSchedulerService().rescheduleOrCreateNewTask(
+                new MissedVisitsStatusChangerJobDefinition(),
+                JobRepeatInterval.HOURLY);
+    }
+
+    private void safeShutdownModule() {
+        Module mod = ModuleFactory.getModuleById(ConfigConstants.MODULE_ID);
+        ModuleFactory.stopModule(mod);
+    }
+
+    private JobSchedulerService getSchedulerService() {
+        if (schedulerService == null) {
+            schedulerService = Context.getRegisteredComponent(
+                    "cfl.jobSchedulerService",
+                    JobSchedulerService.class);
+        }
+        return schedulerService;
     }
 }
