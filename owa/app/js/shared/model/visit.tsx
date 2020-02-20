@@ -13,11 +13,12 @@ import IAttributeDetails from './attribute-details';
 import IPatient from "./patient";
 
 export default class IVisit {
-  uuid: string
+  uuid: string;
   display: string;
   visitType: IVisitType;
   location: ILocation;
   patient: IPatient;
   startDatetime?: Date;
   attributes?: Array<IAttributeDetails>;
+  formUri?: string;
 }

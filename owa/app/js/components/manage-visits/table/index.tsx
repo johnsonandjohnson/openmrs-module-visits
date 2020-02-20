@@ -29,6 +29,8 @@ import IVisit from '../../../shared/model/visit';
 import ITableParams from '../table-params';
 import IModalParams, { createModalParams } from '../modal-params';
 
+const OPEN_MRS_ROUTE = '../..';
+
 interface IPaginationBaseState {
   itemsPerPage: number;
   sort: string;
@@ -106,6 +108,13 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
                 <FontAwesomeIcon icon={['fas', 'pencil-alt']} size={'1x'} />
               </a>
             </span>
+            { (!!visit.formUri) ?
+              <span className="action-button">
+              <a href={`${OPEN_MRS_ROUTE}${visit.formUri}`}>
+                <i className="small icon-stethoscope"/>
+              </a>
+            </span> : null
+            }
             <span className="action-button">
               <i className="small icon-remove delete-action interaction-trash-button"
                 onClick={() => {

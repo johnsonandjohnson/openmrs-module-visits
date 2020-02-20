@@ -27,7 +27,7 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
         try {
             stringUri = VisitFormUriHelper.getVisitFormUri(visit.getPatient(), visit);
         } catch (ValidationException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getErrorResponse().getError());
         }
 
         return new VisitDTO()
