@@ -141,7 +141,8 @@ public class VisitsSectionFragmentController {
             }
         }
         result.sort(ComparatorsHelper.getVisitsComparatorByStartDateAsc());
-        return result.subList(0, GlobalPropertyUtils.getInteger(GlobalPropertiesConstants.UPCOMING_VISITS_LIMIT.getKey()));
+        return getLimitedResult(result, GlobalPropertyUtils.getInteger(
+                GlobalPropertiesConstants.UPCOMING_VISITS_LIMIT.getKey()));
     }
 
     private List<VisitDomainWrapper> getPastVisits(List<VisitDomainWrapper> allVisits) {
@@ -152,6 +153,15 @@ public class VisitsSectionFragmentController {
             }
         }
         result.sort(ComparatorsHelper.getVisitsComparatorByStartDateDesc());
-        return result.subList(0, GlobalPropertyUtils.getInteger(GlobalPropertiesConstants.PAST_VISITS_LIMIT.getKey()));
+        return getLimitedResult(result, GlobalPropertyUtils.getInteger(
+                GlobalPropertiesConstants.PAST_VISITS_LIMIT.getKey()));
+    }
+
+    private List<VisitDomainWrapper> getLimitedResult(List<VisitDomainWrapper> visits, int limit) {
+        if (visits.size() > limit) {
+            return visits.subList(0, limit);
+        } else {
+            return visits;
+        }
     }
 }
