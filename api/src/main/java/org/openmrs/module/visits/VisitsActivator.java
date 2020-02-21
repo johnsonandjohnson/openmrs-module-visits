@@ -52,6 +52,7 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
                     ConfigConstants.VISIT_FORM_URI_DEFAULT_VALUE, ConfigConstants.VISIT_FORM_URI_DESCRIPTION);
             createVisitTimeAttributeType();
             createVisitStatusAttributeType();
+            createMissedVisitStatusChangerConfig();
             scheduleMissedVisitsStatusChangerJob();
         } catch (APIException e) {
             safeShutdownModule();
@@ -78,6 +79,23 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
     public void setDaemonToken(DaemonToken token) {
         LOGGER.info("Set daemon token to Visits Module event listeners");
         getSchedulerService().setDaemonToken(token);
+    }
+
+    private void createMissedVisitStatusChangerConfig() {
+        createGlobalSettingIfNotExists(
+                ConfigConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_KEY,
+                ConfigConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_DEFAULT_VALUE,
+                ConfigConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_DESCRIPTION);
+
+        createGlobalSettingIfNotExists(
+                ConfigConstants.STATUSES_ENDING_VISIT_KEY,
+                ConfigConstants.STATUSES_ENDING_VISIT_DEFAULT_VALUE,
+                ConfigConstants.STATUSES_ENDING_VISIT_DESCRIPTION);
+
+        createGlobalSettingIfNotExists(
+                ConfigConstants.STATUS_OF_MISSED_VISIT_KEY,
+                ConfigConstants.STATUS_OF_MISSED_VISIT_DEFAULT_VALUE,
+                ConfigConstants.STATUS_OF_MISSED_VISIT_DESCRIPTION);
     }
 
     private void createVisitStatusAttributeType() {

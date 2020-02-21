@@ -12,9 +12,6 @@ import static org.openmrs.module.visits.api.util.VisitsConstants.DEFAULT_FRONT_E
 import static org.openmrs.module.visits.api.util.VisitsConstants.DEFAULT_SERVER_SIDE_DATETIME_FORMAT;
 import static org.openmrs.module.visits.api.util.VisitsConstants.DEFAULT_SERVER_SIDE_DATE_FORMAT;
 
-/**
- * Copied from Message Module
- */
 public final class DateUtil {
 
     public static final int HOUR_IN_SECONDS = 60 * 60;

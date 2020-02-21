@@ -18,21 +18,34 @@ public final class ConfigConstants {
     public static final String COMMA_SEPARATOR = ",";
 
     public static final String VISIT_TIMES_KEY = "visits.visit-times";
-
     public static final String VISIT_TIMES_DEFAULT_VALUE = "Morning,Afternoon,Evening";
-
     public static final String VISIT_TIMES_DESCRIPTION = "Coma separated list of visit types used to schedule a visit."
             + " Example of usage: "
             + "'" + VISIT_TIMES_DEFAULT_VALUE + "'";
 
     public static final String VISIT_STATUSES_KEY = "visits.visit-statuses";
-
     public static final String VISIT_STATUSES_DEFAULT_VALUE = "SCHEDULED,OCCURRED,MISSED";
-
     public static final String VISIT_STATUSES_DESCRIPTION = "Coma separated list of visit statuses used to "
             + "schedule a visit. IMPORTANT: Status of newly created visits is always set to the first element of the "
             + " list. Example of usage: "
             + "'" + VISIT_STATUSES_DEFAULT_VALUE + "'";
+
+    public static final String MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_KEY =
+            "visits.minimumVisitDelayToAutomaticallyMarkItAsMissed";
+    public static final String MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_DEFAULT_VALUE = "1";
+    public static final String MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_DESCRIPTION = "The number of days after which "
+            + "missed visits should be automatically marked as missed";
+
+    public static final String STATUSES_ENDING_VISIT_KEY = "visits.statusesEndingVisit";
+    public static final String STATUSES_ENDING_VISIT_DEFAULT_VALUE = "OCCURRED";
+    public static final String STATUSES_ENDING_VISIT_DESCRIPTION = "The comma-separated list allowing to specify "
+            + "statuses which point on already completed visits. Visits with these statuses should not be changed to "
+            + "missed";
+
+    public static final String STATUS_OF_MISSED_VISIT_KEY = "visits.statusOfMissedVisit";
+    public static final String STATUS_OF_MISSED_VISIT_DEFAULT_VALUE = "MISSED";
+    public static final String STATUS_OF_MISSED_VISIT_DESCRIPTION = "The value specifying a status that will be set if "
+            + "the visit will be determined to be marked as missing.";
 
     public static final String VISIT_TIME_ATTRIBUTE_TYPE_NAME = "Visit Time";
 
