@@ -9,11 +9,10 @@
 
 package org.openmrs.module.visits;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.GlobalProperty;
 import org.openmrs.VisitAttributeType;
+import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.api.APIException;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
@@ -27,6 +26,10 @@ import org.openmrs.module.visits.api.scheduler.job.JobRepeatInterval;
 import org.openmrs.module.visits.api.scheduler.job.MissedVisitsStatusChangerJobDefinition;
 import org.openmrs.module.visits.api.service.JobSchedulerService;
 import org.openmrs.module.visits.api.util.ConfigConstants;
+import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
+import org.openmrs.module.visits.api.util.GlobalPropertyUtils;
+
+import java.util.Arrays;
 
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
@@ -44,16 +47,15 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
     public void started() {
         LOGGER.info("Started Visits Module");
         try {
-            createGlobalSettingIfNotExists(ConfigConstants.VISIT_TIMES_KEY,
-                    ConfigConstants.VISIT_TIMES_DEFAULT_VALUE, ConfigConstants.VISIT_TIMES_DESCRIPTION);
-            createGlobalSettingIfNotExists(ConfigConstants.VISIT_STATUSES_KEY,
-                    ConfigConstants.VISIT_STATUSES_DEFAULT_VALUE, ConfigConstants.VISIT_STATUSES_DESCRIPTION);
-            createGlobalSettingIfNotExists(ConfigConstants.VISIT_FORM_URI_KEY,
-                    ConfigConstants.VISIT_FORM_URI_DEFAULT_VALUE, ConfigConstants.VISIT_FORM_URI_DESCRIPTION);
+            GlobalPropertyUtils.createGlobalSettingsIfNotExists(Arrays.asList(
+                    GlobalPropertiesConstants.VISIT_TIMES, GlobalPropertiesConstants.VISIT_STATUSES,
+                    GlobalPropertiesConstants.PAST_VISITS_LIMIT, GlobalPropertiesConstants.UPCOMING_VISITS_LIMIT,
+                    GlobalPropertiesConstants.VISIT_FORM_URI));
             createVisitTimeAttributeType();
             createVisitStatusAttributeType();
             createMissedVisitStatusChangerConfig();
             scheduleMissedVisitsStatusChangerJob();
+            configureDistribution();
         } catch (APIException e) {
             safeShutdownModule();
             throw new VisitsRuntimeException("Failed to setup the required modules", e);
@@ -82,20 +84,19 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
     }
 
     private void createMissedVisitStatusChangerConfig() {
-        createGlobalSettingIfNotExists(
-                ConfigConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_KEY,
-                ConfigConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_DEFAULT_VALUE,
-                ConfigConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED_DESCRIPTION);
+        GlobalPropertyUtils.createGlobalSettingsIfNotExists(Arrays.asList(
+                GlobalPropertiesConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED,
+                GlobalPropertiesConstants.STATUSES_ENDING_VISIT, GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT));
+    }
 
-        createGlobalSettingIfNotExists(
-                ConfigConstants.STATUSES_ENDING_VISIT_KEY,
-                ConfigConstants.STATUSES_ENDING_VISIT_DEFAULT_VALUE,
-                ConfigConstants.STATUSES_ENDING_VISIT_DESCRIPTION);
+    private void configureDistribution() {
+        disableUnusedApps(Context.getService(AppFrameworkService.class));
+    }
 
-        createGlobalSettingIfNotExists(
-                ConfigConstants.STATUS_OF_MISSED_VISIT_KEY,
-                ConfigConstants.STATUS_OF_MISSED_VISIT_DEFAULT_VALUE,
-                ConfigConstants.STATUS_OF_MISSED_VISIT_DESCRIPTION);
+    private void disableUnusedApps(AppFrameworkService appFrameworkService) {
+        if (appFrameworkService.getApp(ConfigConstants.COREAPPS_RECENT_VISITS_FRAGMENT) != null) {
+            appFrameworkService.disableApp(ConfigConstants.COREAPPS_RECENT_VISITS_FRAGMENT);
+        }
     }
 
     private void createVisitStatusAttributeType() {
@@ -121,17 +122,6 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
         VisitAttributeType actual = visitService.getVisitAttributeTypeByUuid(uuid);
         if (actual == null) {
             visitService.saveVisitAttributeType(attributeType);
-        }
-    }
-
-    private void createGlobalSettingIfNotExists(String key, String value, String description) {
-        String existSetting = Context.getAdministrationService().getGlobalProperty(key);
-        if (StringUtils.isBlank(existSetting)) {
-            GlobalProperty gp = new GlobalProperty(key, value, description);
-            Context.getAdministrationService().saveGlobalProperty(gp);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("Visits Module created '%s' global property with value - %s", key, value));
-            }
         }
     }
 

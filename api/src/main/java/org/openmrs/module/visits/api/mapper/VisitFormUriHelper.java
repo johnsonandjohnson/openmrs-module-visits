@@ -9,8 +9,8 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.openmrs.module.visits.api.exception.ValidationException;
 
 import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_FORM_URI_KEY;
 import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
+import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.VISIT_FORM_URI;
 
 public final class VisitFormUriHelper {
 
@@ -31,7 +31,7 @@ public final class VisitFormUriHelper {
         String patternWithPatient = applyId(pattern, PATIENT_UUID_PARAM, patient.getUuid());
         String stringUri = applyId(patternWithPatient, VISIT_UUID_PARAM, visit.getUuid());
         if (isInvalid(stringUri, pattern)) {
-            throw new ValidationException("Visit Form URI is invalid. Please check " + VISIT_FORM_URI_KEY +
+            throw new ValidationException("Visit Form URI is invalid. Please check " + VISIT_FORM_URI.getKey() +
                     " global property.");
         }
         return stringUri;
@@ -58,7 +58,7 @@ public final class VisitFormUriHelper {
     }
 
     private static String getVisitFormUriPattern() {
-        return Context.getAdministrationService().getGlobalProperty(VISIT_FORM_URI_KEY);
+        return Context.getAdministrationService().getGlobalProperty(VISIT_FORM_URI.getKey());
     }
 
     private VisitFormUriHelper() {

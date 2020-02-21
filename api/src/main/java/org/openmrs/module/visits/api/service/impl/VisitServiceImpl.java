@@ -25,6 +25,8 @@ import org.openmrs.module.visits.api.service.VisitService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.OverviewCriteria;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
@@ -40,7 +42,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
     @Override
     public List<String> getVisitTimes() {
         String visitTimesProperty = Context.getAdministrationService()
-                .getGlobalProperty(ConfigConstants.VISIT_TIMES_KEY);
+                .getGlobalProperty(GlobalPropertiesConstants.VISIT_TIMES.getKey());
         List<String> results = new ArrayList<>();
         if (StringUtils.isNotBlank(visitTimesProperty)) {
             results.addAll(Arrays.asList(visitTimesProperty.split(ConfigConstants.COMMA_SEPARATOR)));
@@ -51,7 +53,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
     @Override
     public List<String> getVisitStatuses() {
         String visitTimesProperty = Context.getAdministrationService()
-                .getGlobalProperty(ConfigConstants.VISIT_STATUSES_KEY);
+                .getGlobalProperty(GlobalPropertiesConstants.VISIT_STATUSES.getKey());
         List<String> results = new ArrayList<>();
         if (StringUtils.isNotBlank(visitTimesProperty)) {
             results.addAll(Arrays.asList(visitTimesProperty.split(ConfigConstants.COMMA_SEPARATOR)));

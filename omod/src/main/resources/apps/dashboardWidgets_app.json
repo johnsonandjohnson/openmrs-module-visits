@@ -1,0 +1,23 @@
+[
+  {
+    "id":"visits.patientDashboard.visitsSection",
+    "description":"Add visit widget to the patient dashboard. It's configurable by two Global Properties how many nearest visits it should display: visits.upcoming-visits-limit and visits.past-visits-limit",
+    "extensions": [
+      {
+        "id": "visits.patientDashboard.visitsSection",
+        "order": 1,
+        "extensionPointId": "patientDashboard.secondColumnFragments",
+        "icon": "icon-calendar",
+        "extensionParams": {
+          "provider": "visits",
+          "fragment": "clinicianfacing/visitsSection",
+          "fragmentConfig": {
+            "showVisitStatus": "true",
+            "editPageUrl": "owa/visits/index.html?#/visits/manage/{{patient.uuid}}",
+            "visitUrl": "owa/visits/index.html?#/visits/manage/{{patient.uuid}}/schedule/{{visit.uuid}}"
+          }
+        }
+      }
+    ]
+  }
+]

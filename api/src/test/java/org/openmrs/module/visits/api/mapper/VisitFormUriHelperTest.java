@@ -3,7 +3,7 @@ package org.openmrs.module.visits.api.mapper;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_FORM_URI_DEFAULT_VALUE;
+import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.VISIT_FORM_URI;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import org.junit.Before;
@@ -36,7 +36,7 @@ public class VisitFormUriHelperTest {
     @Test
     public void shouldReturnValidURI() {
         given(Context.getAdministrationService().getGlobalProperty(Matchers.any()))
-                .willReturn(VISIT_FORM_URI_DEFAULT_VALUE);
+                .willReturn(VISIT_FORM_URI.getDefaultValue());
         Patient patient = new Patient();
         Visit visit = new Visit();
         visit.setPatient(patient);
@@ -85,6 +85,6 @@ public class VisitFormUriHelperTest {
     }
 
     private static String getVisitFormUriInvalidValue() {
-        return "/////" + VISIT_FORM_URI_DEFAULT_VALUE;
+        return "/////" + VISIT_FORM_URI.getDefaultValue();
     }
 }
