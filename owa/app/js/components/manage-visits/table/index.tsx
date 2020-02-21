@@ -161,7 +161,7 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
     const loadingText = <LocalizedMessage id="reactcomponents.table.loading" defaultMessage="Loading..." />;
     const pageText = <LocalizedMessage id="reactcomponents.table.page" defaultMessage="Page" />;
     const ofText = <LocalizedMessage id="reactcomponents.table.of" defaultMessage="of" />;
-    const rowsText = <LocalizedMessage id="reactcomponents.table.rows" defaultMessage="rows" />;
+    const rowsText = "results";
 
     return (
       <div>
