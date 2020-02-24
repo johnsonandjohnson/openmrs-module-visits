@@ -1,11 +1,5 @@
 package org.openmrs.module.visits.api.mapper;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.VISIT_FORM_URI;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +13,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
 import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
+import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.VISIT_FORM_URI;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Context.class})
@@ -74,14 +73,14 @@ public class VisitFormUriHelperTest {
         return "/htmlformentryui/htmlform/" +
                 "enterHtmlFormWithStandardUi.page?" + PATIENT_UUID_PARAM + "=" + patientUuid +
                 "&" + VISIT_UUID_PARAM + "=" + visitUuid +
-                "&definitionUiResource=referenceapplication:htmlforms/simpleVisitNote.xml";
+                "&definitionUiResource=cfl:htmlforms/cfl-visit-note.xml";
     }
 
     private static String getVisitFormUriMissingParenthesisValue() {
         return "/htmlformentryui/htmlform/" +
                 "enterHtmlFormWithStandardUi.page?" + PATIENT_UUID_PARAM + "=" + PATIENT_UUID_PARAM +
                 "&" + VISIT_UUID_PARAM + "=" + VISIT_UUID_PARAM +
-                "&definitionUiResource=referenceapplication:htmlforms/simpleVisitNote.xml";
+                "&definitionUiResource=cfl:htmlforms/cfl-visit-note.xml";
     }
 
     private static String getVisitFormUriInvalidValue() {

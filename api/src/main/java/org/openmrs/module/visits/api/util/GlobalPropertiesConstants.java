@@ -33,7 +33,7 @@ public final class GlobalPropertiesConstants {
                     "enterHtmlFormWithStandardUi.page?" + ConfigConstants.PATIENT_UUID_PARAM +
                     "={{" + ConfigConstants.PATIENT_UUID_PARAM + "}}" +
                     "&" + ConfigConstants.VISIT_UUID_PARAM + "={{" + ConfigConstants.VISIT_UUID_PARAM + "}}" +
-                    "&definitionUiResource=referenceapplication:htmlforms/simpleVisitNote.xml",
+                    "&definitionUiResource=cfl:htmlforms/cfl-visit-note.xml",
             "The URI which leads to current visit form," +
                     " which consists of patient and visit uuid.",
             true);
