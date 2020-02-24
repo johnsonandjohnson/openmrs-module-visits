@@ -30,6 +30,9 @@
 		<require_module version="${emrapiVersion}">
 			org.openmrs.module.emrapi
 		</require_module>
+        <require_module version="${htmlformentryVersion}">
+            org.openmrs.module.htmlformentry
+        </require_module>
 	</require_modules>
 	
 	<!-- <updateURL>https://modules.openmrs.org/modules/download/@MODULE_ID@/update.rdf</updateURL> -->

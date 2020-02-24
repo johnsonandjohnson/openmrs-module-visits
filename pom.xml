@@ -123,6 +123,18 @@
 				<version>${calculationVersion}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>htmlformentry-api</artifactId>
+				<version>${htmlformentryVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${javax.servlet.version}</version>
+				<scope>provided</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -432,5 +444,7 @@
 		<serializationXstream>0.2.12</serializationXstream>
 		<providermanagementVersion>2.9.0</providermanagementVersion>
 		<javaxXmlBindVersion>2.3.0</javaxXmlBindVersion>
+		<htmlformentryVersion>3.8.0</htmlformentryVersion>
+		<htmlformentryuiVersion>1.7.0</htmlformentryuiVersion>
 	</properties>
 </project>
