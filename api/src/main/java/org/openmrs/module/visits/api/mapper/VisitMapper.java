@@ -49,9 +49,17 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
         result.setStartDatetime(dto.getStartDate());
         result.setLocation(locationService.getLocationByUuid(dto.getLocation()));
         result.setVisitType(visitService.getVisitTypeByUuid(dto.getType()));
-        setVisitStatus(result, dto);
-        setVisitTime(result, dto);
+        setVisitStatus(result, dto.getStatus());
+        setVisitTime(result, dto.getTime());
         return result;
+    }
+
+    public void setVisitStatus(Visit visit, String status) {
+        setAttribute(visit, ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID, status);
+    }
+
+    private void setVisitTime(Visit visit, String time) {
+        setAttribute(visit, ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID, time);
     }
 
     private void setAttribute(Visit visit, String typeUuid, String value) {
@@ -77,14 +85,6 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
             attribute.setVoided(true);
             visit.setAttribute(attribute);
         }
-    }
-
-    private void setVisitStatus(Visit visit, VisitDTO dto) {
-        setAttribute(visit, ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID, dto.getStatus());
-    }
-
-    private void setVisitTime(Visit visit, VisitDTO dto) {
-        setAttribute(visit, ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID, dto.getTime());
     }
 
     private VisitAttribute getAttributeOfType(Visit visit, String typeUuid) {
