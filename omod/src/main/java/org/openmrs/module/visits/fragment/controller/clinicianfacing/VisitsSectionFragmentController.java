@@ -128,8 +128,10 @@ public class VisitsSectionFragmentController {
         Map<String, String> result = new HashMap<>();
         result.put("url", templateFactory.handlebars(ui.urlBind(visitsPageWithSpecificVisitUrl,
                 visit.getVisit()), contextModel));
-        result.put("status", visit.getVisitAttribute(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID).toString());
-
+        Object status = visit.getVisitAttribute(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
+        if (status != null) {
+            result.put("status", status.toString());
+        }
         return result;
     }
 
