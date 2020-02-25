@@ -9,29 +9,28 @@
 
 package org.openmrs.module.visits.api.service.impl;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
-import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.mapper.VisitMapper;
-import org.openmrs.module.visits.api.util.ConfigConstants;
+import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.VisitService;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.OverviewCriteria;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 
+import java.util.List;
+
 public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements VisitService {
+
+    private static final Log LOGGER = LogFactory.getLog(VisitServiceImpl.class);
 
     private PatientService patientService;
 
@@ -39,27 +38,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
 
     private VisitMapper visitMapper;
 
-    @Override
-    public List<String> getVisitTimes() {
-        String visitTimesProperty = Context.getAdministrationService()
-                .getGlobalProperty(GlobalPropertiesConstants.VISIT_TIMES.getKey());
-        List<String> results = new ArrayList<>();
-        if (StringUtils.isNotBlank(visitTimesProperty)) {
-            results.addAll(Arrays.asList(visitTimesProperty.split(ConfigConstants.COMMA_SEPARATOR)));
-        }
-        return results;
-    }
-
-    @Override
-    public List<String> getVisitStatuses() {
-        String visitTimesProperty = Context.getAdministrationService()
-                .getGlobalProperty(GlobalPropertiesConstants.VISIT_STATUSES.getKey());
-        List<String> results = new ArrayList<>();
-        if (StringUtils.isNotBlank(visitTimesProperty)) {
-            results.addAll(Arrays.asList(visitTimesProperty.split(ConfigConstants.COMMA_SEPARATOR)));
-        }
-        return results;
-    }
+    private ConfigService configService;
 
     @Override
     public List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo) {
@@ -73,6 +52,27 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
     @Override
     public void updateVisit(String visitUuid, VisitDTO visitDTO) {
         saveOrUpdate(visitMapper.fromDto(visitDTO.setUuid(visitUuid)));
+    }
+
+    @Override
+    public void changeStatusForMissedVisits() {
+        String missedVisitStatus = configService.getStatusOfMissedVisit();
+        List<Visit> missedVisits = findAllByCriteria(VisitCriteria.forMissedVisits(
+                configService.getMinimumVisitDelayToMarkItAsMissed(),
+                missedVisitStatus,
+                configService.getStatusesEndingVisit()));
+
+        LOGGER.info(String.format("Changing status of %d visits to %s", missedVisits.size(), missedVisitStatus));
+        for (Visit visit : missedVisits) {
+            VisitDecorator visitDecorator = new VisitDecorator(visit);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format("Changing status of the visit %d from %s to %s",
+                        visitDecorator.getId(), visitDecorator.getStatus(), missedVisitStatus));
+                visitDecorator.setStatus(missedVisitStatus);
+            }
+            saveOrUpdate(visitDecorator.getObject());
+        }
+
     }
 
     public void setVisitMapper(VisitMapper visitMapper) {
@@ -96,5 +96,9 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
 
     public void setLocationService(LocationService locationService) {
         this.locationService = locationService;
+    }
+
+    public void setConfigService(ConfigService configService) {
+        this.configService = configService;
     }
 }

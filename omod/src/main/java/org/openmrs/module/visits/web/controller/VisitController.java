@@ -4,6 +4,7 @@ import org.openmrs.Visit;
 import org.openmrs.module.visits.api.dto.PageDTO;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.mapper.VisitMapper;
+import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.VisitService;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.web.model.PageableParams;
@@ -32,16 +33,20 @@ public class VisitController extends BaseRestController {
     @Qualifier("visits.visitMapper")
     private VisitMapper visitMapper;
 
+    @Autowired
+    @Qualifier("visits.configService")
+    private ConfigService configService;
+
     @RequestMapping(value = "/times", method = RequestMethod.GET)
     @ResponseBody
     public List<String> getVisitTimes() {
-        return visitService.getVisitTimes();
+        return configService.getVisitTimes();
     }
 
     @RequestMapping(value = "/statuses", method = RequestMethod.GET)
     @ResponseBody
     public List<String> getVisitStatuses() {
-        return visitService.getVisitStatuses();
+        return configService.getVisitStatuses();
     }
 
     @RequestMapping(value = "/patient/{uuid}", method = RequestMethod.GET)

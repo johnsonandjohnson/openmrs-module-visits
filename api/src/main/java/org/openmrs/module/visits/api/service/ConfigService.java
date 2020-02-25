@@ -8,6 +8,18 @@ import java.util.List;
 public interface ConfigService {
 
     /**
+     * Provides the list specifying possible visit times.
+     * @return - the list with visit times
+     */
+    List<String> getVisitTimes();
+
+    /**
+     * Provides the list specifying possible visit statuses.
+     * @return - the list with visit statuses
+     */
+    List<String> getVisitStatuses();
+
+    /**
      * Provides the number of days after which missed visits should be automatically marked as missed.
      * @return - the number of days
      */

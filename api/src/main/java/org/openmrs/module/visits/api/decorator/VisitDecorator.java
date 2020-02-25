@@ -1,9 +1,17 @@
 package org.openmrs.module.visits.api.decorator;
 
+import org.apache.commons.lang.StringUtils;
+import org.openmrs.Location;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttribute;
+import org.openmrs.VisitType;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.util.ConfigConstants;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID;
@@ -15,31 +23,89 @@ public class VisitDecorator extends ObjectDecorator<Visit> {
         super(object);
     }
 
+    public Integer getId() {
+        return getObject().getId();
+    }
+
+    public String getUuid() {
+        return getObject().getUuid();
+    }
+
+    public void setStartDatetime(Date startDate) {
+        getObject().setStartDatetime(startDate);
+    }
+
+    public void setLocation(Location locationByUuid) {
+        getObject().setLocation(locationByUuid);
+    }
+
+    public void setVisitType(VisitType visitTypeByUuid) {
+        getObject().setVisitType(visitTypeByUuid);
+    }
+
     public String getTime() {
-        String time = null;
-        VisitAttribute attribute = getAttribute(VISIT_TIME_ATTRIBUTE_TYPE_UUID);
-        if (attribute != null) {
-            time = String.valueOf(attribute.getValue());
-        }
-        return time;
+        return getAttribute(VISIT_TIME_ATTRIBUTE_TYPE_UUID);
+    }
+
+    public void setTime(String time) {
+        setAttribute(ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID, time);
     }
 
     public String getStatus() {
+        return getAttribute(VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
+    }
+
+    public void setStatus(String status) {
+        setAttribute(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID, status);
+    }
+
+    private String getAttribute(String visitStatusAttributeTypeUuid) {
         String status = null;
-        VisitAttribute attribute = getAttribute(VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
+        VisitAttribute attribute = getVisitAttribute(visitStatusAttributeTypeUuid);
         if (attribute != null) {
             status = String.valueOf(attribute.getValue());
         }
         return status;
     }
 
-    public VisitAttribute getAttribute(String uuid) {
+    private VisitAttribute getVisitAttribute(String typeUuid) {
         Set<VisitAttribute> attributes = new HashSet<>(getObject().getActiveAttributes());
         for (VisitAttribute attribute : attributes) {
-            if (uuid.equals(attribute.getAttributeType().getUuid())) {
+            if (typeUuid.equals(attribute.getAttributeType().getUuid())) {
                 return attribute;
             }
         }
         return null;
+    }
+
+    private void setAttribute(String typeUuid, String value) {
+        if (StringUtils.isBlank(value)) {
+            voidAllAttributesWithType(typeUuid);
+        } else {
+            getObject().setAttribute(createVisitAttribute(typeUuid, value));
+        }
+    }
+
+    private void voidAllAttributesWithType(String typeUuid) {
+        for (VisitAttribute attribute : getAttributesOfType(typeUuid)) {
+            attribute.setVoided(true);
+        }
+    }
+
+    private VisitAttribute createVisitAttribute(String typeUuid, String value) {
+        VisitAttribute result = new VisitAttribute();
+        result.setAttributeType(Context.getVisitService().getVisitAttributeTypeByUuid(typeUuid));
+        result.setValueReferenceInternal(value);
+        return result;
+    }
+
+    private List<VisitAttribute> getAttributesOfType(String typeUuid) {
+        List<VisitAttribute> results = new ArrayList<>();
+        for (VisitAttribute attribute : getObject().getActiveAttributes()) {
+            if (attribute.getAttributeType().getUuid().equals(typeUuid)) {
+                results.add(attribute);
+            }
+        }
+        return results;
     }
 }

@@ -15,8 +15,6 @@ public final class ConfigConstants {
 
     public static final String MODULE_ID = "visits";
 
-    public static final String COMMA_SEPARATOR = ",";
-
     public static final String VISIT_TIME_ATTRIBUTE_TYPE_NAME = "Visit Time";
 
     public static final String VISIT_TIME_ATTRIBUTE_TYPE_DESCRIPTION = "Visit Time attribute," +

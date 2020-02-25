@@ -32,6 +32,9 @@
                 <property name="locationService">
                     <ref bean="locationService"/>
                 </property>
+                <property name="configService">
+                    <ref local="visits.configService"/>
+                </property>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -69,4 +72,5 @@
         </property>
     </bean>
 
+    <bean id="visits.configService" class="org.openmrs.module.visits.api.service.impl.ConfigServiceImpl"/>
 </beans>

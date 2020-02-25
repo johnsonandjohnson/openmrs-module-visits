@@ -16,13 +16,11 @@ import org.openmrs.module.visits.domain.PagingInfo;
 
 public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
 
-    List<String> getVisitTimes();
-
-    List<String> getVisitStatuses();
-
     List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo);
 
     List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo, String query);
 
     void updateVisit(String visitUuid, VisitDTO visitDTO);
+
+    void changeStatusForMissedVisits();
 }

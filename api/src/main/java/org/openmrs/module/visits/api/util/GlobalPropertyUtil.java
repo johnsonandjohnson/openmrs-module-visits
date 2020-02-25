@@ -56,7 +56,9 @@ public final class GlobalPropertyUtil {
         if (StringUtils.isNotBlank(delimiter) && value.contains(delimiter)) {
             return Arrays.asList(value.split(delimiter));
         }
-        return Collections.singletonList(value);
+        return StringUtils.isBlank(value)
+                ? Collections.emptyList()
+                : Collections.singletonList(value);
     }
 
     private GlobalPropertyUtil() {

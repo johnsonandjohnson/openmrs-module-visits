@@ -2,6 +2,8 @@ package org.openmrs.module.visits.api.scheduler.job;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.service.VisitService;
 
 public class MissedVisitsStatusChangerJobDefinition extends JobDefinition {
 
@@ -11,7 +13,7 @@ public class MissedVisitsStatusChangerJobDefinition extends JobDefinition {
     @Override
     public void execute() {
         LOGGER.info(getTaskName() + " started");
-        // TODO: CFLM-747 it will be implemented in the next PRs
+        getVisitService().changeStatusForMissedVisits();
     }
 
     @Override
@@ -27,5 +29,9 @@ public class MissedVisitsStatusChangerJobDefinition extends JobDefinition {
     @Override
     public Class getTaskClass() {
         return MissedVisitsStatusChangerJobDefinition.class;
+    }
+
+    private VisitService getVisitService() {
+        return Context.getRegisteredComponent("visits.visitService", VisitService.class);
     }
 }

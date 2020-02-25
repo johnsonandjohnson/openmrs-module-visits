@@ -14,6 +14,7 @@ import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
 import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
 import org.openmrs.module.htmlformentry.handler.AttributeDescriptor;
 import org.openmrs.module.htmlformentry.handler.SubstitutionTagHandler;
+import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.mapper.VisitMapper;
 import org.openmrs.module.visits.api.service.VisitService;
 
@@ -62,10 +63,11 @@ public class VisitNoteMetaTagHandler extends SubstitutionTagHandler {
         @Override
         public void handleSubmission(FormEntrySession formEntrySession, HttpServletRequest request) {
             if (formEntrySession.getContext().getVisit() != null) {
-                Visit visit = (Visit) formEntrySession.getContext().getVisit();
-                getVisitMapper().setVisitStatus(visit, STATUSES_ENDING_VISIT.getDefaultValue());
-                getVisitService().saveOrUpdate(visit);
-                LOGGER.info(String.format("Visit with uuid: %s has successfully changed the status.", visit.getUuid()));
+                VisitDecorator visitDecorator = new VisitDecorator((Visit) formEntrySession.getContext().getVisit());
+                visitDecorator.setStatus(STATUSES_ENDING_VISIT.getDefaultValue());
+                getVisitService().saveOrUpdate(visitDecorator.getObject());
+                LOGGER.info(String.format("Visit with uuid: %s has successfully changed the status.",
+                        visitDecorator.getUuid()));
             }
         }
 
