@@ -37,4 +37,10 @@ public interface ConfigService {
      * @return - the visit status
      */
     String getStatusOfMissedVisit();
+
+    /**
+     * Provides the value specifying a status that will be set if the visit will be determined to be marked as occurred.
+     * @return - the visit status
+     */
+    String getStatusOfOccurredVisit();
 }

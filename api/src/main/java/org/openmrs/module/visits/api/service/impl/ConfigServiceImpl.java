@@ -72,6 +72,18 @@ public class ConfigServiceImpl implements ConfigService {
         return missedStatus;
     }
 
+    @Override
+    public String getStatusOfOccurredVisit() {
+        String missedStatus = getGp(GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT.getKey());
+        List<String> visitStatuses = getVisitStatuses();
+        if (!visitStatuses.contains(missedStatus)) {
+            LOGGER.warn(String.format("The occurred visit's status defined in GP (%s) is not part of visit statuses (%s)",
+                    missedStatus,
+                    visitStatuses));
+        }
+        return missedStatus;
+    }
+
     private String getGp(String propertyName) {
         return Context.getAdministrationService().getGlobalProperty(propertyName);
     }

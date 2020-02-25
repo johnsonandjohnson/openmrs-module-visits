@@ -61,5 +61,12 @@ public final class GlobalPropertiesConstants {
                     + "determined to be marked as missing.",
     true);
 
+    public static final GPDefinition STATUS_OF_OCCURRED_VISIT = new GPDefinition(
+            "visits.statusOfOccurredVisit",
+            "OCCURRED",
+            "The value specifying a status that will be set if the visit will be "
+                    + "determined to be marked as occurred.",
+            true);
+
     private GlobalPropertiesConstants() { }
 }

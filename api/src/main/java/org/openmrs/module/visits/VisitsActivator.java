@@ -89,7 +89,8 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
         GlobalPropertyUtils.createGlobalSettingsIfNotExists(Arrays.asList(
                 GlobalPropertiesConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED,
                 GlobalPropertiesConstants.STATUSES_ENDING_VISIT,
-                GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT));
+                GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT,
+                GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT));
     }
 
     private void configureDistribution() {

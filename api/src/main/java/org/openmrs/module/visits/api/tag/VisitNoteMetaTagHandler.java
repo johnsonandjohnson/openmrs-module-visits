@@ -15,7 +15,7 @@ import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
 import org.openmrs.module.htmlformentry.handler.AttributeDescriptor;
 import org.openmrs.module.htmlformentry.handler.SubstitutionTagHandler;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
-import org.openmrs.module.visits.api.mapper.VisitMapper;
+import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.VisitService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,13 +25,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.STATUSES_ENDING_VISIT;
-
 public class VisitNoteMetaTagHandler extends SubstitutionTagHandler {
 
     private static final Log LOGGER = LogFactory.getLog(VisitNoteMetaTagHandler.class);
     private static final String VISIT_SERVICE = "visits.visitService";
-    private static final String VISIT_MAPPER = "visits.visitMapper";
+    private static final String CONFIG_SERVICE = "visits.configService";
 
     @Override
     protected List<AttributeDescriptor> createAttributeDescriptors() {
@@ -64,7 +62,7 @@ public class VisitNoteMetaTagHandler extends SubstitutionTagHandler {
         public void handleSubmission(FormEntrySession formEntrySession, HttpServletRequest request) {
             if (formEntrySession.getContext().getVisit() != null) {
                 VisitDecorator visitDecorator = new VisitDecorator((Visit) formEntrySession.getContext().getVisit());
-                visitDecorator.setStatus(STATUSES_ENDING_VISIT.getDefaultValue());
+                visitDecorator.setStatus(getConfigService().getStatusOfOccurredVisit());
                 getVisitService().saveOrUpdate(visitDecorator.getObject());
                 LOGGER.info(String.format("Visit with uuid: %s has successfully changed the status.",
                         visitDecorator.getUuid()));
@@ -75,8 +73,8 @@ public class VisitNoteMetaTagHandler extends SubstitutionTagHandler {
             return Context.getRegisteredComponent(VISIT_SERVICE, VisitService.class);
         }
 
-        private VisitMapper getVisitMapper() {
-            return Context.getRegisteredComponent(VISIT_MAPPER, VisitMapper.class);
+        private ConfigService getConfigService() {
+            return Context.getRegisteredComponent(CONFIG_SERVICE, ConfigService.class);
         }
     }
 }
