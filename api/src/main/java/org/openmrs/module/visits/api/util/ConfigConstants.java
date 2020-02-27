@@ -39,5 +39,7 @@ public final class ConfigConstants {
 
     public static final String VISIT_UUID_PARAM = "visitId";
 
+    public static final String ENCOUNTER_UUID_PARAM = "encounterId";
+
     private ConfigConstants() { }
 }

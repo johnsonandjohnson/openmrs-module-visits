@@ -1,5 +1,7 @@
 package org.openmrs.module.visits.api.service;
 
+import org.openmrs.module.visits.api.dto.VisitFormUrisMap;
+
 import java.util.List;
 
 /**
@@ -43,4 +45,10 @@ public interface ConfigService {
      * @return - the visit status
      */
     String getStatusOfOccurredVisit();
+
+    /**
+     * Provides the map specifying visit form uris for create/edit visit details.
+     * @return - the map of visit form uris
+     */
+    VisitFormUrisMap getVisitFormUrisMap();
 }

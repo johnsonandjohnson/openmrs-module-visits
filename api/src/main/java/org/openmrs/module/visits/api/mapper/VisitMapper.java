@@ -8,6 +8,7 @@ import org.openmrs.api.VisitService;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
+import org.openmrs.module.visits.api.service.ConfigService;
 
 public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
@@ -17,12 +18,14 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
     private LocationService locationService;
 
+    private ConfigService configService;
+
     @Override
     public VisitDTO toDto(Visit visit) {
         VisitDecorator visitDecorator = new VisitDecorator(visit);
         String stringUri = null;
         try {
-            stringUri = VisitFormUriHelper.getVisitFormUri(visit.getPatient(), visit);
+            stringUri = configService.getVisitFormUrisMap().getUri(visit);
         } catch (ValidationException e) {
             LOGGER.error(e.getErrorResponse().getError());
         }
@@ -58,5 +61,9 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
     public void setLocationService(LocationService locationService) {
         this.locationService = locationService;
+    }
+
+    public void setConfigService(ConfigService configService) {
+        this.configService = configService;
     }
 }

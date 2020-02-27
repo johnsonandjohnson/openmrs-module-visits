@@ -15,6 +15,9 @@ public final class VisitsConstants {
 
     public static final String DEFAULT_FRONT_END_DATE_FORMAT = "dd MMM yyyy";
 
+    public static final String CREATE_URI_NAME = "create";
+    public static final String EDIT_URI_NAME = "edit";
+
     private VisitsConstants() {
     }
 }

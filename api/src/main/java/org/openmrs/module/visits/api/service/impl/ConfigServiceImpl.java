@@ -3,6 +3,7 @@ package org.openmrs.module.visits.api.service.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.dto.VisitFormUrisMap;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
@@ -82,6 +83,11 @@ public class ConfigServiceImpl implements ConfigService {
                     visitStatuses));
         }
         return missedStatus;
+    }
+
+    @Override
+    public VisitFormUrisMap getVisitFormUrisMap() {
+        return new VisitFormUrisMap(getGp(GlobalPropertiesConstants.VISIT_FORM_URIS.getKey()));
     }
 
     private String getGp(String propertyName) {

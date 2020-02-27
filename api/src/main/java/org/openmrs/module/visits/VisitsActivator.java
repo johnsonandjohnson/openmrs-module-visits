@@ -52,7 +52,7 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
             GlobalPropertyUtils.createGlobalSettingsIfNotExists(Arrays.asList(
                     GlobalPropertiesConstants.VISIT_TIMES, GlobalPropertiesConstants.VISIT_STATUSES,
                     GlobalPropertiesConstants.PAST_VISITS_LIMIT, GlobalPropertiesConstants.UPCOMING_VISITS_LIMIT,
-                    GlobalPropertiesConstants.VISIT_FORM_URI));
+                    GlobalPropertiesConstants.VISIT_FORM_URIS));
             createVisitTimeAttributeType();
             createVisitStatusAttributeType();
             createMissedVisitStatusChangerConfig();
