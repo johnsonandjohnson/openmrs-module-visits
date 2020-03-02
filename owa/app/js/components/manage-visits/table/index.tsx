@@ -51,6 +51,7 @@ export interface ITableProps {
   sortable?: boolean;
   multiSort?: boolean;
   resizable?: boolean;
+  noDataText? : string;
   fetchDataCallback(params: ITableParams): void;
   removeCallback(params: IModalParams): void;
 };
@@ -155,6 +156,7 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
     () => this.props.fetchDataCallback(this.stateToTableParams()));
 
   render = () => {
+    const NullComponent = () => null;
     const noDataText = <LocalizedMessage id="reactcomponents.table.noDataText" defaultMessage="No results found" />;
     const previousText = <LocalizedMessage id="reactcomponents.table.previous" defaultMessage="Previous" />;
     const nextText = <LocalizedMessage id="reactcomponents.table.next" defaultMessage="Next" />;
@@ -184,7 +186,8 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
           rowsText={rowsText}
           loadingText={loadingText}
           ofText={ofText}
-          noDataText={<span className="sortableTable-noDataText">{noDataText}</span>}
+          noDataText={_.get(this.props, 'noDataText', <span className="sortableTable-noDataText">{noDataText}</span>)}
+          NoDataComponent={NullComponent}
           pageText={pageText}
           showPagination={_.get(this.props, 'showPagination', true)}
           sortable={_.get(this.props, 'sortable', true)}
