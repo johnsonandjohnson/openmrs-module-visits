@@ -94,5 +94,15 @@ public final class GlobalPropertiesConstants {
                     + "determined to be marked as occurred.",
             true);
 
+    public static final GPDefinition ENCOUNTER_DATETIME_VALIDATION = new GPDefinition(
+            "visits.encounterDatetimeValidation",
+            "true",
+            "Used to control if encounter datetime should be validated. By default OpenMRS doesn't support adding "
+                    + "encounter if its date isn't between visit start and end date. This GP can be used to turn off this "
+                    + "default validation. When the value is set to false then the custom EnterHtmlFormFragment is used to "
+                    + "override the encounter validation in emr api and additionally OpenMRS core encounter validator "
+                    + "is overridden. Possible values: true, false",
+            true);
+
     private GlobalPropertiesConstants() { }
 }

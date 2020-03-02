@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.dto.VisitFormUrisMap;
 import org.openmrs.module.visits.api.service.ConfigService;
+import org.openmrs.module.visits.api.util.GPDefinition;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
 
@@ -23,21 +24,21 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public List<String> getVisitTimes() {
         return GlobalPropertyUtil.parseList(
-                getGp(GlobalPropertiesConstants.VISIT_TIMES.getKey()),
+                getGp(GlobalPropertiesConstants.VISIT_TIMES),
                 COMMA_DELIMITER);
     }
 
     @Override
     public List<String> getVisitStatuses() {
         return GlobalPropertyUtil.parseList(
-                getGp(GlobalPropertiesConstants.VISIT_STATUSES.getKey()),
+                getGp(GlobalPropertiesConstants.VISIT_STATUSES),
                 COMMA_DELIMITER);
     }
 
     @Override
     public int getMinimumVisitDelayToMarkItAsMissed() {
-        String gpName = GlobalPropertiesConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED.getKey();
-        int days = GlobalPropertyUtil.parseInt(gpName, getGp(gpName));
+        GPDefinition gpDefinition = GlobalPropertiesConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED;
+        int days = GlobalPropertyUtil.parseInt(gpDefinition.getKey(), getGp(gpDefinition));
         if (days < ONE) {
             LOGGER.warn(String.format("The GP minimumVisitDelayToMarkItAsMissed could not be below 1 " +
                             "(the current value: %d). The value 1 will be used", days));
@@ -49,7 +50,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public List<String> getStatusesEndingVisit() {
         List<String> statusesEndingVisits = GlobalPropertyUtil.parseList(
-                getGp(GlobalPropertiesConstants.STATUSES_ENDING_VISIT.getKey()),
+                getGp(GlobalPropertiesConstants.STATUSES_ENDING_VISIT),
                 COMMA_DELIMITER);
         List<String> visitStatuses = getVisitStatuses();
         if (!visitStatuses.containsAll(statusesEndingVisits)) {
@@ -63,7 +64,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public String getStatusOfMissedVisit() {
-        String missedStatus = getGp(GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT.getKey());
+        String missedStatus = getGp(GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT);
         List<String> visitStatuses = getVisitStatuses();
         if (!visitStatuses.contains(missedStatus)) {
             LOGGER.warn(String.format("The missed visit's status defined in GP (%s) is not part of visit statuses (%s)",
@@ -75,7 +76,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public String getStatusOfOccurredVisit() {
-        String missedStatus = getGp(GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT.getKey());
+        String missedStatus = getGp(GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT);
         List<String> visitStatuses = getVisitStatuses();
         if (!visitStatuses.contains(missedStatus)) {
             LOGGER.warn(String.format("The occurred visit's status defined in GP (%s) is not part of visit statuses (%s)",
@@ -87,10 +88,16 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public VisitFormUrisMap getVisitFormUrisMap() {
-        return new VisitFormUrisMap(getGp(GlobalPropertiesConstants.VISIT_FORM_URIS.getKey()));
+        return new VisitFormUrisMap(getGp(GlobalPropertiesConstants.VISIT_FORM_URIS));
     }
 
-    private String getGp(String propertyName) {
-        return Context.getAdministrationService().getGlobalProperty(propertyName);
+    @Override
+    public boolean isEncounterDatetimeValidationEnabled() {
+        String settingValue = getGp(GlobalPropertiesConstants.ENCOUNTER_DATETIME_VALIDATION);
+        return GlobalPropertyUtil.parseBool(settingValue);
+    }
+
+    private String getGp(GPDefinition gpDefinition) {
+        return Context.getAdministrationService().getGlobalProperty(gpDefinition.getKey());
     }
 }

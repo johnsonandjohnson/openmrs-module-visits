@@ -51,4 +51,10 @@ public interface ConfigService {
      * @return - the map of visit form uris
      */
     VisitFormUrisMap getVisitFormUrisMap();
+
+    /**
+     * Provides the information if encounter datetime validation is enabled.
+     * @return - encounter datetime validation status
+     */
+    boolean isEncounterDatetimeValidationEnabled();
 }

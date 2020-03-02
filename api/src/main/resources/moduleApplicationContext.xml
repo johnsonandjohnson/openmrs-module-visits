@@ -76,4 +76,6 @@
     </bean>
 
     <bean id="visits.configService" class="org.openmrs.module.visits.api.service.impl.ConfigServiceImpl"/>
+
+    <bean id="customEncounterValidator" class="org.openmrs.module.visits.api.validator.EncounterValidator" />
 </beans>
