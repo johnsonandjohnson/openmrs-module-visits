@@ -34,7 +34,7 @@ public class EnterHtmlFormFragmentRequestMapper implements FragmentRequestMapper
 
     public static final String NEW_PROVIDER = "visits";
 
-    public static final String NEW_FRAGMENT = "cflEnterHtmlForm";
+    public static final String NEW_FRAGMENT = "visitEnterHtmlForm";
 
     @Override
     public boolean mapRequest(FragmentRequest request) {

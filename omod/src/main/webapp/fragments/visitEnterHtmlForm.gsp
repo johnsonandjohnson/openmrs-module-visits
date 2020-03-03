@@ -101,7 +101,7 @@
 
     <span class="error" style="display: none" id="general-form-error"></span>
 
-    <form id="htmlform" method="post" action="${ ui.actionLink("visits", "cflEnterHtmlForm", "submit") }" onSubmit="submitHtmlForm(); return false;">
+    <form id="htmlform" method="post" action="${ ui.actionLink("visits", "visitEnterHtmlForm", "submit") }" onSubmit="submitHtmlForm(); return false;">
         <input type="hidden" name="personId" value="${ command.patient.personId }"/>
         <input type="hidden" name="htmlFormId" value="${ command.htmlFormId }"/>
         <input type="hidden" name="createVisit" value="${ createVisit }"/>

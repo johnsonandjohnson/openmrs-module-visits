@@ -45,7 +45,7 @@ import javax.transaction.Transactional;
  * Class copied from htmlformentryui (1.7.0) in order to override the submit action.
  * The one difference is that this version of submit action doesn't validate the encounter datetime.
  */
-public class CflEnterHtmlFormFragmentController extends EnterHtmlFormFragmentController {
+public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentController {
 
     @SuppressWarnings({"checkstyle:parameterNumber", "checkstyle:cyclomaticComplexity", "checkstyle:parameterAssignment",
             "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity", "PMD.NPathComplexity",
