@@ -138,7 +138,7 @@ public class VisitsSectionFragmentController {
     private List<VisitDomainWrapper> getUpcomingVisits(List<VisitDomainWrapper> allVisits) {
         List<VisitDomainWrapper> result = new ArrayList<>();
         for (VisitDomainWrapper visit : allVisits) {
-            if (DateUtils.isFuture(visit.getStartDate())) {
+            if (DateUtils.isTodayOrAfter(visit.getStartDate())) {
                 result.add(visit);
             }
         }
@@ -150,7 +150,7 @@ public class VisitsSectionFragmentController {
     private List<VisitDomainWrapper> getPastVisits(List<VisitDomainWrapper> allVisits) {
         List<VisitDomainWrapper> result = new ArrayList<>();
         for (VisitDomainWrapper visit : allVisits) {
-            if (DateUtils.isPast(visit.getStartDate())) {
+            if (DateUtils.isBeforeToday(visit.getStartDate())) {
                 result.add(visit);
             }
         }
