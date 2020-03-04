@@ -1,6 +1,8 @@
 package org.openmrs.module.visits.api.util;
 
 public final class VisitsConstants {
+    public static final String MEDICINE_REFILL_VISIT_TYPE_NAME = "Medicine refill";
+
     public static final String DEFAULT_SERVER_SIDE_DATE_FORMAT = "yyyy-MM-dd";
 
     /**

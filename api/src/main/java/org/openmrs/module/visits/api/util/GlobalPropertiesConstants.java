@@ -6,6 +6,7 @@ import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PA
 import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
 import static org.openmrs.module.visits.api.util.VisitsConstants.CREATE_URI_NAME;
 import static org.openmrs.module.visits.api.util.VisitsConstants.EDIT_URI_NAME;
+import static org.openmrs.module.visits.api.util.VisitsConstants.MEDICINE_REFILL_VISIT_TYPE_NAME;
 
 public final class GlobalPropertiesConstants {
 
@@ -34,6 +35,11 @@ public final class GlobalPropertiesConstants {
                     "IMPORTANT: Status of newly created visits is always set to the first element of the list.",
             true);
 
+    private static final String MEDICINE_REFILL_CREATE_VISIT_FORM_URI = String.format(
+            "/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{%s}}&visitId={{%s}}"
+                    + "&definitionUiResource=cfl:htmlforms/cfl-medicine-refill.xml",
+            PATIENT_UUID_PARAM, VISIT_UUID_PARAM);
+
     private static final String DEFAULT_CREATE_VISIT_FORM_URI = String.format(
             "/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{%s}}&visitId={{%s}}"
                     + "&definitionUiResource=cfl:htmlforms/cfl-visit-note.xml",
@@ -46,9 +52,12 @@ public final class GlobalPropertiesConstants {
     public static final GPDefinition VISIT_FORM_URIS = new GPDefinition(
             "visits.visit-form-uris",
                 String.format(
-                            "{'%s':{"
+                            "{'%s':{'%s':'%s'},"
+                            + "'%s':{"
                             + "'%s':'%s',"
                             + "'%s':'%s'}}",
+                    MEDICINE_REFILL_VISIT_TYPE_NAME,
+                    CREATE_URI_NAME, MEDICINE_REFILL_CREATE_VISIT_FORM_URI,
                     DEFAULT_VISIT_FORM_URIS_KEY,
                     CREATE_URI_NAME, DEFAULT_CREATE_VISIT_FORM_URI,
                     EDIT_URI_NAME, DEFAULT_EDIT_VISIT_FORM_URI),
