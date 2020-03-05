@@ -7,6 +7,7 @@ import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARA
 import static org.openmrs.module.visits.api.util.VisitsConstants.CREATE_URI_NAME;
 import static org.openmrs.module.visits.api.util.VisitsConstants.EDIT_URI_NAME;
 import static org.openmrs.module.visits.api.util.VisitsConstants.MEDICINE_REFILL_VISIT_TYPE_NAME;
+import static org.openmrs.module.visits.api.util.VisitsConstants.SPUTUM_COLLECTION_VISIT_TYPE_NAME;
 
 public final class GlobalPropertiesConstants {
 
@@ -40,6 +41,11 @@ public final class GlobalPropertiesConstants {
                     + "&definitionUiResource=cfl:htmlforms/cfl-medicine-refill.xml",
             PATIENT_UUID_PARAM, VISIT_UUID_PARAM);
 
+    private static final String SPUTUM_COLLECTION_CREATE_VISIT_FORM_URI = String.format(
+            "/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{%s}}&visitId={{%s}}"
+                    + "&definitionUiResource=cfl:htmlforms/cfl-sputum-visit-note.xml",
+            PATIENT_UUID_PARAM, VISIT_UUID_PARAM);
+
     private static final String DEFAULT_CREATE_VISIT_FORM_URI = String.format(
             "/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{%s}}&visitId={{%s}}"
                     + "&definitionUiResource=cfl:htmlforms/cfl-visit-note.xml",
@@ -53,11 +59,14 @@ public final class GlobalPropertiesConstants {
             "visits.visit-form-uris",
                 String.format(
                             "{'%s':{'%s':'%s'},"
+                            + "'%s':{'%s':'%s'},"
                             + "'%s':{"
                             + "'%s':'%s',"
                             + "'%s':'%s'}}",
                     MEDICINE_REFILL_VISIT_TYPE_NAME,
                     CREATE_URI_NAME, MEDICINE_REFILL_CREATE_VISIT_FORM_URI,
+                    SPUTUM_COLLECTION_VISIT_TYPE_NAME,
+                    CREATE_URI_NAME, SPUTUM_COLLECTION_CREATE_VISIT_FORM_URI,
                     DEFAULT_VISIT_FORM_URIS_KEY,
                     CREATE_URI_NAME, DEFAULT_CREATE_VISIT_FORM_URI,
                     EDIT_URI_NAME, DEFAULT_EDIT_VISIT_FORM_URI),
