@@ -1,14 +1,5 @@
 package org.openmrs.module.visits.api.util;
 
-import static org.openmrs.module.visits.api.dto.VisitFormUrisMap.DEFAULT_VISIT_FORM_URIS_KEY;
-import static org.openmrs.module.visits.api.util.ConfigConstants.ENCOUNTER_UUID_PARAM;
-import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
-import static org.openmrs.module.visits.api.util.VisitsConstants.CREATE_URI_NAME;
-import static org.openmrs.module.visits.api.util.VisitsConstants.EDIT_URI_NAME;
-import static org.openmrs.module.visits.api.util.VisitsConstants.MEDICINE_REFILL_VISIT_TYPE_NAME;
-import static org.openmrs.module.visits.api.util.VisitsConstants.SPUTUM_COLLECTION_VISIT_TYPE_NAME;
-
 public final class GlobalPropertiesConstants {
 
     public static final GPDefinition PAST_VISITS_LIMIT = new GPDefinition(
@@ -36,51 +27,7 @@ public final class GlobalPropertiesConstants {
                     "IMPORTANT: Status of newly created visits is always set to the first element of the list.",
             true);
 
-    private static final String MEDICINE_REFILL_CREATE_VISIT_FORM_URI = String.format(
-            "/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{%s}}&visitId={{%s}}"
-                    + "&definitionUiResource=cfl:htmlforms/cfl-medicine-refill.xml",
-            PATIENT_UUID_PARAM, VISIT_UUID_PARAM);
-
-    private static final String SPUTUM_COLLECTION_CREATE_VISIT_FORM_URI = String.format(
-            "/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{%s}}&visitId={{%s}}"
-                    + "&definitionUiResource=cfl:htmlforms/cfl-sputum-visit-note.xml",
-            PATIENT_UUID_PARAM, VISIT_UUID_PARAM);
-
-    private static final String DEFAULT_CREATE_VISIT_FORM_URI = String.format(
-            "/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{%s}}&visitId={{%s}}"
-                    + "&definitionUiResource=cfl:htmlforms/cfl-visit-note.xml",
-            PATIENT_UUID_PARAM, VISIT_UUID_PARAM);
-
-    private static final String DEFAULT_EDIT_VISIT_FORM_URI = String.format(
-            "/htmlformentryui/htmlform/editHtmlFormWithStandardUi.page?patientId={{%s}}&encounterId={{%s}}",
-            PATIENT_UUID_PARAM, ENCOUNTER_UUID_PARAM);
-
-    public static final GPDefinition VISIT_FORM_URIS = new GPDefinition(
-            "visits.visit-form-uris",
-                String.format(
-                            "{'%s':{'%s':'%s'},"
-                            + "'%s':{'%s':'%s'},"
-                            + "'%s':{"
-                            + "'%s':'%s',"
-                            + "'%s':'%s'}}",
-                    MEDICINE_REFILL_VISIT_TYPE_NAME,
-                    CREATE_URI_NAME, MEDICINE_REFILL_CREATE_VISIT_FORM_URI,
-                    SPUTUM_COLLECTION_VISIT_TYPE_NAME,
-                    CREATE_URI_NAME, SPUTUM_COLLECTION_CREATE_VISIT_FORM_URI,
-                    DEFAULT_VISIT_FORM_URIS_KEY,
-                    CREATE_URI_NAME, DEFAULT_CREATE_VISIT_FORM_URI,
-                    EDIT_URI_NAME, DEFAULT_EDIT_VISIT_FORM_URI),
-            String.format(
-                    "The URI templates which leads to current visit form. The value of this property is a JSON "
-                        + "map. The map allows to specify URIs based on the visit type. The key in the map could be "
-                        + "visitTypeUuid or visitTypeName or 'default'. The value is a nested JSON map which could "
-                        + "consists of 2 entries - 'create' and 'edit' URI templates. The template could consists of "
-                        + "{{%s}},{{%s}} and {{%s}} variables which will be replaced if URLs are used. \n "
-                        + "Note: \n A) if invalid URI is set, no form will be used\n "
-                        + "B) if URI is no specified, the form from 'default' settings will be used\n "
-                        + "C) if specific and default URIs are not defined, no form will be used\n",
-                    PATIENT_UUID_PARAM, ENCOUNTER_UUID_PARAM, VISIT_UUID_PARAM),
-            true);
+    public static final String VISIT_FORM_URIS_KEY = "visits.visit-form-uris";
 
     public static final GPDefinition MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED = new GPDefinition(
             "visits.minimumVisitDelayToAutomaticallyMarkItAsMissed",

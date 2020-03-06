@@ -88,7 +88,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public VisitFormUrisMap getVisitFormUrisMap() {
-        return new VisitFormUrisMap(getGp(GlobalPropertiesConstants.VISIT_FORM_URIS));
+        return new VisitFormUrisMap(getGp(GlobalPropertiesConstants.VISIT_FORM_URIS_KEY));
     }
 
     @Override
@@ -98,6 +98,10 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     private String getGp(GPDefinition gpDefinition) {
-        return Context.getAdministrationService().getGlobalProperty(gpDefinition.getKey());
+        return getGp(gpDefinition.getKey());
+    }
+
+    private String getGp(String key) {
+        return Context.getAdministrationService().getGlobalProperty(key);
     }
 }

@@ -67,6 +67,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         executeDataSet(XML_DATA_SET_PATH + "ConceptDataSet.xml");
         executeDataSet(XML_DATA_SET_PATH + "PatientDataSet.xml");
+        executeDataSet(XML_DATA_SET_PATH + "ConfigDataSet.xml");
     }
 
     @Test
