@@ -91,6 +91,14 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
     }
   }
 
+  private getReturnUrlParamForCurrentLocation() {
+    const pathCorrectionString = '?'; // used to compensate OpenMRS returnUrl invalid handling
+    let url = location.href.replace(location.origin, '');
+    url = encodeURIComponent(`${url}${pathCorrectionString}`);
+    const paramName = 'returnUrl';
+    return `${paramName}=${url}`;
+  }
+
   private getActionsColumn = () => {
     return {
       Header: ACTIONS_COLUMN_LABEL,
@@ -111,7 +119,7 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
             </span>
             { (!!visit.formUri) ?
               <span className="action-button">
-              <a href={`${OPEN_MRS_ROUTE}${visit.formUri}`}>
+              <a href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}>
                 <i className="small icon-stethoscope"/>
               </a>
             </span> : null
