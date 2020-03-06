@@ -75,11 +75,11 @@ public final class GlobalPropertiesConstants {
                         + "map. The map allows to specify URIs based on the visit type. The key in the map could be "
                         + "visitTypeUuid or visitTypeName or 'default'. The value is a nested JSON map which could "
                         + "consists of 2 entries - 'create' and 'edit' URI templates. The template could consists of "
-                        + "{{%s}} and {{%s}} variables which will be replaced if URLs are used. \n "
+                        + "{{%s}},{{%s}} and {{%s}} variables which will be replaced if URLs are used. \n "
                         + "Note: \n A) if invalid URI is set, no form will be used\n "
                         + "B) if URI is no specified, the form from 'default' settings will be used\n "
                         + "C) if specific and default URIs are not defined, no form will be used\n",
-                    PATIENT_UUID_PARAM, VISIT_UUID_PARAM),
+                    PATIENT_UUID_PARAM, ENCOUNTER_UUID_PARAM, VISIT_UUID_PARAM),
             true);
 
     public static final GPDefinition MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED = new GPDefinition(
