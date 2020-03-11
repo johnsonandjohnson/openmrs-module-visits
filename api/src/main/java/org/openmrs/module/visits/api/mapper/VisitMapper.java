@@ -4,11 +4,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Visit;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.VisitDTO;
+import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.service.ConfigService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
@@ -19,6 +24,8 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
     private LocationService locationService;
 
     private ConfigService configService;
+
+    private PatientService patientService;
 
     @Override
     public VisitDTO toDto(Visit visit) {
@@ -34,10 +41,12 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
                 .setUuid(visit.getUuid())
                 .setStartDate(visit.getStartDatetime())
                 .setTime(visitDecorator.getTime())
-                .setLocation(visit.getLocation() == null ? null : visit.getLocation().getName())
-                .setType(visit.getVisitType() == null ? null : visit.getVisitType().getName())
+                .setLocation(visit.getLocation() == null ? null : visit.getLocation().getUuid())
+                .setType(visit.getVisitType() == null ? null : visit.getVisitType().getUuid())
                 .setStatus(visitDecorator.getStatus())
-                .setFormUri(stringUri);
+                .setFormUri(stringUri)
+                .setActualDate(visitDecorator.getActualDate())
+                .setPatientUuid(visit.getPatient() == null ? null : visit.getPatient().getUuid());
     }
 
     @Override
@@ -46,13 +55,33 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
         if (result == null) {
             result = new Visit();
         }
+        result.setPatient(patientService.getPatientByUuid(dto.getPatientUuid()));
+
         VisitDecorator resultDecorator = new VisitDecorator(result);
         resultDecorator.setStartDatetime(dto.getStartDate());
         resultDecorator.setLocation(locationService.getLocationByUuid(dto.getLocation()));
         resultDecorator.setVisitType(visitService.getVisitTypeByUuid(dto.getType()));
         resultDecorator.setStatus(dto.getStatus());
         resultDecorator.setTime(dto.getTime());
+        resultDecorator.setActualDate(dto.getActualDate());
         return resultDecorator.getObject();
+    }
+
+    public VisitDetailsDTO toDtoWithDetails(Visit visit) {
+        return new VisitDetailsDTO(
+                toDto(visit),
+                visit.getLocation() == null ? null : visit.getLocation().getName(),
+                visit.getVisitType() == null ? null : visit.getVisitType().getName()
+        );
+    }
+
+    public List<VisitDetailsDTO> toDtosWithDetails(List<Visit> visits) {
+        List<VisitDetailsDTO> dtos = new ArrayList<VisitDetailsDTO>();
+        for (Visit visit : visits) {
+            dtos.add(this.toDtoWithDetails(visit));
+        }
+
+        return dtos;
     }
 
     public void setVisitService(VisitService visitService) {
@@ -65,5 +94,9 @@ public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
     public void setConfigService(ConfigService configService) {
         this.configService = configService;
+    }
+
+    public void setPatientService(PatientService patientService) {
+        this.patientService = patientService;
     }
 }

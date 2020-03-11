@@ -3,6 +3,9 @@ export default interface IVisitDetails {
   startDate: Date;
   time: string | null;
   location: string | null;
+  locationName?: string;
   type: string;
+  typeName?: string;
   status: string | null;
+  actualDate?: Date;
 }

@@ -18,6 +18,7 @@ import {
   OVERVIEW_TITLE,
   OVERVIEW_PATIENT_ID_HEADER,
   OVERVIEW_DATE_HEADER,
+  OVERVIEW_ACTUAL_DATE_HEADER,
   OVERVIEW_TIME_HEADER,
   OVERVIEW_TYPE_HEADER,
   OVERVIEW_STATUS_HEADER,
@@ -37,6 +38,7 @@ import './index.scss';
 const IDENTIFIER_ACCESSOR = 'patientIdentifier';
 const NAME_URL_ACCESSOR = 'nameUrl';
 const START_DATE_ACCESSOR = 'startDate';
+const ACTUAL_DATE_ACCESSOR = 'actualDate';
 const TIME_ACCESSOR = 'time';
 const TYPE_ACCESSOR = 'type';
 const STATUS_ACCESSOR = 'status';
@@ -127,13 +129,15 @@ class OverviewVisits extends React.Component<IProps, IState> {
         data={this.props.visits.map(visit => {
           return {
             ...visit,
-            startDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.startDate)
+            startDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.startDate),
+            actualDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.actualDate)
           }
         })}
         columns={[
           this.getIdCell(),
           this.getNameCell(),
           this.getCell(OVERVIEW_DATE_HEADER, START_DATE_ACCESSOR),
+          this.getCell(OVERVIEW_ACTUAL_DATE_HEADER, ACTUAL_DATE_ACCESSOR),
           this.getCell(OVERVIEW_TIME_HEADER, TIME_ACCESSOR),
           this.getCell(OVERVIEW_TYPE_HEADER, TYPE_ACCESSOR),
           this.getCell(OVERVIEW_STATUS_HEADER, STATUS_ACCESSOR)

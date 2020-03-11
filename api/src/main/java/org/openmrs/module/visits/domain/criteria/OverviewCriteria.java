@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.openmrs.Location;
@@ -34,9 +35,19 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
 
     private String query;
 
+    private boolean sortResults;
+
+    private String sortFieldName;
+
+    private boolean sortAscending;
+
     public OverviewCriteria(Location location, String query) {
         this.location = location;
         this.query = query;
+
+        this.sortResults = true;
+        this.sortFieldName = "startDatetime";
+        this.sortAscending = false;
     }
 
     public String getLocationUuid() {
@@ -47,6 +58,9 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
     public void loadHibernateCriteria(Criteria hibernateCriteria) {
         hibernateCriteria.add(Restrictions.eq("location", location));
         addQueryCriteria(hibernateCriteria);
+        if (sortResults) {
+            addResultSorting(hibernateCriteria);
+        }
     }
 
     public static OverviewCriteria forLocationUuid(String uuid) {
@@ -88,5 +102,13 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
         return Restrictions.and(
                 Restrictions.eq(IDENTIFIERS_PREFERRED_PATH, true),
                 Restrictions.ilike(IDENTIFIERS_IDENTIFIER_PATH, query, MatchMode.ANYWHERE));
+    }
+
+    private void addResultSorting(Criteria criteria) {
+        if (sortAscending) {
+            criteria.addOrder(Order.asc(sortFieldName));
+        } else {
+            criteria.addOrder(Order.desc(sortFieldName));
+        }
     }
 }

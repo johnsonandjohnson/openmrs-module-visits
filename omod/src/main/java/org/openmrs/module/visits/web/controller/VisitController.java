@@ -3,6 +3,7 @@ package org.openmrs.module.visits.web.controller;
 import org.openmrs.Visit;
 import org.openmrs.module.visits.api.dto.PageDTO;
 import org.openmrs.module.visits.api.dto.VisitDTO;
+import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
 import org.openmrs.module.visits.api.mapper.VisitMapper;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.VisitService;
@@ -51,16 +52,40 @@ public class VisitController extends BaseRestController {
 
     @RequestMapping(value = "/patient/{uuid}", method = RequestMethod.GET)
     @ResponseBody
-    public PageDTO<VisitDTO> getVisitsForPatient(@PathVariable("uuid") String patientUuid,
-                                              PageableParams pageableParams) {
+    public PageDTO<VisitDetailsDTO> getVisitsForPatient(@PathVariable("uuid") String patientUuid,
+                                                            PageableParams pageableParams) {
         PagingInfo pagingInfo = pageableParams.getPagingInfo();
         List<Visit> visits = visitService.getVisitsForPatient(patientUuid, pagingInfo);
-        return new PageDTO<>(visitMapper.toDtos(visits), pagingInfo);
+        return new PageDTO<>(visitMapper.toDtosWithDetails(visits), pagingInfo);
     }
 
     @RequestMapping(value = "/{uuid}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public void updateVisit(@PathVariable("uuid") String visitUuid, @RequestBody VisitDTO visit) {
         visitService.updateVisit(visitUuid, visit);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void createVisit(@RequestBody VisitDTO visitDTO) {
+        if (visitDTO.getUuid() != null) {
+            throw new IllegalArgumentException("New visit cannot already have a uuid");
+        }
+
+        if (visitDTO.getStatus() != null) {
+            throw new IllegalArgumentException("Status cannot be set before creation. (Default one will be set)");
+        }
+
+        visitService.createVisit(visitDTO);
+    }
+
+    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
+    @ResponseBody
+    public VisitDetailsDTO getVisit(@PathVariable("uuid") String visitUuid) {
+        Visit visit = visitService.getByUuid(visitUuid);
+        if (visit == null) {
+            throw new IllegalArgumentException(String.format("Visit with the uuid (%s) doesn't exits", visitUuid));
+        }
+        return visitMapper.toDtoWithDetails(visit);
     }
 }

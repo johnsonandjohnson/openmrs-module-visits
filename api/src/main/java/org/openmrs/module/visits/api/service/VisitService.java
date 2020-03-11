@@ -9,10 +9,11 @@
 
 package org.openmrs.module.visits.api.service;
 
-import java.util.List;
 import org.openmrs.Visit;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.domain.PagingInfo;
+
+import java.util.List;
 
 public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
 
@@ -23,4 +24,6 @@ public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
     void updateVisit(String visitUuid, VisitDTO visitDTO);
 
     void changeStatusForMissedVisits();
+
+    void createVisit(VisitDTO visit);
 }

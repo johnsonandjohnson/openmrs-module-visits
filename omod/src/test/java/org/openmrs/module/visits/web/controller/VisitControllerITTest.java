@@ -2,10 +2,13 @@ package org.openmrs.module.visits.web.controller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Location;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.db.VisitDAO;
+import org.openmrs.module.visits.api.dto.VisitDTO;
+import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
 import org.openmrs.module.visits.api.service.VisitService;
 import org.openmrs.module.visits.web.BaseModuleWebContextSensitiveWithActivatorTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +20,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
 import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
+import static org.openmrs.module.visits.util.JsonUtil.json;
 import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
 import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,6 +50,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
     private static final int DEFAULT_PAGE_NUMBER = 1;
     private static final int BAD_ROWS_COUNT = 0;
     private static final int BAD_PAGE_NUMBER = 0;
+    private static final String LOCATION_NAME = "LocationName";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -104,10 +111,6 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
             .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.content.[*].uuid")
-                .value(hasItem(visit1.getUuid())))
-            .andExpect(jsonPath("$.content.[*].uuid")
-                .value(hasItem(visit2.getUuid())))
             .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
             .andReturn();
     }
@@ -123,10 +126,6 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
             .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.content.[*].uuid")
-                .value(hasItem(visit3.getUuid())))
-            .andExpect(jsonPath("$.content.[*].uuid")
-                .value(hasItem(visit4.getUuid())))
             .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
             .andReturn();
     }
@@ -176,14 +175,73 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
                 .andReturn();
     }
 
+    @Test
+    public void shouldReturnVisitDecoratedWithNames() throws Exception {
+        Visit visit = prepareVisitForPatient(PATIENT_1_UUID);
+        mockMvc.perform(get("/visits/{uuid}", visit.getUuid()))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.uuid").value(visit.getUuid()))
+                .andExpect(jsonPath("$.locationName").value(visit.getLocation().getName()))
+                .andExpect(jsonPath("$.typeName").value(visit.getVisitType().getName()))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldCreateVisit() throws Exception {
+        Visit visit = prepareVisitForPatient(PATIENT_1_UUID);
+
+        VisitDTO visitDTO = new VisitDTO()
+            .setUuid(null)
+            .setPatientUuid(visit.getPatient().getUuid())
+            .setStartDate(visit.getStartDatetime())
+            .setType(visit.getVisitType().getUuid());
+        VisitDetailsDTO visitDetailsDTO = new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName());
+
+        mockMvc.perform(post("/visits")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json(visitDetailsDTO)))
+                .andExpect(status().is(HttpStatus.OK.value()));
+    }
+
+    @Test
+    public void shouldNotCreateVisitWithUuid() throws Exception {
+        Visit visit = prepareVisitForPatient(PATIENT_1_UUID);
+
+        VisitDTO visitDTO = new VisitDTO()
+            .setUuid(visit.getUuid())
+            .setPatientUuid(visit.getPatient().getUuid())
+            .setStartDate(visit.getStartDatetime())
+            .setType(visit.getVisitType().getUuid());
+        VisitDetailsDTO visitDetailsDTO = new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName());
+
+        mockMvc.perform(post("/visits")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json(visitDetailsDTO)))
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    private Date getDateShiftedByDays(Date date, int plusDays) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, plusDays);
+        return cal.getTime();
+    }
+
     private Visit prepareVisitForPatient(String patientUuid) {
+        return prepareVisitForPatient(patientUuid, new Date());
+    }
+
+    private Visit prepareVisitForPatient(String patientUuid, Date date) {
         VisitType visitType = new VisitType("type", "type");
         visitType = visitDAO.saveVisitType(visitType);
-        return visitDAO.saveVisit(
-            new Visit(patientService.getPatientByUuid(patientUuid),
-            visitType,
-            new Date())
-        );
+
+        Location sampleLocation = new Location(1);
+        sampleLocation.setName(LOCATION_NAME);
+
+        Visit visit = new Visit(patientService.getPatientByUuid(patientUuid), visitType, date);
+        visit.setLocation(sampleLocation);
+        return visitDAO.saveVisit(visit);
     }
 
     private static String getExpectedUri(String patientUuid, String visitUuid) {

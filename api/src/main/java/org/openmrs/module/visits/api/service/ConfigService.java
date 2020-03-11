@@ -28,6 +28,12 @@ public interface ConfigService {
     int getMinimumVisitDelayToMarkItAsMissed();
 
     /**
+     * Provides the initial status of visit set after creation (first on the statuses list).
+     * @return - the initial status of visit
+     */
+    String getVisitInitialStatus();
+
+    /**
      * Provides the list specifying statuses which point on already completed visits. Visits with these statuses should
      * not be changed to missed.
      * @return - the list with visit statuses

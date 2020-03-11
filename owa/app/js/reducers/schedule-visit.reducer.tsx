@@ -115,7 +115,6 @@ export default (state = initialState, action) => {
       return {
         ...state,
         visitStatuses: action.payload.data,
-        visit: _.assign(state.visit, { visitStatus: action.payload.data[0] })
       };
     case SUCCESS(ACTION_TYPES.GET_LOCATIONS):
       return {
@@ -191,20 +190,23 @@ export const getLocations = () => async (dispatch) => {
 export const updateVisit = (visit: VisitUI) => async (dispatch) => {
   dispatch({
     type: ACTION_TYPES.UPDATE_VISIT,
-    payload: await visit.validate(false)
+    payload: await visit.validate(false, true)
   })
 };
 
 export const saveVisit = (visit: VisitUI, successCallback?) => async (dispatch) => {
-  const validated = await visit.validate(true);
+  const isEdit = !!visit.uuid;
+  const validated = await visit.validate(true, isEdit);
   if (_.isEmpty(validated.errors)) {
-    const payload = visit.uuid ?
-      axiosInstance.put(`${moduleUrl}/${visit.uuid}`, visit.toVisitDetails())
-      : axiosInstance.post(visitUrl, visit.toVisitRequest())
+    const payload = isEdit ?
+      axiosInstance.put(`${moduleUrl}/${visit.uuid}`, visit)
+      : axiosInstance.post(moduleUrl, visit);
+
     const body = {
       type: ACTION_TYPES.POST_VISIT,
       payload
-    }
+    };
+
     await handleRequest(dispatch, body, Msg.GENERIC_SUCCESS, Msg.GENERIC_FAILURE);
     if (successCallback) {
       successCallback();
@@ -217,19 +219,10 @@ export const saveVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
   }
 };
 
-const visitRepresentation = 'custom:(uuid,attributes,startDatetime,visitType,display,location,patient)';
-
 export const getVisit = (visitUuid: string) => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT,
-    payload: axiosInstance.get(`${visitUrl}/${visitUuid}?v=${visitRepresentation}`)
-  });
-};
-
-export const getVisits = (patientUuid: string) => async (dispatch) => {
-  await dispatch({
-    type: ACTION_TYPES.GET_VISITS,
-    payload: axiosInstance.get(`${visitUrl}?patient=${patientUuid}&v=${visitRepresentation}`)
+    payload: axiosInstance.get(`${moduleUrl}/${visitUuid}`)
   });
 };
 
@@ -282,4 +275,4 @@ export const reset = (successCallback?) => async (dispatch) => {
   if (successCallback) {
     successCallback();
   }
-}
+};

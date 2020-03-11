@@ -2,6 +2,7 @@ package org.openmrs.module.visits.domain.criteria;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
@@ -26,9 +27,17 @@ public class VisitCriteria extends BaseCriteria implements Serializable {
     private int minDelaysInDays;
     private List<String> statusesForEndedAndMissedVisit;
 
+    private boolean sortResults;
+    private String sortFieldName;
+    private boolean sortAscending;
+
     public VisitCriteria(Patient patient) {
         this.onlyMissedVisitsWithIncorrectStatus = false;
         this.patient = patient;
+
+        this.sortResults = true;
+        this.sortFieldName = "startDatetime";
+        this.sortAscending = false;
     }
 
     @Override
@@ -38,6 +47,9 @@ public class VisitCriteria extends BaseCriteria implements Serializable {
         }
         if (onlyMissedVisitsWithIncorrectStatus) {
             addOnlyMissedVisitWithIncorrectStatusRestrictions(criteria);
+        }
+        if (sortResults) {
+            addResultSorting(criteria);
         }
     }
 
@@ -51,6 +63,16 @@ public class VisitCriteria extends BaseCriteria implements Serializable {
         this.minDelaysInDays = minDelaysInDays;
         this.statusesForEndedAndMissedVisit = new ArrayList<>(statusesEndingVisit);
         this.statusesForEndedAndMissedVisit.add(statusOfMissedVisit);
+    }
+
+    public void setSortingByField(String fieldName, boolean sortAscending) {
+        this.sortResults = true;
+        this.sortFieldName = fieldName;
+        this.sortAscending = sortAscending;
+    }
+
+    public void disableSorting() {
+        this.sortResults = false;
     }
 
     public static VisitCriteria forPatientUuid(String uuid) {
@@ -81,5 +103,13 @@ public class VisitCriteria extends BaseCriteria implements Serializable {
                 .add(Restrictions.sqlRestriction(
                         "TIMESTAMP(date_started) <= TIMESTAMP(?)",
                         maxStartDate, StandardBasicTypes.TIMESTAMP));
+    }
+
+    private void addResultSorting(Criteria criteria) {
+        if (sortAscending) {
+            criteria.addOrder(Order.asc(sortFieldName));
+        } else {
+            criteria.addOrder(Order.desc(sortFieldName));
+        }
     }
 }

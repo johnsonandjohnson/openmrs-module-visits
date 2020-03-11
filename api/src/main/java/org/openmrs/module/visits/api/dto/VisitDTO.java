@@ -1,9 +1,12 @@
 package org.openmrs.module.visits.api.dto;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class VisitDTO implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class VisitDTO implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -6043667045678304408L;
 
@@ -14,8 +17,28 @@ public class VisitDTO implements Serializable {
     private String type;
     private String status;
     private String formUri;
+    private Date actualDate;
+    private String patientUuid;
 
     public VisitDTO() {
+    }
+
+    @SuppressWarnings("checkstyle:parameternumber")
+    public VisitDTO(String uuid, Date startDate, String time, String location, String type, String status,
+                    String formUri, Date actualDate, String patientUuid) {
+        this.uuid = uuid;
+        this.startDate = startDate;
+        this.time = time;
+        this.location = location;
+        this.type = type;
+        this.status = status;
+        this.formUri = formUri;
+        this.actualDate = actualDate;
+        this.patientUuid = patientUuid;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     public String getUuid() {
@@ -78,6 +101,24 @@ public class VisitDTO implements Serializable {
 
     public VisitDTO setFormUri(String formUri) {
         this.formUri = formUri;
+        return this;
+    }
+
+    public Date getActualDate() {
+        return actualDate;
+    }
+
+    public VisitDTO setActualDate(Date actualDate) {
+        this.actualDate = actualDate;
+        return this;
+    }
+
+    public String getPatientUuid() {
+        return patientUuid;
+    }
+
+    public VisitDTO setPatientUuid(String patientUuid) {
+        this.patientUuid = patientUuid;
         return this;
     }
 }

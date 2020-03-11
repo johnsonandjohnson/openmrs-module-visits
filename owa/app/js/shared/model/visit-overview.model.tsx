@@ -10,4 +10,5 @@ export default interface IVisitOverview {
   type: string;
   status: string | null;
   location: string | null;
+  actualDate?: Date;
 }

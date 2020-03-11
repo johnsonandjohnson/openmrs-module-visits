@@ -26,6 +26,7 @@ import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.OverviewCriteria;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 
+import java.util.Date;
 import java.util.List;
 
 public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements VisitService {
@@ -52,6 +53,22 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
     @Override
     public void updateVisit(String visitUuid, VisitDTO visitDTO) {
         saveOrUpdate(visitMapper.fromDto(visitDTO.setUuid(visitUuid)));
+    }
+
+    @Override
+    public void createVisit(VisitDTO visitDTO) {
+        try {
+            VisitDTO clone = (VisitDTO) visitDTO.clone();
+            clone.setStatus(configService.getVisitInitialStatus());
+            if (clone.getStartDate() == null) {
+                clone.setStartDate(new Date());
+            }
+
+            saveOrUpdate(visitMapper.fromDto(clone));
+        } catch (CloneNotSupportedException e) {
+            LOGGER.error(e);
+            throw new IllegalArgumentException("Unable to clone passed visit", e);
+        }
     }
 
     @Override

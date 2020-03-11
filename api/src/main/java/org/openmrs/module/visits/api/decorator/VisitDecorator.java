@@ -1,6 +1,7 @@
 package org.openmrs.module.visits.api.decorator;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttribute;
@@ -57,6 +58,37 @@ public class VisitDecorator extends ObjectDecorator<Visit> {
 
     public void setStatus(String status) {
         setAttribute(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID, status);
+    }
+
+    public Date getActualDate() {
+        if (getObject().getEncounters() == null
+            || getObject().getEncounters().size() == 0) {
+            return null;
+        }
+
+        // we assume there is 1 encounter per visit
+        Encounter encounter = getObject()
+                .getEncounters()
+                .iterator()
+                .next();
+        return encounter.getEncounterDatetime();
+    }
+
+    public void setActualDate(Date actualDate) {
+        if (actualDate == null) {
+            return;
+        }
+        if (getObject().getEncounters() == null
+                || getObject().getEncounters().size() == 0) {
+            throw new IllegalStateException("Unable to set actual date (encounter date). No encounters related to visit.");
+        }
+
+        // we assume there is 1 encounter per visit
+        Encounter encounter = getObject()
+                .getEncounters()
+                .iterator()
+                .next();
+        encounter.setEncounterDatetime(actualDate);
     }
 
     private String getAttribute(String visitStatusAttributeTypeUuid) {

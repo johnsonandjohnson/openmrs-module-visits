@@ -21,4 +21,5 @@ export default class IVisit {
   startDatetime?: Date;
   attributes?: Array<IAttributeDetails>;
   formUri?: string;
+  actualDate?: Date;
 }

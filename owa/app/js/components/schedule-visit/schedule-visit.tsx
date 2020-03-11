@@ -21,7 +21,8 @@ import {
   VISIT_TYPE_LABEL,
   VISIT_STATUS_LABEL,
   VISIT_TIME_LABEL,
-  VISIT_DATE_LABEL,
+  VISIT_PLANNED_DATE_LABEL,
+  VISIT_ACTUAL_DATE_LABEL,
   SAVE_BUTTON_LABEL,
   LOCATION_LABEL,
   CANCEL_BUTTON_LABEL
@@ -29,6 +30,7 @@ import {
 import _ from 'lodash';
 import './schedule-visit.scss';
 import OpenMrsDatePicker from '@bit/soldevelo-omrs.cfl-components.openmrs-date-picker';
+import {convertToLocalString} from "../../shared/utils/time-util";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string,
@@ -61,10 +63,11 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     this.props.getLocations();
     this.props.getVisitTimes();
     this.props.getVisitStatuses();
-    this.handleChange(this.props.match.params.patientUuid, 'patient');
+
+    this.handleChange(this.props.match.params.patientUuid, 'patientUuid');
   };
 
-  isEdit = () => !!this.props.match.params.visitUuid
+  isEdit = () => !!this.props.match.params.visitUuid;
 
   handleChange = (newValue: string, prop: string) => {
     const cloned = _.cloneDeep(this.props.visit);
@@ -105,7 +108,10 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     </FormGroup>;
 
   renderVisitDate = (errors) =>
-    this.renderDatePicker(errors, VISIT_DATE_LABEL, 'startDatetime');
+    this.renderDatePicker(errors, VISIT_PLANNED_DATE_LABEL, 'startDate');
+
+  renderActualDate = (errors) =>
+    this.renderDatePicker(errors, VISIT_ACTUAL_DATE_LABEL, 'actualDate');
 
   renderLocation = (errors) =>
     this.renderDropdown(errors, LOCATION_LABEL, 'location',
@@ -114,19 +120,19 @@ class ScheduleVisit extends React.Component<IProps, IState> {
       ));
 
   renderVisitType = (errors) =>
-    this.renderDropdown(errors, VISIT_TYPE_LABEL, 'visitType',
+    this.renderDropdown(errors, VISIT_TYPE_LABEL, 'type',
       this.props.visitTypes.map(type =>
         <option value={type.uuid} key={type.uuid}>{type.display}</option>
       ), true);
 
   renderVisitStatus = (errors) =>
-    this.renderDropdown(errors, VISIT_STATUS_LABEL, 'visitStatus',
+    this.renderDropdown(errors, VISIT_STATUS_LABEL, 'status',
       this.props.visitStatuses.map(status =>
         <option value={status} key={status}>{status}</option>
       ), true);
 
   renderVisitTime = (errors) =>
-    this.renderDropdown(errors, VISIT_TIME_LABEL, 'visitTime',
+    this.renderDropdown(errors, VISIT_TIME_LABEL, 'time',
       this.props.visitTimes.map(time =>
         <option value={time} key={time}>{time}</option>
       ));

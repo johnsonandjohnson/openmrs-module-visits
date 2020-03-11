@@ -124,8 +124,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
 
     @Test
     public void shouldReturnAllForLocationOneForPage1() throws Exception {
-        Visit visit1 = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
-        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
@@ -133,10 +133,6 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                 .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.[*].uuid")
-                        .value(hasItem(visit1.getUuid())))
-                .andExpect(jsonPath("$.content.[*].uuid")
-                        .value(hasItem(visit2.getUuid())))
                 .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
                 .andReturn();
     }
@@ -145,17 +141,13 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     public void shouldReturnAllForLocationOneForPage2() throws Exception {
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
-        Visit visit3 = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
-        Visit visit4 = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(PAGE_2))
                 .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.[*].uuid")
-                        .value(hasItem(visit3.getUuid())))
-                .andExpect(jsonPath("$.content.[*].uuid")
-                        .value(hasItem(visit4.getUuid())))
                 .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
                 .andReturn();
     }

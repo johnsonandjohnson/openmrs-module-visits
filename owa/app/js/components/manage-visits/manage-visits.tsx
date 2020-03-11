@@ -71,7 +71,8 @@ class ManageVisits extends React.Component<IProps, IState> {
       data={this.props.visits.map(visit => {
         return {
           ...visit,
-          startDate: formatDateIfDefined(MANAGE_DATE_FORMAT, visit.startDate)
+          startDate: formatDateIfDefined(MANAGE_DATE_FORMAT, visit.startDate),
+          actualDate: formatDateIfDefined(MANAGE_DATE_FORMAT, visit.actualDate)
         }
       })}
       removeCallback={this.removeVisit}

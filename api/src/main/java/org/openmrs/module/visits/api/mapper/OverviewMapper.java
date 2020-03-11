@@ -20,6 +20,7 @@ public final class OverviewMapper extends AbstractMapper<OverviewDTO, Visit> {
                 .setPatientIdentifier(visit.getPatient().getPatientIdentifier().getIdentifier())
                 .setNameUrl(name)
                 .setStartDate(visit.getStartDatetime())
+                .setActualDate(visitDecorator.getActualDate())
                 .setTime(visitDecorator.getTime())
                 .setType(visit.getVisitType() == null ? null : visit.getVisitType().getName())
                 .setStatus(visitDecorator.getStatus())

@@ -1,5 +1,6 @@
 package org.openmrs.module.visits.api.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -30,9 +31,17 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public List<String> getVisitStatuses() {
-        return GlobalPropertyUtil.parseList(
+        if (StringUtils.isBlank(getGp(GlobalPropertiesConstants.VISIT_STATUSES))) {
+            throw new IllegalStateException("Visit statuses are not defined as a global property.");
+        }
+        List<String> statuses = GlobalPropertyUtil.parseList(
                 getGp(GlobalPropertiesConstants.VISIT_STATUSES),
                 COMMA_DELIMITER);
+        if (statuses.size() < 1) {
+            throw new IllegalStateException("Visit statuses are not defined as a global property.");
+        }
+
+        return statuses;
     }
 
     @Override
@@ -45,6 +54,11 @@ public class ConfigServiceImpl implements ConfigService {
             days = ONE;
         }
         return days;
+    }
+
+    @Override
+    public String getVisitInitialStatus() {
+        return getVisitStatuses().get(0);
     }
 
     @Override

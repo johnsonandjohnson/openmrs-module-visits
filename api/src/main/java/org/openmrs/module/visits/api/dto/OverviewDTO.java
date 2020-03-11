@@ -15,6 +15,7 @@ public class OverviewDTO implements Serializable {
     private String type;
     private String status;
     private String location;
+    private Date actualDate;
 
     public OverviewDTO() {
     }
@@ -88,6 +89,15 @@ public class OverviewDTO implements Serializable {
 
     public OverviewDTO setLocation(String location) {
         this.location = location;
+        return this;
+    }
+
+    public Date getActualDate() {
+        return actualDate;
+    }
+
+    public OverviewDTO setActualDate(Date actualDate) {
+        this.actualDate = actualDate;
         return this;
     }
 }
