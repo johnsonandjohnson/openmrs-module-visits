@@ -159,6 +159,8 @@ const locationUrl = `${restUrl}/location`;
 const visitsTimesUrl = `${moduleUrl}/times`;
 const visitsStatusesUrl = `${moduleUrl}/statuses`;
 
+const visitLocationTagName = 'Visit Location';
+
 export const getVisitTypes = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT_TYPES,
@@ -183,7 +185,11 @@ export const getVisitStatuses = () => async (dispatch) => {
 export const getLocations = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_LOCATIONS,
-    payload: axiosInstance.get(locationUrl)
+    payload: axiosInstance.get(locationUrl, {
+      params: {
+        tag: visitLocationTagName
+      }
+    })
   });
 };
 
