@@ -10,8 +10,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Form, ControlLabel, FormGroup, Row, Col } from 'react-bootstrap';
-import _ from 'lodash';
-import Table from '@bit/soldevelo-omrs.cfl-components.table/table';
 import { history } from '../../config/redux-store';
 
 import {
@@ -25,6 +23,7 @@ import {
   OVERVIEW_NAME_HEADER,
   OVERVIEW_PATIEND_ID_PREFIX,
   OVERVIEW_SEARCH_TITLE,
+  OVERVIEW_DESCRIPTION,
 } from '../../shared/utils/messages';
 import {
   getOverviewPage,
@@ -34,6 +33,7 @@ import {
 import { formatDateIfDefined } from '../../shared/utils/date-util';
 import { IRootState } from '../../reducers';
 import './index.scss';
+import OverviewVisitTable from "./table";
 
 const IDENTIFIER_ACCESSOR = 'patientIdentifier';
 const NAME_URL_ACCESSOR = 'nameUrl';
@@ -109,6 +109,11 @@ class OverviewVisits extends React.Component<IProps, IState> {
     return (
       <>
         <Row>
+          <Col sm={8}>
+            <p>{OVERVIEW_DESCRIPTION}</p>
+          </Col>
+        </Row>
+        <Row>
           <Col sm={4}>{OVERVIEW_SEARCH_TITLE}</Col>
         </Row>
         <Row className="search-bar">
@@ -125,7 +130,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
   private renderTable = () => {
     return (
-      <Table
+      <OverviewVisitTable
         data={this.props.visits.map(visit => {
           return {
             ...visit,
