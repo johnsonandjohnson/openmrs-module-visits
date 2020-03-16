@@ -10,6 +10,7 @@ import org.openmrs.module.visits.api.util.GPDefinition;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,13 +33,14 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public List<String> getVisitStatuses() {
         if (StringUtils.isBlank(getGp(GlobalPropertiesConstants.VISIT_STATUSES))) {
-            throw new IllegalStateException("Visit statuses are not defined as a global property.");
+            LOGGER.warn("Visit statuses are not defined as a global property.");
+            return new ArrayList<>();
         }
         List<String> statuses = GlobalPropertyUtil.parseList(
                 getGp(GlobalPropertiesConstants.VISIT_STATUSES),
                 COMMA_DELIMITER);
         if (statuses.size() < 1) {
-            throw new IllegalStateException("Visit statuses are not defined as a global property.");
+            LOGGER.warn("Visit statuses are not defined as a global property.");
         }
 
         return statuses;
@@ -58,7 +60,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public String getVisitInitialStatus() {
-        return getVisitStatuses().get(0);
+        return getVisitStatuses().size() > 0 ? getVisitStatuses().get(0) : null;
     }
 
     @Override
