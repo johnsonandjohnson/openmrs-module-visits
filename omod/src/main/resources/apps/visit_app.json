@@ -22,9 +22,9 @@
     "extensions": [
       {
         "id": "visitsapp.visitsOverview.homepageLink",
-        "extensionPointId": "systemAdministration.apps",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
-        "order": 5,
+        "order": 3,
         "label": "visits.overview",
         "url": "owa/visits/index.html#/visits/overview",
         "icon": "icon-calendar",
