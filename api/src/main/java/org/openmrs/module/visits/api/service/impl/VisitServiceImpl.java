@@ -85,8 +85,8 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace(String.format("Changing status of the visit %d from %s to %s",
                         visitDecorator.getId(), visitDecorator.getStatus(), missedVisitStatus));
-                visitDecorator.setStatus(missedVisitStatus);
             }
+            visitDecorator.setStatus(missedVisitStatus);
             saveOrUpdate(visitDecorator.getObject());
         }
 
