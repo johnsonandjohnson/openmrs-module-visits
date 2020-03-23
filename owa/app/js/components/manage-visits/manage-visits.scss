@@ -15,10 +15,29 @@
     color: #009384;
   }
 
-  .button-section {
-    flex-flow: row-reverse;
+  .visit-header-section {
     display: flex;
-    padding: 20px;
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  .header-left-section {
+    float: left;
+    width: 50%;
+  }
+
+  .header-right-section {
+    float: right;
+    width: 50%;
+  }
+
+  .schedule-button {
+    float: right;
+    margin-top: 15px;
+  }
+
+  .fields-form {
+    margin-top: -20px;
   }
 
   .action-column {

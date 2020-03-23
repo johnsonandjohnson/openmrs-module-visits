@@ -106,11 +106,17 @@ class ManageVisits extends React.Component<IProps, IState> {
       <div className="manage-visits">
         {this.renderModal()}
         <Form className="fields-form">
-          <ControlLabel className="fields-form-title">
-            <h2>{MANAGE_VISITS}</h2>
-          </ControlLabel>
-          <div className="button-section">
-            {this.renderScheduleVisitButton()}
+          <div className="visit-header-section">
+            <div className="header-left-section">
+              <ControlLabel className="fields-form-title">
+                <h2>{MANAGE_VISITS}</h2>
+              </ControlLabel>
+            </div>
+            <div className="header-right-section">
+              <div className="schedule-button">
+                {this.renderScheduleVisitButton()}
+              </div>
+            </div>
           </div>
           <FormGroup>
             {this.renderTable()}
