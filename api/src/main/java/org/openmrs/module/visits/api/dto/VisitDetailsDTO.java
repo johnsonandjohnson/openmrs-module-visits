@@ -2,6 +2,9 @@ package org.openmrs.module.visits.api.dto;
 
 import java.io.Serializable;
 
+/**
+ * Object representing a visit DTO extended with the additional properties
+ */
 public class VisitDetailsDTO extends VisitDTO implements Serializable {
 
     private static final long serialVersionUID = 1330524598690465688L;
@@ -12,6 +15,13 @@ public class VisitDetailsDTO extends VisitDTO implements Serializable {
     public VisitDetailsDTO() {
     }
 
+    /**
+     * Constructor of the visit details DTO
+     *
+     * @param visitDTO base visit DTO object
+     * @param locationName name of the location
+     * @param typeName name of the type
+     */
     public VisitDetailsDTO(VisitDTO visitDTO, String locationName, String typeName) {
         super(
                 visitDTO.getUuid(),

@@ -6,6 +6,9 @@ import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.NameUrlDTO;
 import org.openmrs.module.visits.api.dto.OverviewDTO;
 
+/**
+ * Maps objects between the related visit overview types
+ */
 public final class OverviewMapper extends AbstractMapper<OverviewDTO, Visit> {
 
     private static final String URL = "/openmrs/coreapps/clinicianfacing/patient.page?patientId=";

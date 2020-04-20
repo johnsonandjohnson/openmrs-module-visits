@@ -3,6 +3,9 @@ package org.openmrs.module.visits.api.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Object representing a visit overview DTO, used to display data
+ */
 public class OverviewDTO implements Serializable {
 
     private static final long serialVersionUID = 4539000117834015411L;

@@ -58,6 +58,20 @@ public class VisitsSectionFragmentController {
     private static final String VISIT_URL = "visitUrl";
     private static final String EDIT_PAGE_URL = "editPageUrl";
 
+    /**
+     * Method used by OpenMRS for preparing the contoller of Visit Section Fragment
+     *
+     * @param config fragment configuration object to initialize
+     * @param pageModel represents page model
+     * @param model represents fragment model
+     * @param ui object containing UI util methods
+     * @param sessionContext UI session context
+     * @param templateFactory OpenMRS template factory
+     * @param coreAppsProperties OpenMRS core apps properties
+     * @param patientWrapper OpenMRS patient domain wrapper
+     * @param adtService OpenMRS adt service
+     * @param visitTypeHelper OpenMRS visit type helper
+     */
     @SuppressWarnings({"checkstyle:parameterNumber", "PMD.ExcessiveParameterList"})
     public void controller(FragmentConfiguration config,
                            PageModel pageModel,

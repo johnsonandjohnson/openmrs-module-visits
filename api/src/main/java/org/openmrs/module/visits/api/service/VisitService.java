@@ -15,12 +15,34 @@ import org.openmrs.module.visits.domain.PagingInfo;
 
 import java.util.List;
 
+/**
+ * Provides methods for creating, reading, updating and deleting Visit entities
+ */
 public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
 
+    /**
+     * Finds paginated collection of the visits for the given patient
+     *
+     * @param patientUuid uuid of the patient
+     * @param pagingInfo properties of the pagination
+     * @return list of the patient's visits, implicitly paginated
+     */
     List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo);
 
+    /**
+     * Finds paginated collection of the visits for the given location, optionally filtered by a query
+     *
+     * @param locationUuid uuid of the location
+     * @param pagingInfo properties of the pagination
+     * @return list of the location's visits, implicitly paginated
+     */
     List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo, String query);
 
+
+    /**
+     * @param visitUuid
+     * @param visitDTO
+     */
     void updateVisit(String visitUuid, VisitDTO visitDTO);
 
     void changeStatusForMissedVisits();

@@ -15,6 +15,9 @@ import org.openmrs.module.visits.api.service.ConfigService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Maps objects between the related visit types
+ */
 public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
     private static final Log LOGGER = LogFactory.getLog(VisitMapper.class);

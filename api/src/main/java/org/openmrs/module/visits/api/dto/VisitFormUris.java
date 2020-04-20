@@ -17,6 +17,9 @@ import static org.openmrs.module.visits.api.util.ConfigConstants.ENCOUNTER_UUID_
 import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
 import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
 
+/**
+ * Object containing a visit form URIs for creating and editing
+ */
 public class VisitFormUris {
     private static final Log LOGGER = LogFactory.getLog(VisitFormUris.class);
     private static final int ONE = 1;
@@ -30,6 +33,12 @@ public class VisitFormUris {
     public VisitFormUris() {
     }
 
+    /**
+     * Constructor of the visit form uris object
+     *
+     * @param createTemplate URI of a template for creating a visit form
+     * @param editTemplate URI of a template for editing a visit form
+     */
     public VisitFormUris(String createTemplate, String editTemplate) {
         this.createTemplate = createTemplate;
         this.editTemplate = editTemplate;

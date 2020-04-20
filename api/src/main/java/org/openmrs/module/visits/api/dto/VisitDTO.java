@@ -5,6 +5,9 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Object representing a visit DTO
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VisitDTO implements Serializable, Cloneable {
 
@@ -23,6 +26,19 @@ public class VisitDTO implements Serializable, Cloneable {
     public VisitDTO() {
     }
 
+    /**
+     * Constructor of a Visit DTO object
+     *
+     * @param uuid uuid of the visit
+     * @param startDate start date of visit (planned date)
+     * @param time time of day of the visit (eg. morning)
+     * @param location location of the visit
+     * @param type type of the visit (eg. follow-up)
+     * @param status status of the visit (eg. SCHEDULED)
+     * @param formUri visit form URI
+     * @param actualDate actual date of the visit
+     * @param patientUuid uuid of the patient
+     */
     @SuppressWarnings("checkstyle:parameternumber")
     public VisitDTO(String uuid, Date startDate, String time, String location, String type, String status,
                     String formUri, Date actualDate, String patientUuid) {
@@ -37,6 +53,10 @@ public class VisitDTO implements Serializable, Cloneable {
         this.patientUuid = patientUuid;
     }
 
+    /**
+     * @return a clone of a visit DTO object
+     * @throws CloneNotSupportedException
+     */
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }

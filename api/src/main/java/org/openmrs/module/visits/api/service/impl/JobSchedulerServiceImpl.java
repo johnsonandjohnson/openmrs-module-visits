@@ -1,6 +1,5 @@
 package org.openmrs.module.visits.api.service.impl;
 
-import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Daemon;
@@ -15,6 +14,11 @@ import org.openmrs.scheduler.SchedulerException;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 
+import java.util.Date;
+
+/**
+ * Implements a functionality related to the job scheduling management
+ */
 public class JobSchedulerServiceImpl extends BaseOpenmrsService implements JobSchedulerService {
 
     private static final Log LOGGER = LogFactory.getLog(JobSchedulerServiceImpl.class);

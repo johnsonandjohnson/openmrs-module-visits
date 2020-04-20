@@ -23,6 +23,9 @@ import org.openmrs.ui.framework.fragment.FragmentRequest;
 import org.openmrs.ui.framework.fragment.FragmentRequestMapper;
 import org.springframework.stereotype.Component;
 
+/**
+ * Allows to override default fragment request handling
+ */
 @Component
 public class EnterHtmlFormFragmentRequestMapper implements FragmentRequestMapper {
 
@@ -36,6 +39,13 @@ public class EnterHtmlFormFragmentRequestMapper implements FragmentRequestMapper
 
     public static final String NEW_FRAGMENT = "visitEnterHtmlForm";
 
+    /**
+     * Method used to determine if custom handling should be used. When encounter datetime validation is disabled,
+     * the default fragment provider (handler) is overridden by the custom one.
+     *
+     * @param request object representing a fragment request
+     * @return true if the request should be mapped with custom handler
+     */
     @Override
     public boolean mapRequest(FragmentRequest request) {
         if (isHtmlFormFragment(request) && isEncounterDatetimeValidationDisabled()) {

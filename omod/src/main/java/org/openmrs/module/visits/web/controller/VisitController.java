@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
+/**
+ * Exposes the endpoints related to managing the visits
+ */
 @Controller
 @RequestMapping("/visits")
 public class VisitController extends BaseRestController {
@@ -38,18 +41,35 @@ public class VisitController extends BaseRestController {
     @Qualifier("visits.configService")
     private ConfigService configService;
 
+    /**
+     * Fetches the available visit times (eg. morning, afternoon, evening)
+     *
+     * @return list of string values of visit times
+     */
     @RequestMapping(value = "/times", method = RequestMethod.GET)
     @ResponseBody
     public List<String> getVisitTimes() {
         return configService.getVisitTimes();
     }
 
+    /**
+     * Fetches the available visit statuses (eg. SCHEDULED)
+     *
+     * @return list of string values of visit times
+     */
     @RequestMapping(value = "/statuses", method = RequestMethod.GET)
     @ResponseBody
     public List<String> getVisitStatuses() {
         return configService.getVisitStatuses();
     }
 
+    /**
+     * Fetches a page of the visit details related to a given patient
+     *
+     * @param patientUuid uuid of the patient
+     * @param pageableParams parameters representing expected page shape
+     * @return a page containing visit details
+     */
     @RequestMapping(value = "/patient/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public PageDTO<VisitDetailsDTO> getVisitsForPatient(@PathVariable("uuid") String patientUuid,
@@ -59,12 +79,23 @@ public class VisitController extends BaseRestController {
         return new PageDTO<>(visitMapper.toDtosWithDetails(visits), pagingInfo);
     }
 
+    /**
+     * Updates a visit with the visit details
+     *
+     * @param visitUuid uuid representing the visit
+     * @param visit DTO object containing the visit details
+     */
     @RequestMapping(value = "/{uuid}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public void updateVisit(@PathVariable("uuid") String visitUuid, @RequestBody VisitDTO visit) {
         visitService.updateVisit(visitUuid, visit);
     }
 
+    /**
+     * Creates a visit
+     *
+     * @param visitDTO DTO object containing the visit data, must not contain uuid nor status
+     */
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void createVisit(@RequestBody VisitDTO visitDTO) {
@@ -79,6 +110,12 @@ public class VisitController extends BaseRestController {
         visitService.createVisit(visitDTO);
     }
 
+    /**
+     * Fetches a single visit
+     *
+     * @param visitUuid uuid of the visit
+     * @return a DTO object containing the single visit details
+     */
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public VisitDetailsDTO getVisit(@PathVariable("uuid") String visitUuid) {

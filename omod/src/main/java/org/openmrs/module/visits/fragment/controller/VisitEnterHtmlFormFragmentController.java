@@ -32,14 +32,14 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 
 /**
  * Class copied from htmlformentryui (1.7.0) in order to override the submit action.
@@ -47,6 +47,22 @@ import javax.transaction.Transactional;
  */
 public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentController {
 
+    /**
+     * Method copied from htmlformentryui (1.7.0) is responsible for handling a submit action of a visit form.
+     * @param sessionContext UI session context
+     * @param patient visit patient
+     * @param hf html visit form
+     * @param encounter encounter object related to a visit
+     * @param visit object representing a visit
+     * @param createVisit flag determining if a new visit should be created
+     * @param returnUrl url which is used to redirect after committing a submit action
+     * @param adtService object representing ADT service
+     * @param featureToggles object representing feature toggles used to set up a velocity context
+     * @param ui utils related to UI
+     * @param request passed HTTP request
+     * @return a key-value map related to UI framework
+     * @throws Exception when there is any form submission error
+     */
     @SuppressWarnings({"checkstyle:parameterNumber", "checkstyle:cyclomaticComplexity", "checkstyle:parameterAssignment",
             "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity", "PMD.NPathComplexity",
             "PMD.AvoidReassigningParameters"})

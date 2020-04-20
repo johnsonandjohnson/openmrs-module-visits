@@ -4,8 +4,16 @@ import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 
 import java.util.Comparator;
 
+/**
+ * Util class supporting with the visit domain comparators
+ */
 public final class ComparatorsHelper {
 
+    /**
+     * Method generating a visit domain wrapper comparator which compares by start date ascending
+     *
+     * @return an ascending start date comparator
+     */
     public static Comparator<VisitDomainWrapper> getVisitsComparatorByStartDateAsc() {
         return new Comparator<VisitDomainWrapper>() {
             @Override
@@ -15,6 +23,11 @@ public final class ComparatorsHelper {
         };
     }
 
+    /**
+     * Method generating a visit domain wrapper comparator which compares by start date descending
+     *
+     * @return a descending start date comparator
+     */
     public static Comparator<VisitDomainWrapper> getVisitsComparatorByStartDateDesc() {
         return new Comparator<VisitDomainWrapper>() {
             @Override

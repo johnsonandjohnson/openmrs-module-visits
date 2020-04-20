@@ -29,6 +29,9 @@ import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Implements methods for creating, reading, updating and deleting Visit entities
+ */
 public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements VisitService {
 
     private static final Log LOGGER = LogFactory.getLog(VisitServiceImpl.class);

@@ -12,6 +12,10 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Object containing a visit form URIs map parsed from JSON (eg. fetched from Global Property)
+ * Additionally, a default URIs object is attached to the entity.
+ */
 public class VisitFormUrisMap {
 
     public static final String DEFAULT_VISIT_FORM_URIS_KEY = "default";
@@ -21,6 +25,11 @@ public class VisitFormUrisMap {
     private Map<String, VisitFormUris> urisMap;
     private VisitFormUris defaultUris;
 
+    /**
+     * Constructor of the visit form URIs map
+     *
+     * @param visitFormUrisJson a JSON object in key-value map structure passed as a text
+     */
     public VisitFormUrisMap(String visitFormUrisJson) {
         urisMap = parseJson(visitFormUrisJson);
         defaultUris = urisMap.remove(DEFAULT_VISIT_FORM_URIS_KEY);

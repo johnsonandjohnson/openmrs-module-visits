@@ -2,6 +2,9 @@ package org.openmrs.module.visits.api.dto;
 
 import java.io.Serializable;
 
+/**
+ * Object representing a DTO object containing displayed name with url
+ */
 public class NameUrlDTO implements Serializable {
 
     private static final long serialVersionUID = 5388170127582018965L;

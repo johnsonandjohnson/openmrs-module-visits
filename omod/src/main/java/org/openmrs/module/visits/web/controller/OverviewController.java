@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
+/**
+ * Exposes the endpoints related to Visit Overview
+ */
 @Controller
 @RequestMapping("/visits/overview")
 public class OverviewController extends BaseRestController {
@@ -30,6 +33,15 @@ public class OverviewController extends BaseRestController {
     @Qualifier("visits.overviewMapper")
     private OverviewMapper overviewMapper;
 
+    /**
+     * Fetches the page of the visits for given location
+     *
+     * @param locationUuid uuid of the location
+     * @param pageableParams parameters representing expected page shape
+     * @param query optional query containing phrase filtering the visits by patient's identifier or name,
+     * eg. phrase 'jo' may result in returning the visits for patient 'John'
+     * @return a page containing visit overview details
+     */
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public PageDTO<OverviewDTO> getVisitsForLocation(@PathVariable("uuid") String locationUuid,
