@@ -1,6 +1,7 @@
 package org.openmrs.module.visits.api.util;
 
 import org.junit.Test;
+import org.openmrs.module.visits.BaseTest;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -10,7 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.openmrs.module.visits.TestConstants.MILLISECONDS_PER_DAY;
 
-public class DateUtilsTest {
+public class DateUtilsTest extends BaseTest {
 
     @Test
     public void todayShouldReturnDateWithoutTime() {

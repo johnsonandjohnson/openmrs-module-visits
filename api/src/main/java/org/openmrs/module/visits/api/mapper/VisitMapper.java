@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Maps objects between the related visit types
  */
-public final class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
+public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
     private static final Log LOGGER = LogFactory.getLog(VisitMapper.class);
 

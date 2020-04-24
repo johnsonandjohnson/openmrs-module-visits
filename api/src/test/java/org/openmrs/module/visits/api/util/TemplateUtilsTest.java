@@ -1,12 +1,13 @@
 package org.openmrs.module.visits.api.util;
 
 import org.junit.Test;
+import org.openmrs.module.visits.BaseTest;
 
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
-public class TemplateUtilsTest {
+public class TemplateUtilsTest extends BaseTest {
     private static final String VALUE = "123";
 
     @Test

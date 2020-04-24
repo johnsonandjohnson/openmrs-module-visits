@@ -59,7 +59,7 @@ public class VisitsSectionFragmentController {
     private static final String EDIT_PAGE_URL = "editPageUrl";
 
     /**
-     * Method used by OpenMRS for preparing the contoller of Visit Section Fragment
+     * Method used by OpenMRS for preparing the controller of Visit Section Fragment
      *
      * @param config fragment configuration object to initialize
      * @param pageModel represents page model
