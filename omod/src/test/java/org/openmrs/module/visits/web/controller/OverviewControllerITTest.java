@@ -1,5 +1,6 @@
 package org.openmrs.module.visits.web.controller;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Visit;
@@ -9,8 +10,10 @@ import org.openmrs.VisitType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.db.VisitDAO;
+import org.openmrs.module.visits.dto.PageDTO;
 import org.openmrs.module.visits.api.service.VisitService;
 import org.openmrs.module.visits.api.util.ConfigConstants;
+import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.web.BaseModuleWebContextSensitiveWithActivatorTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,12 +21,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
 import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -60,6 +68,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     private static final String TIME_MORNING = "Morning";
     private static final String PATIENT_2_URL = "/openmrs/coreapps/clinicianfacing/patient.page?patientId=" +
             PATIENT_2_UUID;
+    private static final long TOTAL_RECORDS = 2L;
 
     private MockMvc mockMvc;
 
@@ -179,6 +188,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(BAD_ROWS_COUNT)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"error\":\"Invalid page size 0\",\"errorMessages\":null}"))
                 .andReturn();
     }
 
@@ -414,6 +425,38 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                         .value(hasItem(visit2.getUuid())))
                 .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
                 .andReturn();
+    }
+
+    @Test
+    public void shouldReturnExpectedStructureOfResponse() throws Exception {
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
+        final String searchTerm = "Another   Sick  Person";
+        MvcResult result = mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(QUERY_PARAM, searchTerm))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        assertThat(result, is(notNullValue()));
+        PageDTO expected = new PageDTO(Arrays.asList(visit, visit2),
+                new PagingInfo(DEFAULT_PAGE_NUMBER, DEFAULT_ROWS_COUNT));
+        expected.setTotalRecords(TOTAL_RECORDS);
+        PageDTO actual = getPageDTO(result);
+        assertThat(actual.getPageIndex(), is(expected.getPageIndex()));
+        assertThat(actual.getPageCount(), is(expected.getPageCount()));
+        assertThat(actual.getPageSize(), is(expected.getPageSize()));
+        assertThat(actual.getContentSize(), is(expected.getContentSize()));
+        assertThat(actual.getTotalRecords(), is(expected.getTotalRecords()));
+        assertThat(actual.getContent().size(), is(expected.getContent().size()));
+    }
+
+    private PageDTO getPageDTO(MvcResult result) throws java.io.IOException {
+        return new ObjectMapper().readValue(result.getResponse().getContentAsString(), PageDTO.class);
     }
 
     private Visit prepareVisitForPatientWithLocation(String patientUuid, String locationUuid) {

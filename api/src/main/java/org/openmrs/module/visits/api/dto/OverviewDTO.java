@@ -20,9 +20,6 @@ public class OverviewDTO implements Serializable {
     private String location;
     private Date actualDate;
 
-    public OverviewDTO() {
-    }
-
     public String getUuid() {
         return uuid;
     }

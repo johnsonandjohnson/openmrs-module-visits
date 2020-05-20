@@ -1,4 +1,4 @@
-package org.openmrs.module.visits.api.dto;
+package org.openmrs.module.visits.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -22,6 +22,8 @@ public class PageDTO<T> {
     private Long totalRecords;
 
     private List<T> content = new ArrayList<T>();
+
+    private int pageCount;
 
     public PageDTO() { }
 
@@ -74,9 +76,15 @@ public class PageDTO<T> {
         this.totalRecords = totalRecords;
     }
 
+    public PageDTO<T> setPageCount(Integer pageCount) {
+        this.pageCount = pageCount;
+        return this;
+    }
+
     public Integer getPageCount() {
-        return totalRecords == null ? null :
+        pageCount = totalRecords == null ? null :
             (int) Math.ceil((double) totalRecords / (double) pageSize);
+        return pageCount;
     }
 
     @Override

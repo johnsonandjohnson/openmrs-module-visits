@@ -84,12 +84,7 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
 
         boolean editMode = encounter != null;
 
-        FormEntrySession fes;
-        if (encounter != null) {
-            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
-        } else {
-            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
-        }
+        FormEntrySession fes = getFormEntrySession(patient, hf, encounter, request);
 
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggles);
@@ -160,6 +155,19 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
         return returnHelper(null, fes, formEncounter);
     }
 
+    // we couldn't change the FormEntrySession code
+    @SuppressWarnings({"PMD.SignatureDeclareThrowsException"})
+    private FormEntrySession getFormEntrySession(Patient patient, HtmlForm hf, Encounter encounter,
+                                                 HttpServletRequest request) throws Exception {
+        FormEntrySession fes;
+        if (encounter != null) {
+            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
+        } else {
+            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
+        }
+        return fes;
+    }
+
     private SimpleObject returnHelper(List<FormSubmissionError> validationErrors, FormEntrySession session,
             Encounter encounter) {
         if (validationErrors == null || validationErrors.size() == 0) {
@@ -170,7 +178,8 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
                 afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{encounter.id\\}\\}",
                         session.getEncounter().getId().toString());
             }
-            return SimpleObject.create("success", true, "encounterId", encounter.getId(), "goToUrl", afterSaveUrl);
+            return SimpleObject.create("success", true, "encounterId", encounter == null ? null : encounter.getId(),
+                    "goToUrl", afterSaveUrl);
         } else {
             Map<String, String> errors = new HashMap<String, String>();
             for (FormSubmissionError err : validationErrors) {

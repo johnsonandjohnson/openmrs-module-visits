@@ -2,7 +2,7 @@ package org.openmrs.module.visits.web.controller;
 
 import org.openmrs.Visit;
 import org.openmrs.module.visits.api.dto.OverviewDTO;
-import org.openmrs.module.visits.api.dto.PageDTO;
+import org.openmrs.module.visits.dto.PageDTO;
 import org.openmrs.module.visits.api.mapper.OverviewMapper;
 import org.openmrs.module.visits.api.service.VisitService;
 import org.openmrs.module.visits.domain.PagingInfo;

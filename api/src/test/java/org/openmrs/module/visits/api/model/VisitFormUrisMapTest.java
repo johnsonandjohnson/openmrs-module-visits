@@ -8,62 +8,98 @@ import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.module.visits.BaseTest;
 import org.openmrs.module.visits.api.dto.VisitFormUrisMap;
-import org.springframework.util.Assert;
+import org.openmrs.module.visits.builder.PatientBuilder;
+import org.openmrs.module.visits.builder.VisitBuilder;
+import org.openmrs.module.visits.builder.VisitTypeBuilder;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.openmrs.module.visits.api.util.VisitsConstants.CREATE_URI_NAME;
 import static org.openmrs.module.visits.api.util.VisitsConstants.EDIT_URI_NAME;
 
 public class VisitFormUrisMapTest extends BaseTest {
-    public static final String VISIT_TYPE_1_NAME = "Follow-up";
-    public static final String VISIT_TYPE_1_UUID = UUID.randomUUID().toString();
+    private static final String VISIT_TYPE_1_NAME = "Follow-up";
+    private static final String VISIT_TYPE_1_UUID = UUID.randomUUID().toString();
 
-    public static final String INVALID_URI = "&&  @@@";
+    private static final String INVALID_URI = "&&  @@@";
 
-    public static final String VISIT_TYPE_1_CREATE_URI = "/a";
-    public static final String VISIT_TYPE_1_EDIT_URI = "/b";
-    public static final String DEFAULT_VISIT_TYPE_CREATE_URI = "/d";
-    public static final String DEFAULT_VISIT_TYPE_EDIT_URI = "/e";
+    private static final String VISIT_TYPE_1_CREATE_URI = "/a";
+    private static final String VISIT_TYPE_1_EDIT_URI = "/b";
+    private static final String DEFAULT_VISIT_TYPE_CREATE_URI = "/d";
+    private static final String DEFAULT_VISIT_TYPE_EDIT_URI = "/e";
 
-    public static final String EMPTY_STRING = "";
-    public static final String INVALID_JSON = "{";
+    private static final String EMPTY_STRING = "";
+    private static final String INVALID_JSON = "{";
+    private static final String PATIENT_UUID = "62f4ada0-8a14-4130-bae6-5ffef175f46b";
 
     @Test
     public void shouldParseTypeWith2Uris() {
+        Visit visit = new VisitBuilder()
+                .withVisitType(new VisitTypeBuilder().withName(VISIT_TYPE_1_NAME).build())
+                .withPatient(new PatientBuilder().withUuid(PATIENT_UUID).build())
+                .build();
         String input = getInputForType1With2Uri();
-        new VisitFormUrisMap(input);
+        VisitFormUrisMap actual = new VisitFormUrisMap(input);
+        assertThat(actual.getUri(visit), is(VISIT_TYPE_1_CREATE_URI));
     }
 
     @Test
     public void shouldParseTypeWith1Uris() {
+        Visit visit = new VisitBuilder()
+                .withVisitType(new VisitTypeBuilder().withName(VISIT_TYPE_1_NAME).build())
+                .withPatient(new PatientBuilder().withUuid(PATIENT_UUID).build())
+                .build();
         String input = getInputForType1With1Uri();
-        new VisitFormUrisMap(input);
+        VisitFormUrisMap actual = new VisitFormUrisMap(input);
+        assertThat(actual.getUri(visit), is(nullValue()));
     }
 
     @Test
     public void shouldParseJsonWithDefaultUri() {
         String input = getInputForDefaultType2With2Uris();
-        new VisitFormUrisMap(input);
+        VisitFormUrisMap actual = new VisitFormUrisMap(input);
+        Visit visit = new VisitBuilder()
+                .withVisitType(new VisitTypeBuilder().withName(VISIT_TYPE_1_NAME).build())
+                .withPatient(new PatientBuilder().withUuid(PATIENT_UUID).build())
+                .build();
+        assertThat(actual.getUri(visit), is(DEFAULT_VISIT_TYPE_CREATE_URI));
     }
 
     @Test
     public void shouldParseJsonWithNoUris() {
+        Visit visit = new VisitBuilder()
+                .withVisitType(new VisitTypeBuilder().withName(VISIT_TYPE_1_NAME).build())
+                .withPatient(new PatientBuilder().withUuid(PATIENT_UUID).build())
+                .build();
         String input = getInputWithoutUris();
-        new VisitFormUrisMap(input);
+        VisitFormUrisMap actual = new VisitFormUrisMap(input);
+        assertThat(actual.getUri(visit), is(nullValue()));
     }
 
     @Test
     public void shouldParseEmptyInput() {
-        new VisitFormUrisMap(EMPTY_STRING);
+        Visit visit = new VisitBuilder()
+            .withVisitType(new VisitTypeBuilder().withName(VISIT_TYPE_1_NAME).build())
+            .withPatient(new PatientBuilder().withUuid(PATIENT_UUID).build())
+            .build();
+        VisitFormUrisMap actual = new VisitFormUrisMap(EMPTY_STRING);
+        assertThat(actual.getUri(visit), is(nullValue()));
     }
 
     @Test
     public void shouldNoThrowExceptionIfJsonIsInvalid() {
-        new VisitFormUrisMap(INVALID_JSON);
+        Visit visit = new VisitBuilder()
+                .withVisitType(new VisitTypeBuilder().withName(VISIT_TYPE_1_NAME).build())
+                .withPatient(new PatientBuilder().withUuid(PATIENT_UUID).build())
+                .build();
+        VisitFormUrisMap actual = new VisitFormUrisMap(INVALID_JSON);
+        assertThat(actual.getUri(visit), is(nullValue()));
     }
 
     @Test
@@ -73,8 +109,8 @@ public class VisitFormUrisMapTest extends BaseTest {
         String actualForCreation = visitFormUrisMap.getUri(createVisit(VISIT_TYPE_1_NAME, VISIT_TYPE_1_UUID,  true));
         String actualForEdit = visitFormUrisMap.getUri(createVisit(VISIT_TYPE_1_NAME, VISIT_TYPE_1_UUID,  false));
 
-        Assert.isNull(actualForCreation);
-        Assert.isNull(actualForEdit);
+        assertThat(actualForCreation, is(nullValue()));
+        assertThat(actualForEdit, is(nullValue()));
     }
 
     @Test
@@ -85,8 +121,8 @@ public class VisitFormUrisMapTest extends BaseTest {
         String actualForCreation = visitFormUrisMap.getUri(createVisit(VISIT_TYPE_1_NAME, VISIT_TYPE_1_UUID, true));
         String actualForEdit = visitFormUrisMap.getUri(createVisit(VISIT_TYPE_1_NAME, VISIT_TYPE_1_UUID, false));
 
-        Assert.isNull(actualForCreation);
-        Assert.isNull(actualForEdit);
+        assertThat(actualForCreation, is(nullValue()));
+        assertThat(actualForEdit, is(nullValue()));
     }
 
     @Test

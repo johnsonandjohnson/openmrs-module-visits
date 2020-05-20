@@ -20,10 +20,10 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
     private static final String PATH_SEPARATOR = ".";
     private static final String PATIENT_PATH = "patient";
     private static final String PATIENT_ALIAS = "patient";
-    private static final String NAMES_PATH = PATIENT_PATH + PATH_SEPARATOR + "names";
     private static final String NAMES_ALIAS = "names";
-    private static final String IDENTIFIERS_PATH = PATIENT_PATH + PATH_SEPARATOR + "identifiers";
+    private static final String NAMES_PATH = PATIENT_PATH + PATH_SEPARATOR + NAMES_ALIAS;
     private static final String IDENTIFIERS_ALIAS = "identifiers";
+    private static final String IDENTIFIERS_PATH = PATIENT_PATH + PATH_SEPARATOR + IDENTIFIERS_ALIAS;
     private static final String IDENTIFIERS_PREFERRED_PATH = "identifiers.preferred";
     private static final String IDENTIFIERS_IDENTIFIER_PATH = "identifiers.identifier";
     private static final String NAMES_PREFERRED_PATH = "names.preferred";

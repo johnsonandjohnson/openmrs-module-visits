@@ -14,4 +14,9 @@
         <constructor-arg value="org.openmrs.scheduler.SchedulerService" />
     </bean>
 
+    <bean id="TestDrugOrderTagHandlerSupport"
+          class="org.openmrs.module.htmlformentry.handler.DrugOrderTagHandlerSupport1_6" />
+
+    <bean id="TestStandardRegimenTagHandlerSupport"
+          class="org.openmrs.module.htmlformentry.handler.StandardRegimenTagHandlerSupport1_6" />
 </beans>

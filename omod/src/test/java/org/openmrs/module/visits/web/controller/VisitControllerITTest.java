@@ -157,6 +157,8 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
         mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID)
             .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
             .param(ROWS_PARAM, String.valueOf(BAD_ROWS_COUNT)))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string("{\"error\":\"Invalid page size 0\",\"errorMessages\":null}"))
             .andReturn();
     }
 
