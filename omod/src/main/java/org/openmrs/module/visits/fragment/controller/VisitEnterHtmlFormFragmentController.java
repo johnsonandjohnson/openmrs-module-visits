@@ -88,7 +88,7 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
 
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggles);
-        setupFormEntrySession(fes, visitDomainWrapper, ui, sessionContext, returnUrl);
+        setupFormEntrySession(fes, visitDomainWrapper, null, ui, sessionContext, returnUrl);
         fes.getHtmlToDisplay();  // needs to happen before we validate or process a form
 
         // Validate and return with errors if any are found
@@ -121,6 +121,8 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
         Encounter formEncounter = fes.getContext().getMode() == FormEntryContext.Mode.ENTER
                 ? fes.getSubmissionActions().getEncountersToCreate().get(0) : encounter;
 
+        // this will handled in HFE (and could be removed from here) as-of HFE 3.9.0,
+        // see: https://issues.openmrs.org/browse/HTML-678
         // we don't want to lose any time information just because we edited it with a form that only collects date
         if (fes.getContext().getMode() == FormEntryContext.Mode.EDIT
                 && hasNoTimeComponent(formEncounter.getEncounterDatetime())) {
@@ -200,7 +202,8 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
     private void keepTimeComponentOfEncounterIfDateComponentHasNotChanged(Date previousEncounterDate,
             Encounter formEncounter) {
         if (previousEncounterDate != null
-                && new DateMidnight(previousEncounterDate).equals(new DateMidnight(formEncounter.getEncounterDatetime()))) {
+                && new DateMidnight(previousEncounterDate)
+                    .equals(new DateMidnight(formEncounter.getEncounterDatetime()))) {
             formEncounter.setEncounterDatetime(previousEncounterDate);
         }
     }
