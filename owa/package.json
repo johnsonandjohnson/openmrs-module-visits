@@ -21,7 +21,7 @@
     "@fortawesome/free-regular-svg-icons": "5.11.2",
     "@fortawesome/free-solid-svg-icons": "5.11.2",
     "@fortawesome/react-fontawesome": "0.1.4",
-    "@openmrs/react-components": "^1.3.0",
+    "@openmrs/react-components": "^1.4.0",
     "@openmrs/style-referenceapplication": "^0.1.0",
     "@types/react": "^16.4.2",
     "@types/react-dom": "^16.4.2",
