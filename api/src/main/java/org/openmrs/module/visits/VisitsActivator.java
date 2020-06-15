@@ -39,8 +39,7 @@ import java.util.Arrays;
 public class VisitsActivator extends BaseModuleActivator implements DaemonTokenAware {
 
     private static final Log LOGGER = LogFactory.getLog(VisitsActivator.class);
-
-    private JobSchedulerService schedulerService;
+    private static final String SCHEDULER_SERVICE_BEAN = "cfl.jobSchedulerService";
 
     /**
      * @see #started()
@@ -148,11 +147,6 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
     }
 
     private JobSchedulerService getSchedulerService() {
-        if (schedulerService == null) {
-            schedulerService = Context.getRegisteredComponent(
-                    "cfl.jobSchedulerService",
-                    JobSchedulerService.class);
-        }
-        return schedulerService;
+        return Context.getRegisteredComponent(SCHEDULER_SERVICE_BEAN, JobSchedulerService.class);
     }
 }
