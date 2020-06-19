@@ -8,7 +8,9 @@ import org.openmrs.module.visits.domain.PagingInfo;
 /**
  * Models the messaging controller parameters
  */
-public class PageableParams {
+public class PageableParams extends AbstractDTO {
+
+    private static final long serialVersionUID = 8249775572545602184L;
 
     /**
      * The default page to display.
