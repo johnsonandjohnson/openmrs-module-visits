@@ -12,7 +12,8 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import {
-  getNotifications
+  getNotifications,
+  removeFirstNotification
 } from '../../reducers/notification.reducer';
 import { IRootState } from '../../reducers';
 import { successToast, errorToast } from '@bit/soldevelo-omrs.cfl-components.toast-handler';
@@ -29,7 +30,13 @@ class Notification extends React.Component<IProps, IState> {
 
   componentDidUpdate() {
     if (this.props.notifications[0]) {
-      successToast(this.props.notifications[0].message);
+      const notification = this.props.notifications[0];
+      if (notification.errorMessage) {
+        errorToast(notification.message);
+      } else {
+        successToast(notification.message);
+      }
+      this.props.removeFirstNotification(this.props.notifications);
     }
   }
 
@@ -44,7 +51,8 @@ const mapStateToProps = ({ notification }: IRootState) => ({
 });
 
 const mapDispatchToProps = ({
-  getNotifications
+  getNotifications,
+  removeFirstNotification
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

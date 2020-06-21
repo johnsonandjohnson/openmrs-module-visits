@@ -15,6 +15,7 @@ import INotification from '../shared/model/notification';
 
 export const ACTION_TYPES = {
   GET_NOTIFICATION: 'notificationReducer/GET_NOTIFICATION',
+  UPDATE_NOTIFICATION: 'notificationReducer/UPDATE_NOTIFICATION',
   RESET: 'notificationReducer/RESET'
 };
 
@@ -43,8 +44,14 @@ export default (state = initialState, action) => {
         notificationLoading: false,
         notifications: action.payload.data
       };
-    case ACTION_TYPES.RESET:
+    case ACTION_TYPES.UPDATE_NOTIFICATION:
       return {
+        ...state,
+        notificationLoading: false,
+        notifications: action.payload
+      };
+    case ACTION_TYPES.RESET:
+      return { 
         ..._.cloneDeep(initialState)
       };
     default:
@@ -58,6 +65,14 @@ export const getNotifications = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_NOTIFICATION,
     payload: axiosInstance.get(notificationsUrl)
+  });
+};
+
+export const removeFirstNotification = (notifications: INotification[]) => async (dispatch) => {
+  notifications.shift();
+  await dispatch({
+    type: ACTION_TYPES.GET_NOTIFICATION,
+    payload: notifications
   });
 };
 
