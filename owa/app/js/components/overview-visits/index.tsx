@@ -21,7 +21,6 @@ import {
   OVERVIEW_TYPE_HEADER,
   OVERVIEW_STATUS_HEADER,
   OVERVIEW_NAME_HEADER,
-  OVERVIEW_PATIEND_ID_PREFIX,
   OVERVIEW_SEARCH_TITLE,
   OVERVIEW_DESCRIPTION,
 } from '../../shared/utils/messages';
@@ -86,7 +85,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
       Header: OVERVIEW_PATIENT_ID_HEADER,
       accessor: IDENTIFIER_ACCESSOR,
       Cell: props => {
-        return <div className="td-cell">{OVERVIEW_PATIEND_ID_PREFIX}&nbsp;{props.value}</div>;
+        return <div className="td-cell">{props.value}</div>;
       }
     };
   }

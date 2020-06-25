@@ -60,6 +60,5 @@ export const OVERVIEW_ACTUAL_DATE_HEADER = 'Actual Date';
 export const OVERVIEW_TIME_HEADER = 'Time';
 export const OVERVIEW_TYPE_HEADER = 'Type';
 export const OVERVIEW_STATUS_HEADER = 'Status';
-export const OVERVIEW_PATIEND_ID_PREFIX = 'OpenMRS ID:';
 export const OVERVIEW_SEARCH_TITLE = 'Search';
 export const OVERVIEW_DESCRIPTION = 'The results presented below are related to the current location.';
