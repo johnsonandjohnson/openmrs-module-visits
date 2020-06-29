@@ -13,6 +13,8 @@ import patient, { PatientState } from './patient.reducer';
 import scheduleVisit, { ScheduleVisitState } from './schedule-visit.reducer';
 import overview, { OverviewVisitState } from './overview-visits.reducer';
 import notification, { NotificationState } from './notification.reducer';
+import customizeReducer, { CustomizeState } 
+  from '@bit/soldevelo-omrs.cfl-components.customize/customize.reducer';
 
 export interface IRootState {
   readonly openmrs: any;
@@ -20,6 +22,7 @@ export interface IRootState {
   readonly scheduleVisit: ScheduleVisitState;
   readonly overview: OverviewVisitState;
   readonly notification: NotificationState;
+  readonly customizeReducer: CustomizeState;
 }
 
 export default combineReducers<IRootState>({
@@ -27,5 +30,6 @@ export default combineReducers<IRootState>({
   patient,
   scheduleVisit,
   overview,
-  notification
+  notification,
+  customizeReducer
 });

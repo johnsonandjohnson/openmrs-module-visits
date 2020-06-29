@@ -15,9 +15,11 @@ import { ScheduleVisitWithHeader as ScheduleVisit } from './components/hoc/with-
 import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
 import { withNotifications } from './components/hoc/with-notifications';
 import OverviewVisits from './components/overview-visits';
+import Customize from '@bit/soldevelo-omrs.cfl-components.customize'
 
 export default (store) => (
     <div>
+        <Customize />
         <Header />
         <BreadCrumb />
         <Switch>
