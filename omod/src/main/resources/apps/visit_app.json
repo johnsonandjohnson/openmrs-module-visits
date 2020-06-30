@@ -10,7 +10,7 @@
         "type": "link",
         "label": "visits.visits",
         "icon": "icon-calendar",
-        "order": 1,
+        "order": 3,
         "url": "owa/visits/index.html#/visits/manage/{{patient.uuid}}"
       }
     ]
