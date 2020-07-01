@@ -116,7 +116,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
           <Col sm={4}>{OVERVIEW_SEARCH_TITLE}</Col>
         </Row>
         <Row className="search-bar">
-          <Col sm={4}>
+          <Col sm={12}>
             <input
               type="text"
               value={this.props.search}
