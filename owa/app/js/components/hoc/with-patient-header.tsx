@@ -7,11 +7,12 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import Header from '../patient-header/header';
+import Header from '@bit/soldevelo-omrs.cfl-components.person-header';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import ScheduleVisit from '../schedule-visit/schedule-visit';
 import ManageVisits from '../manage-visits/manage-visits';
+import PersonStatus from '@bit/soldevelo-omrs.cfl-components.person-status';
 
 interface IWrappedComponentProps extends RouteComponentProps<{ patientUuid: string }> {
   isNew?: boolean;
@@ -19,10 +20,26 @@ interface IWrappedComponentProps extends RouteComponentProps<{ patientUuid: stri
 
 const withPatientHeader = (WrappedComponent) => {
   return class extends React.Component<IWrappedComponentProps> {
+    
+    getBaseUrl = () => {
+      const path = window.location.pathname;
+      return path.substring(0, path.indexOf('/owa/')) + '/';
+    }
+    
     render() {
+      const newProps = {
+        ...this.props,
+        patientUuid: this.props.match.params.patientUuid,
+        dashboardType: "PATIENT",
+        redirectUrl: this.getBaseUrl() + "coreapps/clinicianfacing/patient.page?patientId=" 
+          + this.props.match.params.patientUuid,
+        displayTelephone: true
+      };
       return (
           <div className="body-wrapper">
-            <Header patientUuid={this.props.match.params.patientUuid} />
+            <Header {...newProps}>
+              <PersonStatus patientUuid={newProps.patientUuid}/>
+            </Header>
             <div className="content">
               <WrappedComponent  {...this.props}/>
             </div>

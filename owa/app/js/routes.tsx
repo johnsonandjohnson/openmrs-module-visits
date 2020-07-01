@@ -16,6 +16,9 @@ import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-pa
 import { withNotifications } from './components/hoc/with-notifications';
 import OverviewVisits from './components/overview-visits';
 import Customize from '@bit/soldevelo-omrs.cfl-components.customize'
+import { initializeLocalizationWrapper } from '@bit/soldevelo-omrs.cfl-components.localization-wrapper';
+
+initializeLocalizationWrapper({});
 
 export default (store) => (
     <div>

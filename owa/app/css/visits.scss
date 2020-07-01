@@ -46,7 +46,8 @@ header .logo img {
 
 .body-wrapper {
     margin-top: 10px;
-    padding: 10px;
+    padding: 2px;
+    padding-top: 0;
     background-color: white;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -56,6 +57,10 @@ header .logo img {
     border-radius: 5px;
     min-height: 500px;
     justify-content: center;
+
+    .ReactTable {
+        margin: 5px;
+    }
 }
 
 .app-title {
