@@ -52,7 +52,7 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
 
 
   buildBreadCrumb = () =>
-    <div className="breadcrumb">
+    <div id="breadcrumbs" className="breadcrumb">
       {this.renderCrumbs(this.getCrumbs(this.state.current))}
     </div>
 
@@ -129,12 +129,12 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
   }
 
   renderDelimiter = () =>
-    <span className="breadcrumb-link-item">
+    <span className="breadcrumb-link-item breadcrumb-delimiter">
       <FontAwesomeIcon size="xs" icon={['fas', 'chevron-right']} />
     </span>
 
   renderHomeCrumb = () =>
-    <a href={OMRS_ROUTE} className="breadcrumb-link-item">
+    <a href={OMRS_ROUTE} className="breadcrumb-link-item home-crumb">
       <FontAwesomeIcon icon={['fas', 'home']} />
     </a>
 
