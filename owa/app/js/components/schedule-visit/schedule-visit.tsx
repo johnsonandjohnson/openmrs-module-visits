@@ -140,7 +140,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
   renderSaveButton = () =>
     <Button
       id="schedule-visit-save"
-      className="btn btn-success btn-md pull-right"
+      className="btn btn-success btn-md pull-right confirm"
       onClick={this.handleSave}>
       {SAVE_BUTTON_LABEL}
     </Button>;
