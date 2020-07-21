@@ -10,7 +10,7 @@
 import _ from 'lodash';
 
 import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
-import axiosInstance from '../config/axios';
+import axiosInstance from '@bit/soldevelo-omrs.cfl-components.shared/axios'
 import INotification from '../shared/model/notification';
 
 export const ACTION_TYPES = {
