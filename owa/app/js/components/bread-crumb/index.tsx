@@ -6,7 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import UrlPattern from 'url-pattern';
 import './bread-crumb.scss';
 import { UnregisterCallback } from 'history';
-import * as Msg from '../../shared/utils/messages';
+import * as Default from '../../shared/utils/messages';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { getPatient } from '../../reducers/patient.reducer';
 import { IRootState } from '../../reducers';
 
@@ -67,7 +68,7 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     } else if (!!MANAGE_VISIT_PATTERN.match(path.toLowerCase())) {
       return this.getManageVisitCrumbs(path);
     } else {
-      return [this.renderLastCrumb(Msg.GENERAL_MODULE_BREADCRUMB)];
+      return [this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_GENERAL_MODULE_BREADCRUMB', defaultMessage: Default.GENERAL_MODULE_BREADCRUMB }))];
     }
   }
 
@@ -87,29 +88,29 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     const match = pattern.match(path.toLowerCase());
     return this.renderCrumb(
       MANAGE_VISITS_ROUTE(match.patientUuid),
-      Msg.MANAGE_VISITS_BREADCRUMB
+      getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS_BREADCRUMB', defaultMessage: Default.MANAGE_VISITS_BREADCRUMB })
     );
   }
 
   getOverviewVisitCrumbs = (): Array<ReactFragment> => [
-    this.renderLastCrumb(Msg.OVERVIEW_VISIT_BREADCRUMB)
+    this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_VISIT_BREADCRUMB', defaultMessage: Default.OVERVIEW_VISIT_BREADCRUMB }))
   ];
 
   getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
     this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN),
-    this.renderLastCrumb(Msg.SCHEDULE_VISIT_BREADCRUMB)
+    this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_SCHEDULE_VISIT_BREADCRUMB', defaultMessage: Default.SCHEDULE_VISIT_BREADCRUMB }))
   ];
 
   getEditVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientNameCrumb(path, EDIT_VISIT_PATTERN),
     this.getManageVisitsCrumb(path, EDIT_VISIT_PATTERN),
-    this.renderLastCrumb(Msg.EDIT_VISIT_BREADCRUMB)
+    this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_EDIT_VISIT_BREADCRUMB', defaultMessage: Default.EDIT_VISIT_BREADCRUMB }))
   ];
 
   getManageVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientNameCrumb(path, MANAGE_VISIT_PATTERN),
-    this.renderLastCrumb(Msg.MANAGE_VISITS_BREADCRUMB)
+    this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS_BREADCRUMB', defaultMessage: Default.MANAGE_VISITS_BREADCRUMB }))
   ];
 
   renderCrumbs = (elements: Array<any>) => {

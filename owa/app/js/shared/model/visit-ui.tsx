@@ -2,7 +2,8 @@ import {ObjectUI} from "@bit/soldevelo-omrs.cfl-components.base-model";
 import {IForm} from "@bit/soldevelo-omrs.cfl-components.validation/model/form";
 import * as Yup from "yup";
 import _ from 'lodash';
-import * as Msg from '../../shared/utils/messages';
+import * as Default from '../../shared/utils/messages';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import {validateFormSafely} from '@bit/soldevelo-omrs.cfl-components.validation';
 import IVisitDetails from "./visit-details";
 
@@ -36,13 +37,13 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
 
   getValidationSchema(validateNotTouched: boolean, isEdit: boolean): Yup.ObjectSchema {
     const createValidators = {
-      type: Yup.string().test('mandatory check', Msg.FIELD_REQUIRED,
+      type: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
         v => this.validateRequiredField('type', v, validateNotTouched))
     };
     const editValidators = {
-      type: Yup.string().test('mandatory check', Msg.FIELD_REQUIRED,
+      type: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
         v => this.validateRequiredField('type', v, validateNotTouched)),
-      status: Yup.string().test('mandatory check', Msg.FIELD_REQUIRED,
+      status: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
         v => this.validateRequiredField('status', v, validateNotTouched))
     };
 

@@ -38,15 +38,11 @@ export const LOCATION_LABEL = 'Visit location';
 
 // Manage visits
 export const MANAGE_VISITS = 'Manage Visits';
-export const MANAGE_VISITS_COLUMNS = [
-  { Header: 'Planned Date', accessor: 'startDate'},
-  { Header: 'Actual Date', accessor: 'actualDate'},
-  { Header: 'Time', accessor: 'time'},
-  { Header: 'Location', accessor: 'locationName'},
-  { Header: 'Type', accessor: 'typeName'},
-  { Header: 'Status', accessor: 'status' }
-];
 export const ACTIONS_COLUMN_LABEL = 'Actions';
+export const TIME_COLUMN_LABEL = 'Time';
+export const LOCATION_COLUMN_LABEL = 'Location';
+export const TYPE_COLUMN_LABEL = 'Type';
+export const STATUS_COLUMN_LABEL = 'Status';
 
 // Validation
 export const FIELD_REQUIRED = 'Required';

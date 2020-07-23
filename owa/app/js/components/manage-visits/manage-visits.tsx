@@ -21,10 +21,8 @@ import {
   closeModal
 } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
-import {
-  MANAGE_VISITS,
-  SCHEDULE_VISIT
-} from '../../shared/utils/messages';
+import * as Default from '../../shared/utils/messages';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { history } from '../../config/redux-store';
 import RemoveVisitModal from './remove-visit-modal';
 import ManageVisitTable from './table';
@@ -61,7 +59,7 @@ class ManageVisits extends React.Component<IProps, IState> {
       <Button
         className="btn btn-success btn-md add-btn"
         onClick={this.handleScheduleVisitButton}>
-        {SCHEDULE_VISIT}
+        {getIntl().formatMessage({ id: 'VISITS_SCHEDULE_VISIT', defaultMessage: Default.SCHEDULE_VISIT })}
       </Button>
     );
   }
@@ -109,7 +107,7 @@ class ManageVisits extends React.Component<IProps, IState> {
           <div className="visit-header-section">
             <div className="header-left-section">
               <ControlLabel className="fields-form-title">
-                <h2>{MANAGE_VISITS}</h2>
+                <h2>{getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS', defaultMessage: Default.MANAGE_VISITS })}</h2>
               </ControlLabel>
             </div>
             <div className="header-right-section">

@@ -20,10 +20,8 @@ import {
   MIN_ROWS,
   PAGE_SIZE_OPTIONS
 } from './constants';
-import {
-  ACTIONS_COLUMN_LABEL,
-  MANAGE_VISITS_COLUMNS
-} from '../../../shared/utils/messages';
+import * as Default from '../../../shared/utils/messages';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { withFiltersChangedCallback } from './with-filters-changed-callback';
 import IVisit from '../../../shared/model/visit';
 import ITableParams from '../table-params';
@@ -101,7 +99,7 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
 
   private getActionsColumn = () => {
     return {
-      Header: ACTIONS_COLUMN_LABEL,
+      Header: getIntl().formatMessage({ id: 'VISITS_ACTIONS_COLUMN_LABEL', defaultMessage: Default.ACTIONS_COLUMN_LABEL }),
       getProps: () => {
         return {
           className: 'action-column'
@@ -143,7 +141,12 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
 
   getColumns = () => {
     return [
-      ...MANAGE_VISITS_COLUMNS,
+      { Header: getIntl().formatMessage({ id: 'VISITS_VISIT_PLANNED_DATE_LABEL', defaultMessage: Default.VISIT_PLANNED_DATE_LABEL }), accessor: 'startDate'},
+      { Header: getIntl().formatMessage({ id: 'VISITS_VISIT_ACTUAL_DATE_LABEL', defaultMessage: Default.VISIT_ACTUAL_DATE_LABEL }), accessor: 'actualDate'},
+      { Header: getIntl().formatMessage({ id: 'VISITS_TIME_COLUMN_LABEL', defaultMessage: Default.TIME_COLUMN_LABEL }), accessor: 'time'},
+      { Header: getIntl().formatMessage({ id: 'VISITS_LOCATION_COLUMN_LABEL', defaultMessage: Default.LOCATION_COLUMN_LABEL }), accessor: 'locationName'},
+      { Header: getIntl().formatMessage({ id: 'VISITS_TYPE_COLUMN_LABEL', defaultMessage: Default.TYPE_COLUMN_LABEL }), accessor: 'typeName'},
+      { Header: getIntl().formatMessage({ id: 'VISITS_STATUS_COLUMN_LABEL', defaultMessage: Default.STATUS_COLUMN_LABEL }), accessor: 'status' },
       this.getActionsColumn()
     ];
   }

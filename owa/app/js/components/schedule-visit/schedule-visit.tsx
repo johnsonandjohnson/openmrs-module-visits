@@ -15,22 +15,11 @@ import { Form, ControlLabel, FormGroup, FormControl, Col, Button, Row } from 're
 import { RouteComponentProps } from 'react-router-dom';
 import ErrorDesc from '@bit/soldevelo-omrs.cfl-components.error-description';
 import FormLabel from '@bit/soldevelo-omrs.cfl-components.form-label';
-import {
-  SCHEDULE_VISIT,
-  EDIT_VISIT,
-  VISIT_TYPE_LABEL,
-  VISIT_STATUS_LABEL,
-  VISIT_TIME_LABEL,
-  VISIT_PLANNED_DATE_LABEL,
-  VISIT_ACTUAL_DATE_LABEL,
-  SAVE_BUTTON_LABEL,
-  LOCATION_LABEL,
-  CANCEL_BUTTON_LABEL
-} from '../../shared/utils/messages';
+import * as Default from '../../shared/utils/messages';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import _ from 'lodash';
 import './schedule-visit.scss';
 import OpenMrsDatePicker from '@bit/soldevelo-omrs.cfl-components.openmrs-date-picker';
-import {convertToLocalString} from "../../shared/utils/time-util";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string,
@@ -108,31 +97,31 @@ class ScheduleVisit extends React.Component<IProps, IState> {
     </FormGroup>;
 
   renderVisitDate = (errors) =>
-    this.renderDatePicker(errors, VISIT_PLANNED_DATE_LABEL, 'startDate');
+    this.renderDatePicker(errors, getIntl().formatMessage({ id: 'VISITS_VISIT_PLANNED_DATE_LABEL', defaultMessage: Default.VISIT_PLANNED_DATE_LABEL }), 'startDate');
 
   renderActualDate = (errors) =>
-    this.renderDatePicker(errors, VISIT_ACTUAL_DATE_LABEL, 'actualDate');
+    this.renderDatePicker(errors, getIntl().formatMessage({ id: 'VISITS_VISIT_ACTUAL_DATE_LABEL', defaultMessage: Default.VISIT_ACTUAL_DATE_LABEL }), 'actualDate');
 
   renderLocation = (errors) =>
-    this.renderDropdown(errors, LOCATION_LABEL, 'location',
+    this.renderDropdown(errors, getIntl().formatMessage({ id: 'VISITS_LOCATION_LABEL', defaultMessage: Default.LOCATION_LABEL }), 'location',
       this.props.locations.map(type =>
         <option value={type.uuid} key={type.uuid}>{type.display}</option>
       ));
 
   renderVisitType = (errors) =>
-    this.renderDropdown(errors, VISIT_TYPE_LABEL, 'type',
+    this.renderDropdown(errors, getIntl().formatMessage({ id: 'VISITS_VISIT_TYPE_LABEL', defaultMessage: Default.VISIT_TYPE_LABEL }), 'type',
       this.props.visitTypes.map(type =>
         <option value={type.uuid} key={type.uuid}>{type.display}</option>
       ), true);
 
   renderVisitStatus = (errors) =>
-    this.renderDropdown(errors, VISIT_STATUS_LABEL, 'status',
+    this.renderDropdown(errors, getIntl().formatMessage({ id: 'VISITS_VISIT_STATUS_LABEL', defaultMessage: Default.VISIT_STATUS_LABEL }), 'status',
       this.props.visitStatuses.map(status =>
         <option value={status} key={status}>{status}</option>
       ), true);
 
   renderVisitTime = (errors) =>
-    this.renderDropdown(errors, VISIT_TIME_LABEL, 'time',
+    this.renderDropdown(errors, getIntl().formatMessage({ id: 'VISITS_VISIT_TIME_LABEL', defaultMessage: Default.VISIT_TIME_LABEL }), 'time',
       this.props.visitTimes.map(time =>
         <option value={time} key={time}>{time}</option>
       ));
@@ -142,7 +131,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
       id="schedule-visit-save"
       className="btn btn-success btn-md pull-right confirm"
       onClick={this.handleSave}>
-      {SAVE_BUTTON_LABEL}
+      {getIntl().formatMessage({ id: 'VISITS_SAVE_BUTTON_LABEL', defaultMessage: Default.SAVE_BUTTON_LABEL })}
     </Button>;
 
   renderCancelButton = () =>
@@ -150,7 +139,7 @@ class ScheduleVisit extends React.Component<IProps, IState> {
       id="schedule-visit-cancel"
       className="btn btn-danger btn-md"
       onClick={this.handleCancel}>
-      {CANCEL_BUTTON_LABEL}
+      {getIntl().formatMessage({ id: 'VISITS_CANCEL_BUTTON_LABEL', defaultMessage: Default.CANCEL_BUTTON_LABEL })}
     </Button>;
 
   render = () => {
@@ -161,7 +150,9 @@ class ScheduleVisit extends React.Component<IProps, IState> {
         <Form className="fields-form">
           <Row>
             <ControlLabel className="fields-form-title">
-              <h2>{this.isEdit() ? EDIT_VISIT : SCHEDULE_VISIT}</h2>
+              <h2>{this.isEdit() ? getIntl().formatMessage({ id: 'VISITS_EDIT_VISIT', defaultMessage: Default.EDIT_VISIT }) 
+                : getIntl().formatMessage({ id: 'VISITS_SCHEDULE_VISIT', defaultMessage: Default.SCHEDULE_VISIT })}
+              </h2>
             </ControlLabel>
             <Col md={3}>
               {this.renderVisitDate(errors)}

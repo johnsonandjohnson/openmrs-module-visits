@@ -13,7 +13,8 @@ import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axiosInstance from '@bit/soldevelo-omrs.cfl-components.shared/axios'
 import IVisitType from '../shared/model/visit-type';
 import VisitUI from '../shared/model/visit-ui';
-import * as Msg from '../shared/utils/messages';
+import * as Default from '../shared/utils/messages';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { handleRequest } from '@bit/soldevelo-omrs.cfl-components.request-toast-handler';
 import ILocation from '../shared/model/location';
 import IVisitDetails from '../shared/model/visit-details';
@@ -213,7 +214,9 @@ export const saveVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
       payload
     };
 
-    await handleRequest(dispatch, body, Msg.GENERIC_SUCCESS, Msg.GENERIC_FAILURE);
+    await handleRequest(dispatch, body,
+      getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
+      getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE }));
     if (successCallback) {
       successCallback();
     }
@@ -260,7 +263,9 @@ export const deleteVisit = (uuid: string, activePage: number, itemsPerPage: numb
     type: ACTION_TYPES.DELETE_VISIT,
     payload: axiosInstance.delete(url)
   };
-  await handleRequest(dispatch, body, Msg.GENERIC_SUCCESS, Msg.GENERIC_FAILURE);
+  await handleRequest(dispatch, body,
+    getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
+    getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE }));
   dispatch(getVisitsPage(activePage, itemsPerPage, patientUuid));
   dispatch(closeModal());
 };

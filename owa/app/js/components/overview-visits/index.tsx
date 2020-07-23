@@ -12,18 +12,8 @@ import { connect } from 'react-redux';
 import { Form, ControlLabel, FormGroup, Row, Col } from 'react-bootstrap';
 import { history } from '../../config/redux-store';
 
-import {
-  OVERVIEW_TITLE,
-  OVERVIEW_PATIENT_ID_HEADER,
-  OVERVIEW_DATE_HEADER,
-  OVERVIEW_ACTUAL_DATE_HEADER,
-  OVERVIEW_TIME_HEADER,
-  OVERVIEW_TYPE_HEADER,
-  OVERVIEW_STATUS_HEADER,
-  OVERVIEW_NAME_HEADER,
-  OVERVIEW_SEARCH_TITLE,
-  OVERVIEW_DESCRIPTION,
-} from '../../shared/utils/messages';
+import * as Default from '../../shared/utils/messages';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import {
   getOverviewPage,
   updateSearch,
@@ -67,7 +57,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
   private getNameCell = () => {
     return {
-      Header: OVERVIEW_NAME_HEADER,
+      Header: getIntl().formatMessage({ id: 'VISITS_OVERVIEW_NAME_HEADER', defaultMessage: Default.OVERVIEW_NAME_HEADER }),
       accessor: NAME_URL_ACCESSOR,
       Cell: props => {
         return (
@@ -82,7 +72,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
   private getIdCell = () => {
     return {
-      Header: OVERVIEW_PATIENT_ID_HEADER,
+      Header: getIntl().formatMessage({ id: 'VISITS_OVERVIEW_PATIENT_ID_HEADER', defaultMessage: Default.OVERVIEW_PATIENT_ID_HEADER }),
       accessor: IDENTIFIER_ACCESSOR,
       Cell: props => {
         return <div className="td-cell">{props.value}</div>;
@@ -109,11 +99,11 @@ class OverviewVisits extends React.Component<IProps, IState> {
       <>
         <Row>
           <Col sm={8}>
-            <p>{OVERVIEW_DESCRIPTION}</p>
+            <p>{getIntl().formatMessage({ id: 'VISITS_OVERVIEW_DESCRIPTION', defaultMessage: Default.OVERVIEW_DESCRIPTION })}</p>
           </Col>
         </Row>
         <Row>
-          <Col sm={4}>{OVERVIEW_SEARCH_TITLE}</Col>
+          <Col sm={4}>{getIntl().formatMessage({ id: 'VISITS_OVERVIEW_SEARCH_TITLE', defaultMessage: Default.OVERVIEW_SEARCH_TITLE })}</Col>
         </Row>
         <Row className="search-bar">
           <Col sm={12}>
@@ -140,11 +130,11 @@ class OverviewVisits extends React.Component<IProps, IState> {
         columns={[
           this.getIdCell(),
           this.getNameCell(),
-          this.getCell(OVERVIEW_DATE_HEADER, START_DATE_ACCESSOR),
-          this.getCell(OVERVIEW_ACTUAL_DATE_HEADER, ACTUAL_DATE_ACCESSOR),
-          this.getCell(OVERVIEW_TIME_HEADER, TIME_ACCESSOR),
-          this.getCell(OVERVIEW_TYPE_HEADER, TYPE_ACCESSOR),
-          this.getCell(OVERVIEW_STATUS_HEADER, STATUS_ACCESSOR)
+          this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_DATE_HEADER', defaultMessage: Default.OVERVIEW_DATE_HEADER }), START_DATE_ACCESSOR),
+          this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_ACTUAL_DATE_HEADER', defaultMessage: Default.OVERVIEW_ACTUAL_DATE_HEADER }), ACTUAL_DATE_ACCESSOR),
+          this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TIME_HEADER', defaultMessage: Default.OVERVIEW_TIME_HEADER }), TIME_ACCESSOR),
+          this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TYPE_HEADER', defaultMessage: Default.OVERVIEW_TYPE_HEADER }), TYPE_ACCESSOR),
+          this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_STATUS_HEADER', defaultMessage: Default.OVERVIEW_STATUS_HEADER }), STATUS_ACCESSOR)
         ]}
         query={this.props.search}
         pages={this.props.pages}
@@ -164,7 +154,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
           <div className="overview-visits">
             <Form className="fields-form">
               <ControlLabel className="fields-form-title">
-                <h2>{OVERVIEW_TITLE}</h2>
+                <h2>{getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TITLE', defaultMessage: Default.OVERVIEW_TITLE })}</h2>
               </ControlLabel>
               {this.renderSearchBar()}
               <FormGroup>
