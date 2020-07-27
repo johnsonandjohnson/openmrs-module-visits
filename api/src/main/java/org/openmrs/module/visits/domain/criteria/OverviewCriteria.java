@@ -3,11 +3,15 @@ package org.openmrs.module.visits.domain.criteria;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
+import org.hibernate.criterion.Subqueries;
 import org.openmrs.Location;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PersonName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,11 +23,12 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
 
     private static final String PATH_SEPARATOR = ".";
     private static final String PATIENT_PATH = "patient";
+    private static final String PERSON_PATH = "person";
     private static final String PATIENT_ALIAS = "patient";
     private static final String NAMES_ALIAS = "names";
-    private static final String NAMES_PATH = PATIENT_PATH + PATH_SEPARATOR + NAMES_ALIAS;
+    private static final String NAMES_PATH = NAMES_ALIAS + PATH_SEPARATOR + PERSON_PATH;
     private static final String IDENTIFIERS_ALIAS = "identifiers";
-    private static final String IDENTIFIERS_PATH = PATIENT_PATH + PATH_SEPARATOR + IDENTIFIERS_ALIAS;
+    private static final String IDENTIFIERS_PATH = IDENTIFIERS_ALIAS + PATH_SEPARATOR + PATIENT_PATH;
     private static final String IDENTIFIERS_PREFERRED_PATH = "identifiers.preferred";
     private static final String IDENTIFIERS_IDENTIFIER_PATH = "identifiers.identifier";
     private static final String NAMES_PREFERRED_PATH = "names.preferred";
@@ -71,11 +76,23 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
 
     private void addQueryCriteria(Criteria c) {
         if (StringUtils.isNotBlank(query)) {
-            c.createAlias(PATIENT_PATH, PATIENT_ALIAS, JoinType.LEFT_OUTER_JOIN);
-            c.createAlias(NAMES_PATH, NAMES_ALIAS, JoinType.LEFT_OUTER_JOIN);
-            c.createAlias(IDENTIFIERS_PATH, IDENTIFIERS_ALIAS, JoinType.LEFT_OUTER_JOIN);
-            c.add(Restrictions.or(getIdentifierCriterion(), getNameCriteria()));
+            DetachedCriteria patientNames = getNamesSubQuery();
+            DetachedCriteria patientIdentifier = getIdentifierSubQuery();
+            c.add(Restrictions.or(Subqueries.propertyIn(PATIENT_ALIAS, patientNames),
+                    Subqueries.propertyIn(PATIENT_ALIAS, patientIdentifier)));
         }
+    }
+
+    private DetachedCriteria getIdentifierSubQuery() {
+        return DetachedCriteria.forClass(PatientIdentifier.class, IDENTIFIERS_ALIAS)
+                        .add(getIdentifierCriterion())
+                        .setProjection(Projections.property(IDENTIFIERS_PATH));
+    }
+
+    private DetachedCriteria getNamesSubQuery() {
+        return DetachedCriteria.forClass(PersonName.class, NAMES_ALIAS)
+                        .add(getNameCriteria())
+                        .setProjection(Projections.property(NAMES_PATH));
     }
 
     private Criterion getNameCriteria() {

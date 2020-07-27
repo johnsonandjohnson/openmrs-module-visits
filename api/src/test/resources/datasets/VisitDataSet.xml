@@ -47,6 +47,17 @@
             date_created="2019-11-16 15:57:09.0"
             voided="false"/>
 
+    <patient_identifier
+            patient_identifier_id="2513"
+            patient_id="2512"
+            identifier="no-unique-identifier2"
+            identifier_type="100"
+            preferred="0"
+            location_id="1"
+            creator="1"
+            date_created="2019-11-16 15:57:09.0"
+            voided="false"/>
+
     <visit_type
         visit_type_id="777"
         name="Follow-up"
@@ -65,6 +76,7 @@
         patient_id="2512"
         voided="false"
         void_reason=""
+        location_id="1"
         uuid="16f280e0-3e91-48b4-acb2-c29c30595b45"
     />
 
