@@ -18,8 +18,8 @@
     </description>
 
     <scm>
-        <connection>scm:git:git@bitbucket.org/soldevelo/omrs-visits.git</connection>
-        <developerConnection>scm:git:git@bitbucket.org/soldevelo/omrs-visits.git</developerConnection>
+        <connection>scm:git:git@bitbucket.org:soldevelo/omrs-visits.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:soldevelo/omrs-visits.git</developerConnection>
         <url>https://bitbucket.org/soldevelo/omrs-visits/</url>
     </scm>
 
