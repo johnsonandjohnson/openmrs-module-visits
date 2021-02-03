@@ -28,6 +28,8 @@ public class NotificationControllerTest extends BaseModuleWebContextSensitiveTes
     private static final String SUCCESS_MESSAGE = "Success message";
     private static final String ERROR_MESSAGE = "Error message";
     private static final String NOT_IMPORTANT_MESSAGE = "Not important message";
+    private static final String RAW_SCRIPT_TAG = "<script>eatCookie();</script>";
+    private static final String ESCAPED_SCRIPT_TAG = "&lt;script&gt;eatCookie();&lt;/script&gt;";
     private MockMvc mockMvc;
 
     @Autowired
@@ -126,6 +128,24 @@ public class NotificationControllerTest extends BaseModuleWebContextSensitiveTes
                 .andExpect(jsonPath("$.length()", is(0)));
     }
 
+    @Test
+    public void shouldEscapeHtmlCharactersInSuccess() throws Exception {
+        final MockHttpSession session = buildMessageSessionWithXSSInSuccess();
+        mockMvc.perform(MockMvcRequestBuilders.get(VISITS_NOTIFICATIONS_URL)
+                .session(session))
+                .andExpect(jsonPath("$.[*].message").value(ESCAPED_SCRIPT_TAG))
+                .andExpect(jsonPath("$.[*].errorMessage").value(false));
+    }
+
+    @Test
+    public void shouldEscapeHtmlCharactersInError() throws Exception {
+        final MockHttpSession session = buildMessageSessionWithXSSInError();
+        mockMvc.perform(MockMvcRequestBuilders.get(VISITS_NOTIFICATIONS_URL)
+                .session(session))
+                .andExpect(jsonPath("$.[*].message").value(ESCAPED_SCRIPT_TAG))
+                .andExpect(jsonPath("$.[*].errorMessage").value(true));
+    }
+
     private HashMap<String, Object> buildSuccessMessageAttributes() {
         HashMap<String, Object> sessionAttributes = new HashMap<String, Object>();
         sessionAttributes.put(VisitsUiConstants.EMR_TOAST_MESSAGE, "true");
@@ -170,6 +190,20 @@ public class NotificationControllerTest extends BaseModuleWebContextSensitiveTes
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(VisitsUiConstants.EMR_TOAST_MESSAGE, "true");
         session.setAttribute(VisitsUiConstants.EMR_INFO_MESSAGE, SUCCESS_MESSAGE);
+        return session;
+    }
+
+    private MockHttpSession buildMessageSessionWithXSSInSuccess() {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(VisitsUiConstants.EMR_TOAST_MESSAGE, "true");
+        session.setAttribute(VisitsUiConstants.EMR_INFO_MESSAGE, RAW_SCRIPT_TAG);
+        return session;
+    }
+
+    private MockHttpSession buildMessageSessionWithXSSInError() {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(VisitsUiConstants.EMR_TOAST_MESSAGE, "true");
+        session.setAttribute(VisitsUiConstants.EMR_ERROR_MESSAGE, RAW_SCRIPT_TAG);
         return session;
     }
 }

@@ -1,5 +1,6 @@
 package org.openmrs.module.visits.web.controller;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.visits.api.dto.ErrorResponseDTO;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import static org.openmrs.module.visits.api.model.ErrorMessageEnum.ERR_BAD_PARAM;
 import static org.openmrs.module.visits.api.model.ErrorMessageEnum.ERR_SYSTEM;
 
@@ -65,5 +67,15 @@ public abstract class BaseRestController {
 
     protected Log getLogger() {
         return logger;
+    }
+
+    /**
+     * Gets a string representation of an {@code obj} and escapes for HTML.
+     *
+     * @param obj the Object to get the escaped String representation
+     * @return the String or null if obj was null
+     */
+    protected String toStringWithEscape(Object obj) {
+        return escapeHtml4(ObjectUtils.toString(obj, null));
     }
 }

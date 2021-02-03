@@ -34,14 +34,15 @@ public class NotificationController extends BaseRestController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public List<Notification> getNotifications(HttpServletRequest request) {
-        List<Notification> notifications = new ArrayList<>();
-        HttpSession session = request.getSession();
-        String toastMessage = (String) session.getAttribute(VisitsUiConstants.EMR_TOAST_MESSAGE);
+        final List<Notification> notifications = new ArrayList<>();
+        final HttpSession session = request.getSession();
+        final String toastMessage = toStringWithEscape(session.getAttribute(VisitsUiConstants.EMR_TOAST_MESSAGE));
         if (StringUtils.isNotBlank(toastMessage) && "true".equals(toastMessage)) {
             notifications.add(new NotificationBuilder()
-                    .withErrorMessage((String) session.getAttribute(VisitsUiConstants.EMR_ERROR_MESSAGE))
-                    .withInfoMessage((String) session.getAttribute(VisitsUiConstants.EMR_INFO_MESSAGE))
+                    .withErrorMessage(toStringWithEscape(session.getAttribute(VisitsUiConstants.EMR_ERROR_MESSAGE)))
+                    .withInfoMessage(toStringWithEscape(session.getAttribute(VisitsUiConstants.EMR_INFO_MESSAGE)))
                     .build());
+
             clearToastSessionAttributes(session);
         }
         return notifications;
