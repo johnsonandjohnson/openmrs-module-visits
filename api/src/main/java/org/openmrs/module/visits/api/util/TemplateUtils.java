@@ -2,9 +2,14 @@ package org.openmrs.module.visits.api.util;
 
 import java.util.Map;
 
+import static org.springframework.util.ObjectUtils.nullSafeToString;
+
 public final class TemplateUtils {
-    private static final String START_PARENTHESIS_REGEX = "\\{\\{";
-    private static final String END_PARENTHESIS_REGEX = "\\}\\}";
+    private static final String START_PARENTHESIS = "{{";
+    private static final String END_PARENTHESIS = "}}";
+
+    private TemplateUtils() {
+    }
 
     public static String fillTemplate(String template, Map<String, String> params) {
         String result = template;
@@ -14,10 +19,7 @@ public final class TemplateUtils {
         return result;
     }
 
-    public static String fillTemplate(String template, String param, String value) {
-        return template.replaceAll(START_PARENTHESIS_REGEX + param + END_PARENTHESIS_REGEX, value);
-    }
-
-    private TemplateUtils() {
+    static String fillTemplate(String template, String param, String value) {
+        return template.replace(START_PARENTHESIS + param + END_PARENTHESIS, nullSafeToString(value));
     }
 }
