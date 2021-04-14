@@ -28,7 +28,7 @@
         "label": "visits.overview",
         "url": "owa/visits/index.html#/visits/overview",
         "icon": "icon-calendar",
-        "requiredPrivilege": "View Visits"
+        "requiredPrivilege": "Get Visits"
       }
     ]
   }
