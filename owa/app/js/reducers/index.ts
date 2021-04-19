@@ -14,7 +14,7 @@ import scheduleVisit, { ScheduleVisitState } from './schedule-visit.reducer';
 import overview, { OverviewVisitState } from './overview-visits.reducer';
 import notification, { NotificationState } from './notification.reducer';
 import customizeReducer, { CustomizeState } 
-  from '@bit/soldevelo-omrs.cfl-components.customize/customize.reducer';
+  from '@bit/soldevelo-cfl.omrs-components.customize/customize.reducer';
 import person, { PersonState }
   from '@bit/soldevelo-omrs.cfl-components.person-header/person-header/person.reducer';
 import personStatus, { PersonStatusState } 
