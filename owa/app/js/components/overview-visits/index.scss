@@ -7,19 +7,166 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-.overview-visits {
-
-  h2 {
-    font-size: 1.3em;
-    color: #009384;
-  }
+ #app .overview-visits {
 
   .td-cell {
     text-align: center;
     margin: auto;
   }
 
-  .search-bar {
-    margin-bottom: 0.5em;
+  .search-section {
+    margin-top: 1rem;
+    background-color: white;
+    .visit-search {
+      display: flex;
+      position: relative;
+      .search-bar {
+        flex-grow: 1;
+        .search-icon {
+          position: absolute;
+          top: 1em;
+          left: 2em;
+        }
+        .search-input {
+          padding: 1.65em 1.65em 1.65em 4em;
+          border-color: #eaeaea !important;
+          font-size: inherit;
+          font-family: CircularStd-Book;
+          font-style: italic;
+          margin: 0;
+        }
+        .date-range-picker {
+          color: red;
+        }
+      }
+    }
+    .visit-table {
+      .helper-text {
+        font-size: 14px;
+        padding: 0 0 0.5rem 2rem;
+      }
+      .ReactTable {
+        border: none;          
+        .rt-thead.-header {
+          pointer-events: none;
+          box-shadow: none;
+          .rt-tr {
+            text-transform: uppercase;
+            color:#212529;
+            font-weight: 400;
+            background-color: white !important;
+          }
+        }
+        .rt-tr-group {
+          border: 0;
+          .rt-tr:hover {
+            cursor: pointer;
+            background-color: rgba(0,0,0,.15) !important;
+          }
+          .rt-tr.-odd {
+            background-color: rgba(0,0,0,.05) !important;
+            &:hover {
+              background-color: rgba(0,0,0,.15) !important;
+            }
+          }
+        }
+        .rt-th, .rt-td {
+          padding: 0.2rem;
+          border: 0;
+          white-space: break-spaces;
+          word-break: break-word;
+          font-size: 12px;
+          font-weight: normal;
+          @media only screen and (min-width: 768px) {
+            font-size: 14px;
+            padding: 0.5rem;
+          }
+          @media only screen and (min-width: 1280px) {
+            font-size: 16px;
+            padding: 0.75rem;
+          }
+        }
+        .pagination-bottom {
+          .-pagination div {
+            background: none;
+            button {
+              max-width: 100%;
+              cursor: pointer;
+              border-radius: 0;
+              background: none;
+              &:hover {
+                background-color: rgba(0,0,0,.15);;
+              }
+              span {
+                color: #212529;
+              }
+            }
+          }
+        }
+      }
+    }
+    form {
+      overflow: initial;
+    }
+    .form-control {
+      outline: none !important;
+      border: 1px solid #ced4da !important;
+      box-shadow: none;
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+      }
+    }
+    input {
+      font-family: CircularStd-Book;
+      font-size: 14px;
+      color: #333333;
+      opacity: 0.5;
+      &::placeholder {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .helper-text {
+    font-family: CircularStd-Book;
+    font-size: 16px;
+    color: #333333;
+    opacity: 0.5;
+  }
+
+  .DateRangePicker {
+    > div {
+      height: 100%;
+    }
+    .DateRangePickerInput {
+      height: 100%;
+      border-radius: 0;
+      border-color: rgba(234,234,234,.5);
+      padding-right: 45px;
+      .DateInput {
+        height: 100%;
+        display: inline-flex;
+        .DateInput_input {
+          margin-top: 0;
+          outline: none;
+          font-style: italic;
+          font-weight: 400;
+          &:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+          }
+        }
+      }
+      .DateRangePickerInput_arrow {
+        margin: 0 0.5rem;
+        opacity: 0.5;
+      }
+      .DateRangePicker_picker strong {
+        font-family: CircularStd-Book;
+      }
+      .DateRangePickerInput_clearDates {
+        margin: 0 5px;
+      }
+    }
   }
 }

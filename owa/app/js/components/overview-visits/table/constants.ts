@@ -1,4 +1,4 @@
-export const DEFAULT_ITEMS_PER_PAGE = 10;
+export const DEFAULT_ITEMS_PER_PAGE = 100;
 export const DEFAULT_SORT = 'id';
 export const DEFAULT_ORDER = 'desc';
 export const MIN_ROWS = 0;

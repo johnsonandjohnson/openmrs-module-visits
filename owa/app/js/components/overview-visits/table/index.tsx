@@ -36,6 +36,7 @@ export interface ITableProps {
   resizable?: boolean,
   noDataText? : string;
   fetchDataCallback(activePage: number, itemsPerPage: number, sort: string, order: string, filters: {}, query?: string): void;
+  onRowClick(rowEntity: {}): void;
 };
 
 export default class OverviewVisitTable extends React.PureComponent<ITableProps, IPaginationBaseState> {
@@ -128,6 +129,9 @@ export default class OverviewVisitTable extends React.PureComponent<ITableProps,
           sortable={_.get(this.props, 'sortable', true)}
           multiSort={_.get(this.props, 'multiSort', true)}
           resizable={_.get(this.props, 'resizable', true)}
+          getTrProps={(_, rowInfo) => ({
+            onClick: () => this.props.onRowClick(rowInfo.original)
+          })}
         />
       </div>
     );
