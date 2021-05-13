@@ -6,77 +6,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-@import '~@fullcalendar/core/main.css';
-@import '~@fullcalendar/daygrid/main.css';
 
-body {
-    font-family: "OpenSans", Arial, sans-serif;
-    -webkit-font-smoothing: subpixel-antialiased;
-    max-width: 1000px;
-    margin: 10px auto;
-    background: #eeeeee;
-    color: #363463;
-    font-size: 16px;
-}
-
-header {
-    position: relative;
-    background-color: #00463f;
-    color: #CCC;
-    line-height: 1em;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -o-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    border-radius: 5px;
-    display: block;
-    min-height: 48px;
-}
-
-header .logo {
-    float: left;
-    margin: 4px;
-    display: block;
-}
-
-header .logo img {
-    width: 120px;
-}
-
-.body-wrapper {
-    margin-top: 10px;
-    padding-top: 0;
-    background-color: white;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -o-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    border-radius: 5px;
-    min-height: 500px;
-    justify-content: center;
-
-    .content {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-}
-
-.app-title {
-    display: block;
-    float: right;
-    color: #eeeeee;
-    font-size: 32px;
-    margin: 4px;
-    height: 100%;
-    padding-top: 12px;
-    padding-right: 5px;
-}
-
-.instructions {
-    align-self: center;
-}
 
 .btn-success {
     color: #fff;
@@ -84,6 +14,9 @@ header .logo img {
     border-color: #28a745;
 }
 
-.u-mt-8 {
-    margin-top: 8px !important;
+h2 {
+    color: #333333 !important;
+    font-size: 22px !important;
+    font-weight: inherit !important;
+    margin: 0 !important;
 }
