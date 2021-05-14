@@ -27,6 +27,10 @@ public final class DateUtil {
         return DateUtils.addSeconds(DateUtil.now(), (int) seconds);
     }
 
+    public static Date getDatePlusDays(Date date, int numberOfDays) {
+        return DateUtils.addDays(date, numberOfDays);
+    }
+
     public static boolean isNotAfter(Date first, Date second) {
         return !first.after(second);
     }
@@ -70,6 +74,31 @@ public final class DateUtil {
             return new Date(date.getTime());
         }
         return date;
+    }
+
+    public static Date getDateIgnoringTime(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTime();
+    }
+
+    public static Date getLastDayOfCurrentWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMaximum(Calendar.DAY_OF_WEEK));
+
+        return calendar.getTime();
+    }
+
+    public static Date getLastDayOfCurrentMonth() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        return calendar.getTime();
     }
 
     private static String convertDate(String date, String fromFormat, String toFormat) throws ParseException {

@@ -103,7 +103,8 @@ public class VisitServiceImplTest extends ContextMockedTest {
         doReturn(location)
                 .when(getLocationService()).getLocationByUuid(location.getUuid());
 
-        List<Visit> visitsForLocation = visitService.getVisitsForLocation(location.getUuid(), new PagingInfo(), null);
+        List<Visit> visitsForLocation = visitService.getVisitsForLocation(location.getUuid(), new PagingInfo(),
+                null, null, null, null, null);
         assertThat(visitsForLocation, org.hamcrest.Matchers.contains(visit));
     }
 }
