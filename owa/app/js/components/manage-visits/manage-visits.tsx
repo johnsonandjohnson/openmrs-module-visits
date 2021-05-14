@@ -30,8 +30,9 @@ import IModalParams from './modal-params';
 import ITableParams from './table-params';
 import './manage-visits.scss';
 import { formatDateIfDefined } from '../../shared/utils/date-util';
+import { SINGLE_PAGE_NUMBER } from './table/constants';
 
-const MANAGE_DATE_FORMAT = 'DD.MM.YYYY';
+const MANAGE_DATE_FORMAT = 'DD MMM YYYY';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string
@@ -80,7 +81,7 @@ class ManageVisits extends React.Component<IProps, IState> {
       fetchDataCallback={this.getVisits}
       sortable={false}
       multiSort={false}
-      showPagination={true}
+      showPagination={this.props.visitsPagesCount > SINGLE_PAGE_NUMBER}
     />
 
   confirm = (modalParams: IModalParams | null) => {
@@ -108,6 +109,9 @@ class ManageVisits extends React.Component<IProps, IState> {
             <div className="header-left-section">
               <ControlLabel className="fields-form-title">
                 <h2>{getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS', defaultMessage: Default.MANAGE_VISITS })}</h2>
+                <div className="helper-text">
+                  {getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS_DESCRIPTION', defaultMessage: Default.OVERVIEW_DESCRIPTION })}
+                </div>
               </ControlLabel>
             </div>
             <div className="header-right-section">

@@ -40,5 +40,6 @@
     "VISITS_OVERVIEW_SEARCH_PLACEHOLDER": "Filter by id or name",
     "VISITS_OVERVIEW_TABLE_ENTER_SEARCH": "For the search results to appear, enter at least 3 characters.",
     "VISITS_OVERVIEW_TABLE_NO_RECORDS": "No records.",
-    "VISITS_OVERVIEW_TABLE_RECORDS_FOUND": "records found."
+    "VISITS_OVERVIEW_TABLE_RECORDS_FOUND": "records found.",
+    "VISITS_MANAGE_VISITS_DESCRIPTION": "Create, edit and delete visits."
 }
