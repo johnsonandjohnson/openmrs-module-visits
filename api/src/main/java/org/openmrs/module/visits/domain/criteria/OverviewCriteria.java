@@ -136,10 +136,12 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
                criteria.add(Restrictions.ge(START_DATE_TIME_FIELD_NAME, today));
                criteria.add(Restrictions.lt(START_DATE_TIME_FIELD_NAME, tomorrow));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.WEEK.name())) {
-               Date lastDayOfWeek = DateUtil.getDateIgnoringTime(DateUtil.getLastDayOfCurrentWeek());
+               Date lastDayOfWeek = DateUtil.getDateIgnoringTime(
+                       DateUtil.getLastDayOfCurrentWeekDateFromGivenDate(DateUtil.now()));
                criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, lastDayOfWeek));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.MONTH.name())) {
-                Date lastDayOfMonth = DateUtil.getDateIgnoringTime(DateUtil.getLastDayOfCurrentMonth());
+                Date lastDayOfMonth = DateUtil.getDateIgnoringTime(
+                        DateUtil.getLastDayOfCurrentMonthDateFromGivenDate(DateUtil.now()));
                 criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, lastDayOfMonth));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.ALL.name())) {
                 criteria.add(Restrictions.ge(START_DATE_TIME_FIELD_NAME, today));

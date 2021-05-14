@@ -87,18 +87,29 @@ public final class DateUtil {
         return calendar.getTime();
     }
 
-    public static Date getLastDayOfCurrentWeek() {
+    public static Date getLastDayOfCurrentWeekDateFromGivenDate(Date date) {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMaximum(Calendar.DAY_OF_WEEK));
 
         return calendar.getTime();
     }
 
-    public static Date getLastDayOfCurrentMonth() {
+    public static Date getLastDayOfCurrentMonthDateFromGivenDate(Date date) {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 
         return calendar.getTime();
+    }
+
+    public static Date convertStringToDate(String date, String format) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        return formatter.parse(date);
+    }
+
+    public static String convertDate(Date date, String toFormat) {
+        return new SimpleDateFormat(toFormat).format(date);
     }
 
     private static String convertDate(String date, String fromFormat, String toFormat) throws ParseException {
@@ -106,10 +117,6 @@ public final class DateUtil {
         Date myDate = newDateFormat.parse(date);
         newDateFormat.applyPattern(toFormat);
         return newDateFormat.format(myDate);
-    }
-
-    private static String convertDate(Date date, String toFormat) {
-        return new SimpleDateFormat(toFormat).format(date);
     }
 
     private DateUtil() { }
