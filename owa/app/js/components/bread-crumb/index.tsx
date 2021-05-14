@@ -15,10 +15,7 @@ const EDIT_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid/schedule/
 const OVERVIEW_VISIT_PATTERN = new UrlPattern(`/visits/overview`);
 const SCHEDULE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid/schedule`);
 const MANAGE_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid*`);
-
-const MODULE_ROUTE = '/';
 const OMRS_ROUTE = '../../';
-const OVERVIEW_VISITS_ROUTE = `/visits/overview`;
 const MANAGE_VISITS_ROUTE = patientUuid => `/visits/manage/${patientUuid}`;
 const PATIENT_DASHBOARD_ROUTE = patientUuid => `${OMRS_ROUTE}coreapps/clinicianfacing/patient.page?patientId=${patientUuid}`;
 
@@ -72,16 +69,19 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     }
   }
 
-  getPatientNameCrumb = (path: string, pattern: UrlPattern) => {
+  getPatientLabelCrumb = (path: string, pattern: UrlPattern) => {
+    const { patient, getPatient } = this.props;
     const match = pattern.match(path.toLowerCase());
     const patientUuid = match.patientUuid;
 
-    if (this.props.patient.uuid != patientUuid) {
-      this.props.getPatient(patientUuid);
+    if (patient.uuid != patientUuid) {
+      getPatient(patientUuid);
     }
 
-    const patientName = this.props.patient.person ? this.props.patient.person.display : '';
-    return this.renderCrumb(PATIENT_DASHBOARD_ROUTE(patientUuid), patientName, true)
+    const patientLabel = !!patient.person
+      ? `${patient.person.display} (${patient.person.age}/${patient.person.gender})`
+      : '';
+    return this.renderCrumb(PATIENT_DASHBOARD_ROUTE(patientUuid), patientLabel, true)
   }
 
   getManageVisitsCrumb = (path: string, pattern: UrlPattern) => {
@@ -97,19 +97,19 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
   ];
 
   getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => [
-    this.getPatientNameCrumb(path, SCHEDULE_VISIT_PATTERN),
+    this.getPatientLabelCrumb(path, SCHEDULE_VISIT_PATTERN),
     this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN),
     this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_SCHEDULE_VISIT_BREADCRUMB', defaultMessage: Default.SCHEDULE_VISIT_BREADCRUMB }))
   ];
 
   getEditVisitCrumbs = (path: string): Array<ReactFragment> => [
-    this.getPatientNameCrumb(path, EDIT_VISIT_PATTERN),
+    this.getPatientLabelCrumb(path, EDIT_VISIT_PATTERN),
     this.getManageVisitsCrumb(path, EDIT_VISIT_PATTERN),
     this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_EDIT_VISIT_BREADCRUMB', defaultMessage: Default.EDIT_VISIT_BREADCRUMB }))
   ];
 
   getManageVisitCrumbs = (path: string): Array<ReactFragment> => [
-    this.getPatientNameCrumb(path, MANAGE_VISIT_PATTERN),
+    this.getPatientLabelCrumb(path, MANAGE_VISIT_PATTERN),
     this.renderLastCrumb(getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS_BREADCRUMB', defaultMessage: Default.MANAGE_VISITS_BREADCRUMB }))
   ];
 

@@ -8,7 +8,7 @@
  */
 
 .manage-visits {
-  margin-left: 10px;
+  margin-top: 20px;
 
   h2 {
     font-size: 1.3em;
@@ -17,8 +17,12 @@
 
   .visit-header-section {
     display: flex;
-    padding: 10px;
+    padding: 10px 15px;
     overflow: hidden;
+    background-color: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    border-left: 1px solid rgba(0, 0, 0, 0.15);
+    border-right: 1px solid rgba(0, 0, 0, 0.15);
   }
 
   .header-left-section {
@@ -31,13 +35,13 @@
     width: 50%;
   }
 
+  .form-group {
+    border: 1px solid rgba(0, 0, 0, 0.15); 
+  }
+
   .schedule-button {
     float: right;
     margin-top: 30px;
-  }
-
-  .fields-form {
-    margin-top: -20px;
   }
 
   .action-column {

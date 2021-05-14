@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Form, FormGroup, Input, Spinner } from 'reactstrap';
+import { Form, FormGroup, Input } from 'reactstrap';
 import { history } from '../../config/redux-store';
 import _ from 'lodash';
 // TODO: Once AGRE-1584 is developed, date range filter
@@ -29,6 +29,7 @@ import { formatDateIfDefined } from '../../shared/utils/date-util';
 import { IRootState } from '../../reducers';
 import './index.scss';
 import OverviewVisitTable from "./table";
+import { SINGLE_PAGE_NUMBER } from './table/constants';
 // TODO: Once AGRE-1584 is developed, date range filter
 // among other additional filters will be delivered in AGRE-1593
 //import { DateRangePicker } from "react-dates";
@@ -44,7 +45,6 @@ const STATUS_ACCESSOR = 'status';
 const OVERVIEW_DATE_FORMAT = 'DD MMM YYYY';
 const SEARCH_INPUT_DELAY = 500;
 const SEARCH_INPUT_MIN_CHARS = 3;
-const SINGLE_PAGE_NUMBER = 1;
 
 const searchIcon = require('../../../img/search.png');
 
@@ -208,7 +208,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
       <div className="visit-table">
         <div className="helper-text">
           {this.props.loading ? (
-            <Spinner color="dark" size="sm" />
+            <div className="spinner-border spinner-border-sm" />
           ) : (
             this.helperText(this.state.query, this.props.loading, this.props.visits.length)
           )}
