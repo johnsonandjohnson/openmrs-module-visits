@@ -50,6 +50,7 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
     private static final String ATTRIBUTE_TYPE = "attributeType";
     private static final String NAME = "name";
     private static final String VISIT_STATUS_ATTRIBUTE_TYPE_NAME = "Visit Status";
+    private static final String SCHEDULED_VISIT_STATUS = "SCHEDULED";
 
     private final Location location;
 
@@ -116,16 +117,19 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
 
     private void addVisitStatusCriteria(Criteria criteria) {
         if (StringUtils.isNotBlank(visitStatus)) {
-            DetachedCriteria detachedCriteria = DetachedCriteria.forClass(VisitAttribute.class, ATTRIBUTES)
-                    .setProjection(Property.forName(VISIT_PROPERTY))
-                    .createAlias(ATTRIBUTES + PATH_SEPARATOR + ATTRIBUTE_TYPE, ATTRIBUTE_TYPE)
-                    .add(Restrictions.eq(ATTRIBUTE_TYPE + PATH_SEPARATOR + NAME,
-                            VISIT_STATUS_ATTRIBUTE_TYPE_NAME))
-                    .add(Restrictions.eq(VALUE_REFERENCE_PROPERTY, visitStatus))
-                    .add(Restrictions.eq(VOIDED_PROPERTY, false));
-
+            DetachedCriteria detachedCriteria = getVisitStatusesSubQuery(visitStatus);
             criteria.add(Property.forName(VISIT_ID_PROPERTY).in(detachedCriteria));
         }
+    }
+
+    private DetachedCriteria getVisitStatusesSubQuery(String visitStatus) {
+        return DetachedCriteria.forClass(VisitAttribute.class, ATTRIBUTES)
+                .setProjection(Property.forName(VISIT_PROPERTY))
+                .createAlias(ATTRIBUTES + PATH_SEPARATOR + ATTRIBUTE_TYPE, ATTRIBUTE_TYPE)
+                .add(Restrictions.eq(ATTRIBUTE_TYPE + PATH_SEPARATOR + NAME,
+                        VISIT_STATUS_ATTRIBUTE_TYPE_NAME))
+                .add(Restrictions.eq(VALUE_REFERENCE_PROPERTY, visitStatus))
+                .add(Restrictions.eq(VOIDED_PROPERTY, false));
     }
 
     private void addScheduledVisitsTimePeriodCriteria(Criteria criteria) {
@@ -136,15 +140,14 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
                criteria.add(Restrictions.ge(START_DATE_TIME_FIELD_NAME, today));
                criteria.add(Restrictions.lt(START_DATE_TIME_FIELD_NAME, tomorrow));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.WEEK.name())) {
-               Date lastDayOfWeek = DateUtil.getDateIgnoringTime(
-                       DateUtil.getLastDayOfCurrentWeekDateFromGivenDate(DateUtil.now()));
-               criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, lastDayOfWeek));
+               Date weekLaterDate = DateUtil.getDatePlusDays(today, 6);
+               criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, weekLaterDate));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.MONTH.name())) {
-                Date lastDayOfMonth = DateUtil.getDateIgnoringTime(
-                        DateUtil.getLastDayOfCurrentMonthDateFromGivenDate(DateUtil.now()));
-                criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, lastDayOfMonth));
+               Date monthLaterDate = DateUtil.getDatePlusMonths(today, 1);
+                criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, monthLaterDate));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.ALL.name())) {
-                criteria.add(Restrictions.ge(START_DATE_TIME_FIELD_NAME, today));
+               DetachedCriteria detachedCriteria = getVisitStatusesSubQuery(SCHEDULED_VISIT_STATUS);
+               criteria.add(Property.forName(VISIT_ID_PROPERTY).in(detachedCriteria));
            }
         }
     }

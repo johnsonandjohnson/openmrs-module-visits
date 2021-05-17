@@ -31,6 +31,10 @@ public final class DateUtil {
         return DateUtils.addDays(date, numberOfDays);
     }
 
+    public static Date getDatePlusMonths(Date date, int numberOfMonths) {
+        return DateUtils.addMonths(date, numberOfMonths);
+    }
+
     public static boolean isNotAfter(Date first, Date second) {
         return !first.after(second);
     }

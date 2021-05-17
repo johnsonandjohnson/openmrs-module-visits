@@ -108,4 +108,12 @@ public class DateUtilTest {
 
         assertEquals("2021-05-14 16:35:00", stringActualDate);
     }
+
+    @Test
+    public void shouldReturnDateTwoMonthsLaterFromGivenDate() {
+        Date actualDate = DateUtil.getDatePlusMonths(exampleDate, 2);
+        String stringActualDate = DateUtil.convertDate(actualDate, DATE_PATTERN);
+
+        assertEquals("2021-07-11 16:35:00", stringActualDate);
+    }
 }
