@@ -33,8 +33,6 @@ public class OverviewController extends BaseRestController {
     @Qualifier("visits.overviewMapper")
     private OverviewMapper overviewMapper;
 
-    private static final String TODAY = "TODAY";
-
     /**
      * Fetches the page of the visits for given location
      *
@@ -58,8 +56,7 @@ public class OverviewController extends BaseRestController {
                                                      @RequestParam(required = false) String visitStatus,
                                                      @RequestParam(required = false) Long dateFrom,
                                                      @RequestParam(required = false) Long dateTo,
-                                                     @RequestParam(required = false, defaultValue = TODAY)
-                                                                 String timePeriod) {
+                                                     @RequestParam(required = false) String timePeriod) {
         PagingInfo pagingInfo = pageableParams.getPagingInfo();
         List<Visit> visits = visitService.getVisitsForLocation(locationUuid, pagingInfo, query, visitStatus,
                 dateFrom, dateTo, timePeriod);

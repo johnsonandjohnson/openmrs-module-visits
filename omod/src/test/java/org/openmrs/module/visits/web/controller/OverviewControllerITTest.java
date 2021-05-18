@@ -1,5 +1,6 @@
 package org.openmrs.module.visits.web.controller;
 
+import ca.uhn.hl7v2.model.v25.segment.LOC;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.openmrs.VisitType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.db.VisitDAO;
+import org.openmrs.module.visits.api.util.DateUtil;
 import org.openmrs.module.visits.dto.PageDTO;
 import org.openmrs.module.visits.api.service.VisitService;
 import org.openmrs.module.visits.api.util.ConfigConstants;
@@ -25,12 +27,15 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
 import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
@@ -69,6 +74,10 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     private static final String PATIENT_2_URL = "/openmrs/coreapps/clinicianfacing/patient.page?patientId=" +
             PATIENT_2_UUID;
     private static final long TOTAL_RECORDS = 2L;
+    private static final String TIME_PERIOD = "timePeriod";
+    private static final String TODAY = "today";
+    private static final String WEEK = "week";
+    private static final String MONTH = "month";
 
     private MockMvc mockMvc;
 
@@ -453,6 +462,65 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         assertThat(actual.getContentSize(), is(expected.getContentSize()));
         assertThat(actual.getTotalRecords(), is(expected.getTotalRecords()));
         assertThat(actual.getContent().size(), is(expected.getContent().size()));
+    }
+
+    @Test
+    public void shouldReturnAllScheduledVisitForToday() throws Exception {
+        Visit visitToday = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        Visit visitThreeDaysLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        visitThreeDaysLater.setStartDatetime(DateUtil.getDatePlusDays(DateUtil.now(), 3));
+
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(TIME_PERIOD, TODAY))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visitToday.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(not(hasItem(visitThreeDaysLater.getUuid()))))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllScheduledVisitForWeek() throws Exception {
+        Visit visitTomorrow = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        visitTomorrow.setStartDatetime(DateUtil.getDatePlusDays(DateUtil.now(), 1));
+        Visit visitTwoWeeksLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        visitTwoWeeksLater.setStartDatetime(DateUtil.getDatePlusDays(DateUtil.now(), 14));
+
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(TIME_PERIOD, WEEK))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visitTomorrow.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(not(hasItem(visitTwoWeeksLater.getUuid()))))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnAllScheduledVisitForMonth() throws Exception {
+        Visit visitWeekLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        visitWeekLater.setStartDatetime(DateUtil.getDatePlusDays(DateUtil.now(), 7));
+        Visit visitThreeMonthsLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+        visitThreeMonthsLater.setStartDatetime(DateUtil.getDatePlusMonths(DateUtil.now(), 3));
+
+        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+                .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
+                .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
+                .param(TIME_PERIOD, MONTH))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(hasItem(visitWeekLater.getUuid())))
+                .andExpect(jsonPath("$.content.[*].uuid")
+                        .value(not(hasItem(visitThreeMonthsLater.getUuid()))))
+                .andReturn();
     }
 
     private PageDTO getPageDTO(MvcResult result) throws java.io.IOException {

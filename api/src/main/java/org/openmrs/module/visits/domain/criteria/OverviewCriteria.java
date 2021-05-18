@@ -51,6 +51,8 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
     private static final String NAME = "name";
     private static final String VISIT_STATUS_ATTRIBUTE_TYPE_NAME = "Visit Status";
     private static final String SCHEDULED_VISIT_STATUS = "SCHEDULED";
+    private static final int ONE = 1;
+    private static final int SIX = 6;
 
     private final Location location;
 
@@ -136,15 +138,15 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
         if (StringUtils.isNotBlank(timePeriod)) {
             Date today = DateUtil.getDateIgnoringTime(DateUtil.now());
            if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.TODAY.name())) {
-               Date tomorrow = DateUtil.getDatePlusDays(today, 1);
+               Date tomorrow = DateUtil.getDatePlusDays(today, ONE);
                criteria.add(Restrictions.ge(START_DATE_TIME_FIELD_NAME, today));
                criteria.add(Restrictions.lt(START_DATE_TIME_FIELD_NAME, tomorrow));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.WEEK.name())) {
-               Date weekLaterDate = DateUtil.getDatePlusDays(today, 6);
+               Date weekLaterDate = DateUtil.getDatePlusDays(today, SIX);
                criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, weekLaterDate));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.MONTH.name())) {
-               Date monthLaterDate = DateUtil.getDatePlusMonths(today, 1);
-                criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, monthLaterDate));
+               Date monthLaterDate = DateUtil.getDatePlusMonths(today, ONE);
+               criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, monthLaterDate));
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.ALL.name())) {
                DetachedCriteria detachedCriteria = getVisitStatusesSubQuery(SCHEDULED_VISIT_STATUS);
                criteria.add(Property.forName(VISIT_ID_PROPERTY).in(detachedCriteria));
