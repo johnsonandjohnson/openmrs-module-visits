@@ -29,9 +29,11 @@
   .manage-visits .ReactTable,
   .overview-visits .ReactTable {
     border: none;
+
     .rt-thead.-header {
       pointer-events: none;
       box-shadow: none;
+
       .rt-tr {
         text-transform: uppercase;
         color: #212529;
@@ -39,19 +41,23 @@
         background-color: white !important;
       }
     }
+
     .rt-tr-group {
       border: 0;
+
       .rt-tr:hover {
-        cursor: pointer;
         background-color: rgba(0, 0, 0, 0.15) !important;
       }
+
       .rt-tr.-odd {
         background-color: rgba(0, 0, 0, 0.05) !important;
+
         &:hover {
           background-color: rgba(0, 0, 0, 0.15) !important;
         }
       }
     }
+
     .rt-th,
     .rt-td {
       padding: 0.2rem;
@@ -62,33 +68,38 @@
       font-weight: normal;
       text-align: center;
       margin: auto;
+
       @media only screen and (min-width: 768px) {
         font-size: 14px;
         padding: 0.5rem;
       }
+
       @media only screen and (min-width: 1280px) {
         font-size: 16px;
         padding: 0.75rem;
       }
     }
-    .pagination-bottom {
-      .-pagination div {
+
+    .pagination-bottom .-pagination div {
+      background: none;
+
+      button {
+        max-width: 100%;
+        cursor: pointer;
+        border-radius: 0;
         background: none;
-        button {
-          max-width: 100%;
-          cursor: pointer;
-          border-radius: 0;
-          background: none;
-          &:hover {
-            background-color: rgba(0, 0, 0, 0.15);
-          }
-          span {
-            color: #212529;
-          }
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.15);
         }
-        select {
+
+        span {
           color: #212529;
         }
+      }
+
+      select {
+        color: #212529;
       }
     }
   }
@@ -105,7 +116,13 @@
     margin: 0 !important;
   }
 
-  form label {
-    font-weight: inherit;
+  form {
+    label {
+      font-weight: inherit;
+    }
+
+    input:focus {
+      background: transparent;
+    }
   }
 }

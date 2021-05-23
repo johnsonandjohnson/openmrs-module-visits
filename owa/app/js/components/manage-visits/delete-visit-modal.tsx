@@ -13,7 +13,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { LocalizedMessage } from '@openmrs/react-components';
 
 import IModalParams from './modal-params';
-import './remove-visit-modal.scss';
+import './delete-visit-modal.scss';
 
 interface IProps {
   show: boolean,
@@ -25,7 +25,7 @@ interface IProps {
 interface IState {
 }
 
-class RemoveVisitModal extends React.PureComponent<IProps, IState> {
+class DeleteVisitModal extends React.PureComponent<IProps, IState> {
 
   buildModal = (modalParams: IModalParams) => {
     const { show, confirm, cancel } = this.props;
@@ -43,15 +43,16 @@ class RemoveVisitModal extends React.PureComponent<IProps, IState> {
       defaultMessage="NO" />;
 
     return (
-      <Modal id="remove-visit-modal" show={show} onHide={cancel}>
-        <Modal.Header bsClass="cfl-dialog-header">
-          <Modal.Title>{title}</Modal.Title>
-        </Modal.Header>
+      <Modal id="delete-visit-modal" show={show} onHide={cancel}>
         <Modal.Body>
+          <div className="modal-title">{title}</div>
           <p>{txt}</p>
           <Button
             bsClass="button confirm right"
-            onClick={() => { confirm(modalParams); }}>
+            onClick={() => {
+              confirm(modalParams);
+            }}
+          >
             {confirmLabel}
           </Button>
           <Button bsClass="button cancel" onClick={this.props.cancel}>
@@ -71,4 +72,4 @@ class RemoveVisitModal extends React.PureComponent<IProps, IState> {
   };
 }
 
-export default RemoveVisitModal;
+export default DeleteVisitModal;
