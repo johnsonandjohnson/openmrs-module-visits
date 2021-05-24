@@ -53,7 +53,8 @@ public class VisitDaoImplTest extends BaseModuleContextSensitiveTest {
     @Test
     public void findByOverviewCriteria() {
         PagingInfo pagingInfo = new PagingInfo(PAGE, PAGE_SIZE);
-        OverviewCriteria criteria = new OverviewCriteria(location, "ic");
+        OverviewCriteria criteria = new OverviewCriteria(location, "ic", null, null,
+                null, null);
         List<Visit> actual = visitDao.findAllByCriteria(criteria, pagingInfo);
         assertThat(actual.size(), is(EXPECTED_ONE));
     }

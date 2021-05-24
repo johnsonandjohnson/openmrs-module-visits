@@ -25,18 +25,28 @@ public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
      *
      * @param patientUuid uuid of the patient
      * @param pagingInfo properties of the pagination
+     *
      * @return list of the patient's visits, implicitly paginated
      */
     List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo);
 
     /**
-     * Finds paginated collection of the visits for the given location, optionally filtered by a query
+     * Finds paginated collection of the visits for the given location, optionally filtered by a different options
      *
      * @param locationUuid uuid of the location
      * @param pagingInfo properties of the pagination
+     * @param query used for searching visits by patient identifier or patient name
+     * @param visitStatus used for filtering visits by visit status
+     * @param dateFrom used for filtering visits where planned date of visit is greater or equals than dateFrom
+     * @param dateTo used for filtering visit where planned date of visit is less or equals than dateTo
+     * @param timePeriod used for filtering visits depending on value from
+     * {@link org.openmrs.module.visits.api.model.TimePeriod}. If value is not provided, default value = TODAY is used.
+     *
      * @return list of the location's visits, implicitly paginated
      */
-    List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo, String query);
+    List<Visit> getVisitsForLocation(String locationUuid, PagingInfo pagingInfo, String query, String visitStatus,
+                                           Long dateFrom, Long dateTo, String timePeriod);
+
 
 
     /**

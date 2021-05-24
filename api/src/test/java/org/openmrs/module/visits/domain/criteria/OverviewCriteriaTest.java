@@ -26,7 +26,8 @@ public class OverviewCriteriaTest {
 
     @Test
     public void shouldLoadHibernateCriteriaWithLocation() throws NoSuchFieldException, IllegalAccessException {
-        OverviewCriteria overviewCriteria = new OverviewCriteria(location, SAMPLE_QUERY);
+        OverviewCriteria overviewCriteria = new OverviewCriteria(location, SAMPLE_QUERY, null, null,
+                null, null);
         Criteria criteria = new CriteriaImpl("Overview", session);
         overviewCriteria.loadHibernateCriteria(criteria);
 

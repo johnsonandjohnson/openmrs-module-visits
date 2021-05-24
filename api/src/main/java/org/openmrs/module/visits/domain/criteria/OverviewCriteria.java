@@ -7,14 +7,19 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
+import org.openmrs.VisitAttribute;
+import org.openmrs.module.visits.api.model.TimePeriod;
+import org.openmrs.module.visits.api.util.DateUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OverviewCriteria extends BaseCriteria implements Serializable {
@@ -35,23 +40,49 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
     private static final String NAMES_GIVEN_NAME_PATH = "names.givenName";
     private static final String NAMES_MIDDLE_NAME_PATH = "names.middleName";
     private static final String NAMES_FAMILY_NAME_PATH = "names.familyName";
+    private static final String START_DATE_TIME_FIELD_NAME = "startDatetime";
+    private static final String LOCATION_PROPERTY = "location";
+    private static final String VISIT_PROPERTY = "visit";
+    private static final String VALUE_REFERENCE_PROPERTY = "valueReference";
+    private static final String VOIDED_PROPERTY = "voided";
+    private static final String VISIT_ID_PROPERTY = "visitId";
+    private static final String ATTRIBUTES = "attributes";
+    private static final String ATTRIBUTE_TYPE = "attributeType";
+    private static final String NAME = "name";
+    private static final String VISIT_STATUS_ATTRIBUTE_TYPE_NAME = "Visit Status";
+    private static final String SCHEDULED_VISIT_STATUS = "SCHEDULED";
+    private static final int ONE = 1;
+    private static final int SIX = 6;
 
-    private Location location;
+    private final Location location;
 
-    private String query;
+    private final String query;
 
-    private boolean sortResults;
+    private final boolean sortResults;
 
-    private String sortFieldName;
+    private final String sortFieldName;
 
-    private boolean sortAscending;
+    private final boolean sortAscending;
 
-    public OverviewCriteria(Location location, String query) {
+    private final Long dateFrom;
+
+    private final Long dateTo;
+
+    private final String visitStatus;
+
+    private final String timePeriod;
+
+    public OverviewCriteria(Location location, String query, String visitStatus,
+                            Long dateFrom, Long dateTo, String timePeriod) {
         this.location = location;
         this.query = query;
+        this.visitStatus = visitStatus;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+        this.timePeriod = timePeriod;
 
         this.sortResults = true;
-        this.sortFieldName = "startDatetime";
+        this.sortFieldName = START_DATE_TIME_FIELD_NAME;
         this.sortAscending = false;
     }
 
@@ -61,8 +92,11 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
 
     @Override
     public void loadHibernateCriteria(Criteria hibernateCriteria) {
-        hibernateCriteria.add(Restrictions.eq("location", location));
+        hibernateCriteria.add(Restrictions.eq(LOCATION_PROPERTY, location));
         addQueryCriteria(hibernateCriteria);
+        addVisitDateRangeCriteria(hibernateCriteria);
+        addVisitStatusCriteria(hibernateCriteria);
+        addScheduledVisitsTimePeriodCriteria(hibernateCriteria);
         if (sortResults) {
             addResultSorting(hibernateCriteria);
         }
@@ -71,7 +105,53 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
     public static OverviewCriteria forLocationUuid(String uuid) {
         Location location = new Location();
         location.setUuid(uuid);
-        return new OverviewCriteria(location, null);
+        return new OverviewCriteria(location, null, null, null, null, null);
+    }
+
+    private void addVisitDateRangeCriteria(Criteria criteria) {
+        if (dateFrom != null) {
+            criteria.add(Restrictions.ge(START_DATE_TIME_FIELD_NAME, new Date(dateFrom)));
+        }
+        if (dateTo != null) {
+            criteria.add(Restrictions.le(START_DATE_TIME_FIELD_NAME, new Date(dateTo)));
+        }
+    }
+
+    private void addVisitStatusCriteria(Criteria criteria) {
+        if (StringUtils.isNotBlank(visitStatus)) {
+            DetachedCriteria detachedCriteria = getVisitStatusesSubQuery(visitStatus);
+            criteria.add(Property.forName(VISIT_ID_PROPERTY).in(detachedCriteria));
+        }
+    }
+
+    private DetachedCriteria getVisitStatusesSubQuery(String visitStatus) {
+        return DetachedCriteria.forClass(VisitAttribute.class, ATTRIBUTES)
+                .setProjection(Property.forName(VISIT_PROPERTY))
+                .createAlias(ATTRIBUTES + PATH_SEPARATOR + ATTRIBUTE_TYPE, ATTRIBUTE_TYPE)
+                .add(Restrictions.eq(ATTRIBUTE_TYPE + PATH_SEPARATOR + NAME,
+                        VISIT_STATUS_ATTRIBUTE_TYPE_NAME))
+                .add(Restrictions.eq(VALUE_REFERENCE_PROPERTY, visitStatus))
+                .add(Restrictions.eq(VOIDED_PROPERTY, false));
+    }
+
+    private void addScheduledVisitsTimePeriodCriteria(Criteria criteria) {
+        if (StringUtils.isNotBlank(timePeriod)) {
+            Date today = DateUtil.getDateIgnoringTime(DateUtil.now());
+           if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.TODAY.name())) {
+               Date tomorrow = DateUtil.getDatePlusDays(today, ONE);
+               criteria.add(Restrictions.ge(START_DATE_TIME_FIELD_NAME, today));
+               criteria.add(Restrictions.lt(START_DATE_TIME_FIELD_NAME, tomorrow));
+           } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.WEEK.name())) {
+               Date weekLaterDate = DateUtil.getDatePlusDays(today, SIX);
+               criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, weekLaterDate));
+           } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.MONTH.name())) {
+               Date monthLaterDate = DateUtil.getDatePlusMonths(today, ONE);
+               criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, monthLaterDate));
+           } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.ALL.name())) {
+               DetachedCriteria detachedCriteria = getVisitStatusesSubQuery(SCHEDULED_VISIT_STATUS);
+               criteria.add(Property.forName(VISIT_ID_PROPERTY).in(detachedCriteria));
+           }
+        }
     }
 
     private void addQueryCriteria(Criteria c) {

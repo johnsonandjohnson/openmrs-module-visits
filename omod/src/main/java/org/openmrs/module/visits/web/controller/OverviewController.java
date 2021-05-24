@@ -40,15 +40,27 @@ public class OverviewController extends BaseRestController {
      * @param pageableParams parameters representing expected page shape
      * @param query optional query containing phrase filtering the visits by patient's identifier or name,
      * eg. phrase 'jo' may result in returning the visits for patient 'John'
+     * @param visitStatus used for filtering visits by visit status
+     * @param dateFrom used for filtering visits where planned date of visit is greater or equals than dateFrom
+     * @param dateTo used for filtering visit where planned date of visit is less or equals than dateTo
+     * @param timePeriod used for filtering visits depending on value from
+     * {@link org.openmrs.module.visits.api.model.TimePeriod}. If value is not provided, default value = TODAY is used.
+     *
      * @return a page containing visit overview details
      */
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public PageDTO<OverviewDTO> getVisitsForLocation(@PathVariable("uuid") String locationUuid,
                                                      PageableParams pageableParams,
-                                                     @RequestParam(required = false) String query) {
+                                                     @RequestParam(required = false) String query,
+                                                     @RequestParam(required = false) String visitStatus,
+                                                     @RequestParam(required = false) Long dateFrom,
+                                                     @RequestParam(required = false) Long dateTo,
+                                                     @RequestParam(required = false) String timePeriod) {
         PagingInfo pagingInfo = pageableParams.getPagingInfo();
-        List<Visit> visits = visitService.getVisitsForLocation(locationUuid, pagingInfo, query);
+        List<Visit> visits = visitService.getVisitsForLocation(locationUuid, pagingInfo, query, visitStatus,
+                dateFrom, dateTo, timePeriod);
+
         return new PageDTO<>(overviewMapper.toDtos(visits), pagingInfo);
     }
 }
