@@ -26,6 +26,8 @@ import { withFiltersChangedCallback } from './with-filters-changed-callback';
 import IVisit from '../../../shared/model/visit';
 import ITableParams from '../table-params';
 import IModalParams, { createModalParams } from '../modal-params';
+import { faPencilAlt, faStethoscope } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 
 const OPEN_MRS_ROUTE = '../..';
 
@@ -51,7 +53,8 @@ export interface ITableProps {
   resizable?: boolean;
   noDataText? : string;
   fetchDataCallback(params: ITableParams): void;
-  removeCallback(params: IModalParams): void;
+  deleteCallback(params: IModalParams): void;
+  updateCallback(params: IModalParams): void;
 };
 
 export default class ManageVisitTable extends React.PureComponent<ITableProps, IPaginationBaseState> {
@@ -107,26 +110,24 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
       },
       Cell: (row) => {
         const visit: IVisit = row.original;
-        const editLink = `#${this.props.createPathname}/schedule/${visit.uuid}`;
         return (
           <>
-            <span className="action-button">
-              <a href={editLink}>
-                <FontAwesomeIcon icon={['fas', 'pencil-alt']} size={'1x'} />
-              </a>
-            </span>
-            { (!!visit.formUri) ?
+            {!!visit.formUri && (
               <span className="action-button">
-              <a href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}>
-                <i className="small icon-stethoscope"/>
-              </a>
-            </span> : null
-            }
+                <a href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}>
+                  <FontAwesomeIcon icon={faStethoscope} size="1x" />
+                </a>
+              </span>
+            )}
             <span className="action-button">
-              <i className="small icon-remove delete-action interaction-trash-button"
-                onClick={() => {
-                  this.remove(visit);
-                }} />
+              <i onClick={() => this.update(visit)}>
+                <FontAwesomeIcon icon={faPencilAlt} size="1x" />
+              </i>
+            </span>
+            <span className="action-button">
+              <i onClick={() => this.delete(visit)}>
+                <FontAwesomeIcon icon={faTrashAlt} size="1x"  />
+              </i>
             </span>
           </>
         );
@@ -134,9 +135,14 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
     };
   }
 
-  remove = (visit: IVisit) => {
+  delete = (visit: IVisit) => {
     const modalParams: IModalParams = createModalParams(visit, this.stateToTableParams());
-    this.props.removeCallback(modalParams);
+    this.props.deleteCallback(modalParams);
+  }
+
+  update = (visit: IVisit) => {
+    const modalParams: IModalParams = createModalParams(visit, this.stateToTableParams());
+    this.props.updateCallback(modalParams);
   }
 
   getColumns = () => {

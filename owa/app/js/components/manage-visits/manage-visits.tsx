@@ -16,15 +16,13 @@ import _ from 'lodash';
 import {
   getVisitsPage,
   getVisitsPagesCount,
-  deleteVisit,
-  openModal,
-  closeModal
+  deleteVisit
 } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import * as Default from '../../shared/utils/messages';
 import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
-import { history } from '../../config/redux-store';
-import RemoveVisitModal from './remove-visit-modal';
+import DeleteVisitModal from './delete-visit-modal';
+import ScheduleVisitModal from '../schedule-visit/schedule-visit-modal';
 import ManageVisitTable from './table';
 import IModalParams from './modal-params';
 import ITableParams from './table-params';
@@ -39,27 +37,51 @@ interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
 }> { }
 
 interface IState {
+  showDeleteVisitModal: boolean,
+  showScheduleVisitModal: boolean,
+  modalParams: IModalParams | null,
+  tableParams: ITableParams | null
 }
 
 class ManageVisits extends React.Component<IProps, IState> {
+  state = {
+    showDeleteVisitModal: false,
+    showScheduleVisitModal: false,
+    modalParams: null as IModalParams | null,
+    tableParams: null as ITableParams | null
+  }
 
   private getVisits = (tableParams: ITableParams) => {
-    this.props.getVisitsPage(tableParams.activePage, tableParams.itemsPerPage, this.props.match.params.patientUuid);
+    this.setState(
+      { tableParams },
+      () => this.props.getVisitsPage(
+        tableParams.activePage,
+        tableParams.itemsPerPage,
+        this.props.match.params.patientUuid
+      )
+    );
   }
 
-  private removeVisit = (modalParams: IModalParams) => {
-    this.props.openModal(modalParams);
+  private refetchVisits = () => {
+    const { tableParams } = this.state;
+    if (!!tableParams) {
+      this.props.getVisitsPage(
+        tableParams.activePage,
+        tableParams.itemsPerPage,
+        this.props.match.params.patientUuid
+      );
+    }
   }
 
-  private handleScheduleVisitButton = () => {
-    history.push(`/visits/manage/${this.props.match.params.patientUuid}/schedule`);
-  }
+  private deleteVisit = (modalParams: IModalParams) => this.setState({ showDeleteVisitModal: true, modalParams });
+
+  private updateVisit = (modalParams: IModalParams) => this.setState({ showScheduleVisitModal: true, modalParams });
+
+  private handleScheduleVisitButton = () => this.setState({ showScheduleVisitModal: true, modalParams: null });
 
   private renderScheduleVisitButton = () => {
     return (
-      <Button
-        className="btn btn-success btn-md add-btn"
-        onClick={this.handleScheduleVisitButton}>
+      <Button className="btn btn-success btn-md add-btn" onClick={this.handleScheduleVisitButton}>
         {getIntl().formatMessage({ id: 'VISITS_SCHEDULE_VISIT', defaultMessage: Default.SCHEDULE_VISIT })}
       </Button>
     );
@@ -74,7 +96,8 @@ class ManageVisits extends React.Component<IProps, IState> {
           actualDate: formatDateIfDefined(MANAGE_DATE_FORMAT, visit.actualDate)
         }
       })}
-      removeCallback={this.removeVisit}
+      deleteCallback={this.deleteVisit}
+      updateCallback={this.updateVisit}
       createPathname={this.props.location.pathname}
       loading={this.props.loading}
       pages={this.props.visitsPagesCount}
@@ -84,26 +107,55 @@ class ManageVisits extends React.Component<IProps, IState> {
       showPagination={this.props.visitsPagesCount > SINGLE_PAGE_NUMBER}
     />
 
-  confirm = (modalParams: IModalParams | null) => {
+  confirmDeleteVisit = (modalParams: IModalParams | null) => {
     if (!!modalParams) {
       const { uuid, params } = modalParams;
       this.props.deleteVisit(uuid, params.activePage, params.itemsPerPage, this.props.match.params.patientUuid);
+      this.closeDeleteVisitModal();
     }
   }
 
-  renderModal = () => {
+  closeDeleteVisitModal = () => this.setState({ showDeleteVisitModal: false });
+
+  renderDeleteVisitModal = () => {
     return (
-      <RemoveVisitModal
-        show={this.props.showModal}
-        modalParams={this.props.toRemove}
-        confirm={this.confirm}
-        cancel={this.props.closeModal} />);
+      <DeleteVisitModal
+        show={this.state.showDeleteVisitModal}
+        modalParams={this.state.modalParams}
+        confirm={this.confirmDeleteVisit}
+        cancel={this.closeDeleteVisitModal}
+      />
+    );
+  }
+
+  closeScheduleVisitModal = () => this.setState({ showScheduleVisitModal: false });
+
+  saveVisitCallback = () => {
+    this.setState(
+      { showScheduleVisitModal: false },
+      () => this.getVisits(this.state.tableParams!)
+    );
+  }
+
+  renderScheduleVisitModal = () => {
+    return (
+      <ScheduleVisitModal
+        show={this.state.showScheduleVisitModal}
+        patientUuid={this.props.match.params.patientUuid}
+        visitUuid={!!this.state.modalParams ? this.state.modalParams.uuid : null}
+        confirm={this.confirmDeleteVisit}
+        cancel={this.closeScheduleVisitModal}
+        saveVisitCallback={this.saveVisitCallback}
+        refetchVisits={this.refetchVisits}
+      />
+    );
   }
 
   render() {
     return (
       <div className="manage-visits">
-        {this.renderModal()}
+        {this.renderDeleteVisitModal()}
+        {this.renderScheduleVisitModal()}
         <Form className="fields-form">
           <div className="visit-header-section">
             <div className="header-left-section">
@@ -132,17 +184,13 @@ class ManageVisits extends React.Component<IProps, IState> {
 const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
   visits: scheduleVisit.visits,
   visitsPagesCount: scheduleVisit.visitsPagesCount,
-  loading: scheduleVisit.visitsLoading,
-  showModal: scheduleVisit.showModal,
-  toRemove: scheduleVisit.toRemove
+  loading: scheduleVisit.visitsLoading
 });
 
 const mapDispatchToProps = ({
   getVisitsPage,
   getVisitsPagesCount,
-  deleteVisit,
-  openModal,
-  closeModal
+  deleteVisit
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

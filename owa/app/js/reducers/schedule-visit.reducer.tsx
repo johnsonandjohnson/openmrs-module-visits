@@ -31,8 +31,6 @@ export const ACTION_TYPES = {
   DELETE_VISIT: 'scheduleVisitReducer/DELETE_VISIT',
   UPDATE_VISIT: 'scheduleVisitReducer/UPDATE_VISIT',
   POST_VISIT: 'scheduleVisitReducer/POST_VISIT',
-  OPEN_MODAL: 'scheduleVisitReducer/OPEN_MODAL',
-  CLOSE_MODAL: 'scheduleVisitReducer/CLOSE_MODAL',
   RESET: 'scheduleVisitReducer/RESET'
 };
 
@@ -44,9 +42,7 @@ const initialState = {
   visitTimes: [] as Array<string>,
   visitStatuses: [] as Array<string>,
   locations: [] as Array<ILocation>,
-  visitsPagesCount: 0,
-  showModal: false,
-  toRemove: null as IModalParams | null
+  visitsPagesCount: 0
 };
 
 export type ScheduleVisitState = Readonly<typeof initialState>;
@@ -128,23 +124,10 @@ export default (state = initialState, action) => {
         visit: action.payload
       };
     }
-    case ACTION_TYPES.OPEN_MODAL: {
-      return {
-        ...state,
-        showModal: true,
-        toRemove: action.payload
-      };
-    }
-    case ACTION_TYPES.CLOSE_MODAL: {
-      return {
-        ...state,
-        showModal: false,
-        toRemove: null
-      };
-    }
     case ACTION_TYPES.RESET:
       return {
-        ..._.cloneDeep(initialState)
+        ...state,
+        visit: VisitUI.getNew()
       };
     default:
       return state;
@@ -214,9 +197,15 @@ export const saveVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
       payload
     };
 
-    await handleRequest(dispatch, body,
-      getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
-      getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE }));
+    await handleRequest(
+      dispatch,
+      body,
+      getIntl().formatMessage({
+        id: isEdit ? 'VISITS_GENERIC_SUCCESS' : 'VISITS_SCHEDULE_VISIT_SUCCESS',
+        defaultMessage: Default.GENERIC_SUCCESS
+      }),
+      getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE })
+    );
     if (successCallback) {
       successCallback();
     }
@@ -267,17 +256,7 @@ export const deleteVisit = (uuid: string, activePage: number, itemsPerPage: numb
     getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
     getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE }));
   dispatch(getVisitsPage(activePage, itemsPerPage, patientUuid));
-  dispatch(closeModal());
 };
-
-export const openModal = (modalParams: IModalParams) => ({
-  type: ACTION_TYPES.OPEN_MODAL,
-  payload: modalParams
-});
-
-export const closeModal = () => ({
-  type: ACTION_TYPES.CLOSE_MODAL
-});
 
 export const reset = (successCallback?) => async (dispatch) => {
   await dispatch({

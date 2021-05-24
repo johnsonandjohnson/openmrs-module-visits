@@ -8,7 +8,6 @@
  */
 
  #app .overview-visits {
-
   .td-cell {
     text-align: center;
     margin: auto;
@@ -17,16 +16,20 @@
   .search-section {
     margin-top: 1rem;
     background-color: white;
+
     .visit-search {
       display: flex;
       position: relative;
+
       .search-bar {
         flex-grow: 1;
+
         .search-icon {
           position: absolute;
           top: 1em;
           left: 2em;
         }
+
         .search-input {
           padding: 1.65em 1.65em 1.65em 4em;
           border-color: #eaeaea !important;
@@ -37,30 +40,42 @@
         }
       }
     }
+
     .visit-table {
       .helper-text {
         font-size: 14px;
         padding: 0 0 0.5rem 2rem;
       }
     }
+
     form {
       overflow: initial;
     }
+
     .form-control {
       outline: none !important;
       border: 1px solid #ced4da !important;
       box-shadow: none;
+
       &:focus {
         box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
       }
     }
+
     input {
       font-family: CircularStd-Book;
       font-size: 14px;
       color: #333333;
       opacity: 0.5;
+
       &::placeholder {
         font-size: 14px;
+      }
+    }
+
+    .ReactTable {
+      .rt-tr:hover {
+        cursor: pointer;
       }
     }
   }

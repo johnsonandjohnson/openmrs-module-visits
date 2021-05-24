@@ -10,7 +10,6 @@
 import Header from '@bit/soldevelo-omrs.cfl-components.person-header';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import ScheduleVisit from '../schedule-visit/schedule-visit';
 import ManageVisits from '../manage-visits/manage-visits';
 import PersonStatus from '@bit/soldevelo-omrs.cfl-components.person-status';
 
@@ -49,5 +48,4 @@ const withPatientHeader = (WrappedComponent) => {
   }
 }
 
-export const ScheduleVisitWithHeader = withPatientHeader(ScheduleVisit);
 export const ManageVisitsWithHeader = withPatientHeader(ManageVisits);
