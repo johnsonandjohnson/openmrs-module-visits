@@ -7,40 +7,43 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import React from 'react';
-import ReactTable from 'react-table';
-import { LocalizedMessage } from '@openmrs/react-components';
-import { withFiltersChangedCallback } from './with-filters-changed-callback';
-import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, MIN_ROWS, PAGE_SIZE_OPTIONS } from './constants';
-import _ from 'lodash';
+import React from "react";
+import ReactTable from "react-table";
+import { LocalizedMessage } from "@openmrs/react-components";
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, MIN_ROWS, PAGE_SIZE_OPTIONS } from "./constants";
+import _ from "lodash";
 
 interface IPaginationBaseState {
   itemsPerPage: number;
   sort: string;
   order: string;
   activePage: number;
-  filters: {};
 }
 
 export interface ITableProps {
   query?: string;
+  filters: {};
   data: any[];
   columns: any[];
   loading: boolean;
   pages: number;
-  filtersComponent?: any;
-  filterProps?: {};
   showPagination?: boolean;
-  sortable?: boolean,
-  multiSort?: boolean,
-  resizable?: boolean,
-  noDataText? : string;
-  fetchDataCallback(activePage: number, itemsPerPage: number, sort: string, order: string, filters: {}, query?: string): void;
+  sortable?: boolean;
+  multiSort?: boolean;
+  resizable?: boolean;
+  noDataText?: string;
+  fetchDataCallback(
+    activePage: number,
+    itemsPerPage: number,
+    sort: string,
+    order: string,
+    filters?: {},
+    query?: string
+  ): void;
   onRowClick(rowEntity: {}): void;
-};
+}
 
 export default class OverviewVisitTable extends React.PureComponent<ITableProps, IPaginationBaseState> {
-  filters: any;
   constructor(props) {
     super(props);
     this.state = {
@@ -48,17 +51,14 @@ export default class OverviewVisitTable extends React.PureComponent<ITableProps,
       itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
       sort: DEFAULT_SORT,
       order: DEFAULT_ORDER,
-      filters: {}
     };
-    if (this.props.filtersComponent) {
-      this.filters = withFiltersChangedCallback(this.filtersChanged)(this.props.filtersComponent);
-    }
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.query != this.props.query) {
-      const { activePage, itemsPerPage, sort, order, filters } = this.state;
-      this.props.fetchDataCallback(activePage, itemsPerPage, sort, order, filters, this.props.query);
+    const { activePage, itemsPerPage, sort, order } = this.state;
+    const { filters, query } = this.props;
+    if (prevProps.query !== query || prevProps.filters !== filters) {
+      this.props.fetchDataCallback(activePage, itemsPerPage, sort, order, filters, query);
     }
   }
 
@@ -68,28 +68,19 @@ export default class OverviewVisitTable extends React.PureComponent<ITableProps,
         activePage: state.page,
         itemsPerPage: state.pageSize,
         sort: state.sorted[0] ? state.sorted[0].id : DEFAULT_SORT,
-        order: state.sorted[0] ? (state.sorted[0].desc ? 'desc' : 'asc') : DEFAULT_ORDER
+        order: state.sorted[0] ? (state.sorted[0].desc ? "desc" : "asc") : DEFAULT_ORDER,
       },
-      () => this.props.fetchDataCallback(
-        this.state.activePage,
-        this.state.itemsPerPage,
-        this.state.sort,
-        this.state.order,
-        this.state.filters,
-        this.props.query
-      )
+      () =>
+        this.props.fetchDataCallback(
+          this.state.activePage,
+          this.state.itemsPerPage,
+          this.state.sort,
+          this.state.order,
+          this.props.filters,
+          this.props.query
+        )
     );
-  }
-
-  filtersChanged = (changedFilters: {}) => this.setState(((prevState, props) => ({ filters: { ...prevState.filters, ...changedFilters } })),
-    () => this.props.fetchDataCallback(
-      this.state.activePage,
-      this.state.itemsPerPage,
-      this.state.sort,
-      this.state.order,
-      this.state.filters,
-      this.props.query
-    ));
+  };
 
   render = () => {
     const NullComponent = () => null;
@@ -99,41 +90,38 @@ export default class OverviewVisitTable extends React.PureComponent<ITableProps,
     const loadingText = <LocalizedMessage id="reactcomponents.table.loading" defaultMessage="Loading..." />;
     const pageText = <LocalizedMessage id="reactcomponents.table.page" defaultMessage="Page" />;
     const ofText = <LocalizedMessage id="reactcomponents.table.of" defaultMessage="of" />;
-    const rowsText = 'results';
+    const rowsText = "results";
 
     return (
-      <div>
-        {this.props.filtersComponent && <this.filters {...this.props.filterProps} {...this.state.filters} {...this.props.filterProps} />}
-        <ReactTable
-          className="-striped -highlight"
-          collapseOnDataChange={false}
-          columns={this.props.columns}
-          data={this.props.data}
-          defaultPageSize={DEFAULT_ITEMS_PER_PAGE}
-          manual={true}
-          loading={this.props.loading}
-          minRows={MIN_ROWS}
-          pages={this.props.pages}
-          pageSizeOptions={PAGE_SIZE_OPTIONS}
-          onFetchData={this.fetchData}
-          multisort={false}
-          nextText={nextText}
-          previousText={previousText}
-          rowsText={rowsText}
-          loadingText={loadingText}
-          ofText={ofText}
-          noDataText={_.get(this.props, 'noDataText', <span className="sortableTable-noDataText">{noDataText}</span>)}
-          NoDataComponent={NullComponent}
-          pageText={pageText}
-          showPagination={_.get(this.props, 'showPagination', true)}
-          sortable={_.get(this.props, 'sortable', true)}
-          multiSort={_.get(this.props, 'multiSort', true)}
-          resizable={_.get(this.props, 'resizable', true)}
-          getTrProps={(_, rowInfo) => ({
-            onClick: () => this.props.onRowClick(rowInfo.original)
-          })}
-        />
-      </div>
+      <ReactTable
+        className="-striped -highlight"
+        collapseOnDataChange={false}
+        columns={this.props.columns}
+        data={this.props.data}
+        defaultPageSize={DEFAULT_ITEMS_PER_PAGE}
+        manual={true}
+        loading={this.props.loading}
+        minRows={MIN_ROWS}
+        pages={this.props.pages}
+        pageSizeOptions={PAGE_SIZE_OPTIONS}
+        onFetchData={this.fetchData}
+        multisort={false}
+        nextText={nextText}
+        previousText={previousText}
+        rowsText={rowsText}
+        loadingText={loadingText}
+        ofText={ofText}
+        noDataText={_.get(this.props, "noDataText", <span className="sortableTable-noDataText">{noDataText}</span>)}
+        NoDataComponent={NullComponent}
+        pageText={pageText}
+        showPagination={_.get(this.props, "showPagination", true)}
+        sortable={_.get(this.props, "sortable", true)}
+        multiSort={_.get(this.props, "multiSort", true)}
+        resizable={_.get(this.props, "resizable", true)}
+        getTrProps={(_, rowInfo) => ({
+          onClick: () => this.props.onRowClick(rowInfo.original)
+        })}
+      />
     );
-  }
+  };
 }

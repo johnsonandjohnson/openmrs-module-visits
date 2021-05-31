@@ -16,7 +16,6 @@ import { ISession } from '../shared/model/session.model';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'overviewVisitReducer/GET_VISITS',
-  UPDATE_SEARCH_TEXT: 'overviewVisitReducer/UPDATE_SEARCH_TEXT',
   GET_LOCATION: 'overviewVisitReducer/GET_LOCATION',
   RESET: 'overviewVisitReducer/RESET'
 };
@@ -24,7 +23,6 @@ export const ACTION_TYPES = {
 const initialState = {
   visits: [] as Array<IVisitOverview>,
   loading: false,
-  search: '',
   pages: 0,
   locationUuid: null as string | null
 };
@@ -63,11 +61,6 @@ export default (state = initialState, action) => {
         locationUuid: session.sessionLocation.uuid,
         loading: false
       };
-    case ACTION_TYPES.UPDATE_SEARCH_TEXT:
-      return {
-        ...state,
-        search: action.payload
-      };
     case ACTION_TYPES.RESET:
       return {
         ..._.cloneDeep(initialState)
@@ -79,27 +72,28 @@ export default (state = initialState, action) => {
 
 const moduleUrl = `/ws/visits`;
 
-const getPageParams = (page: number, size: number, search?: string) => {
+const getPageParams = (page: number, size: number, filters?: {}, query?: string) => {
   const pageParams = {
     page: page + 1,
     rows: size
   };
-  return (!search) ? pageParams : {
+  return {
     ...pageParams,
-    query: search
+    ...filters,
+    query: query,
   };
 }
 
-export const getOverviewPage = (page: number, size: number, locationUuid: string, search?: string) => async (dispatch) => {
+export const getOverviewPage = (page: number, size: number, locationUuid: string, filters?: {}, query?: string) => async (dispatch) => {
   const url = `${moduleUrl}/overview/${locationUuid}`;
-  const params = getPageParams(page, size, search);
+  const params = getPageParams(page, size, filters, query);
   await dispatch({
     type: ACTION_TYPES.GET_VISITS,
     payload: axiosInstance.get(url, { params })
   });
 };
 
-export const getLocation = (page: number, size: number, search?: string) => async (dispatch) => {
+export const getLocation = (page: number, size: number, filters?: {}, query?: string) => async (dispatch) => {
   const url = '/ws/rest/v1/appui/session';
   let result = await dispatch({
     type: ACTION_TYPES.GET_LOCATION,
@@ -107,16 +101,9 @@ export const getLocation = (page: number, size: number, search?: string) => asyn
   });
   const session: ISession = result.value.data;
   dispatch(
-    getOverviewPage(page, size, session.sessionLocation.uuid, search)
+    getOverviewPage(page, size, session.sessionLocation.uuid, filters, query)
   );
 };
-
-export const updateSearch = (search: string) => {
-  return {
-    type: ACTION_TYPES.UPDATE_SEARCH_TEXT,
-    payload: search
-  };
-}
 
 export const reset = () => {
   return {

@@ -7,201 +7,270 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import React from 'react';
-import { connect } from 'react-redux';
-import { Form, FormGroup, Input } from 'reactstrap';
-import { history } from '../../config/redux-store';
-import _ from 'lodash';
-// TODO: Once AGRE-1584 is developed, date range filter
-// among other additional filters will be delivered in AGRE-1593
-//import "react-dates/initialize";
-//import "react-dates/lib/css/_datepicker.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import { connect } from "react-redux";
+import { Form, FormGroup, Input } from "reactstrap";
+import Select from "react-select";
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import * as Default from '../../shared/utils/messages';
+import * as Default from "../../shared/utils/messages";
 import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
-import {
-  getOverviewPage,
-  updateSearch,
-  getLocation
-} from '../../reducers/overview-visits.reducer';
-import { formatDateIfDefined } from '../../shared/utils/date-util';
-import { IRootState } from '../../reducers';
-import './index.scss';
+import { getOverviewPage, getLocation } from "../../reducers/overview-visits.reducer";
+import { getVisitStatuses } from "../../reducers/schedule-visit.reducer";
+import { formatDateIfDefined } from "../../shared/utils/date-util";
+import { IRootState } from "../../reducers";
+import "./index.scss";
 import OverviewVisitTable from "./table";
-import { SINGLE_PAGE_NUMBER } from './table/constants';
-// TODO: Once AGRE-1584 is developed, date range filter
-// among other additional filters will be delivered in AGRE-1593
-//import { DateRangePicker } from "react-dates";
-//import moment from 'moment';
+import { SINGLE_PAGE_NUMBER, TIME_PERIOD_OPTIONS } from "./table/constants";
+import { DateRangePicker } from "react-dates";
+import moment from "moment";
 
-const IDENTIFIER_ACCESSOR = 'patientIdentifier';
-const NAME_URL_ACCESSOR = 'nameUrl';
-const START_DATE_ACCESSOR = 'startDate';
-const ACTUAL_DATE_ACCESSOR = 'actualDate';
-const TIME_ACCESSOR = 'time';
-const TYPE_ACCESSOR = 'type';
-const STATUS_ACCESSOR = 'status';
-const OVERVIEW_DATE_FORMAT = 'DD MMM YYYY';
-const SEARCH_INPUT_DELAY = 500;
-const SEARCH_INPUT_MIN_CHARS = 3;
+const IDENTIFIER_ACCESSOR = "patientIdentifier";
+const NAME_URL_ACCESSOR = "nameUrl";
+const START_DATE_ACCESSOR = "startDate";
+const ACTUAL_DATE_ACCESSOR = "actualDate";
+const TIME_ACCESSOR = "time";
+const TYPE_ACCESSOR = "type";
+const STATUS_ACCESSOR = "status";
+const OVERVIEW_DATE_FORMAT = "DD MMM YYYY";
+const DAY = "day";
+const MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH = 768;
+const DEFAULT_TIME_PERIOD = "TODAY";
 
-const searchIcon = require('../../../img/search.png');
+const searchIcon = require("../../../img/search.png");
 
-interface IProps extends DispatchProps, StateProps { }
+interface IProps extends DispatchProps, StateProps {}
+
+interface IFilters {
+  dateFrom: moment.Moment | null;
+  dateTo: moment.Moment | null;
+  visitStatus: {
+    label: string;
+    value: string;
+  } | null;
+  timePeriod: {
+    label: string;
+    value: string;
+  } | null;
+}
 
 interface IState {
   query: string;
-  // TODO: Once AGRE-1584 is developed, date range filter
-  // among other additional filters will be delivered in AGRE-1593
-  //startDate: moment.Moment,
-  //endDate: moment.Moment,
-  //focusedDatePicker: any
+  filters: IFilters;
+  focusedDatePicker: any;
 }
 
 class OverviewVisits extends React.Component<IProps, IState> {
   state = {
-    query: '',
-    // TODO: Once AGRE-1584 is developed, date range filter
-    // among other additional filters will be delivered in AGRE-1593
-    //startDate: moment(),
-    //endDate: moment(),
-    //focusedDatePicker: null
+    query: "",
+    filters: {
+      dateFrom: null,
+      dateTo: null,
+      visitStatus: null,
+      timePeriod: {
+        label: getIntl().formatMessage({
+          id: `VISITS_OVERVIEW_PREDEFINED_FILTERS_${DEFAULT_TIME_PERIOD}_LABEL`,
+        }),
+        value: DEFAULT_TIME_PERIOD,
+      },
+    },
+    focusedDatePicker: null,
   };
 
-  private getVisits = (activePage: number, itemsPerPage: number, sort: string, order: string, filters: {}, query?: string) => {
-    if (!!this.props.locationUuid) {
-      this.props.getOverviewPage(activePage,
-                                  itemsPerPage,
-                                  this.props.locationUuid,
-                                  query);
-    } else {
-      this.props.getLocation(activePage, itemsPerPage, query);
-    }
+  componentDidMount() {
+    this.props.getVisitStatuses();
   }
 
-  private handleShowPatient = () => {
-    history.push(`/visits/overview`);
-  }
+  private getVisits = (
+    activePage: number,
+    itemsPerPage: number,
+    sort: string,
+    order: string,
+    filters?: IFilters,
+    query?: string
+  ) => {
+    const preparedFilters = {
+      dateFrom: filters?.dateFrom?.startOf(DAY).valueOf(),
+      dateTo: filters?.dateTo?.endOf(DAY).valueOf(),
+      visitStatus: filters?.visitStatus?.value,
+      timePeriod: filters?.timePeriod?.value,
+    };
+    if (!!this.props.locationUuid) {
+      this.props.getOverviewPage(activePage, itemsPerPage, this.props.locationUuid, preparedFilters, query);
+    } else {
+      this.props.getLocation(activePage, itemsPerPage, preparedFilters, query);
+    }
+  };
 
   private getNameCell = () => {
     return {
-      Header: getIntl().formatMessage({ id: 'VISITS_OVERVIEW_NAME_HEADER', defaultMessage: Default.OVERVIEW_NAME_HEADER }),
+      Header: getIntl().formatMessage({
+        id: "VISITS_OVERVIEW_NAME_HEADER",
+        defaultMessage: Default.OVERVIEW_NAME_HEADER,
+      }),
       accessor: NAME_URL_ACCESSOR,
-      Cell: props => {
+      Cell: (props) => {
         return (
-          <div
-            className="td-cell"
-            onClick={this.handleShowPatient}>
+          <div className="td-cell">
             <div className="td-cell">{props.value.name}</div>
-          </div>);
-      }
+          </div>
+        );
+      },
     };
-  }
+  };
 
   private getIdCell = () => {
     return {
-      Header: getIntl().formatMessage({ id: 'VISITS_OVERVIEW_PATIENT_ID_HEADER', defaultMessage: Default.OVERVIEW_PATIENT_ID_HEADER }),
+      Header: getIntl().formatMessage({
+        id: "VISITS_OVERVIEW_PATIENT_ID_HEADER",
+        defaultMessage: Default.OVERVIEW_PATIENT_ID_HEADER,
+      }),
       accessor: IDENTIFIER_ACCESSOR,
-      Cell: props => {
+      Cell: (props) => {
         return <div className="td-cell">{props.value}</div>;
-      }
+      },
     };
-  }
+  };
 
   private getCell = (header: string, accessor: string) => {
     return {
       Header: header,
       accessor: accessor,
-      Cell: props => {
+      Cell: (props) => {
         return <div className="td-cell">{props.value}</div>;
-      }
+      },
     };
-  }
+  };
 
   private onRowClick = (visit: {}) => {
     const patientName = visit[NAME_URL_ACCESSOR];
     if (!!patientName && !!patientName.url) {
       window.location.assign(patientName.url);
     }
-  }
-
-  private searchAfterDelay = _.debounce(() => {
-    if (this.state.query.length >= SEARCH_INPUT_MIN_CHARS) {
-      this.props.updateSearch(this.state.query);
-    }
-  }, SEARCH_INPUT_DELAY);
-
-  private search = () => {
-    if (this.state.query.length >= SEARCH_INPUT_MIN_CHARS) {
-      this.props.updateSearch(this.state.query);
-    }
   };
 
-  private onQueryChange = (event: any) => {
-    this.setState(
-      { query: event.target.value },
-      () => this.searchAfterDelay()
-    );
-  };
+  private onQueryChange = (event: any) => this.setState({ query: event.target.value });
 
-  private onSearchClick = (event: any) => {
-    event.preventDefault();
-    this.searchAfterDelay.cancel();
-    this.search();
-  };
-
-  private helperText = (query: string, loading: boolean, totalCount: number) => {
-    if (query.length < SEARCH_INPUT_MIN_CHARS) {
-      return getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TABLE_ENTER_SEARCH' });
-    } else if (totalCount > 0) {
+  private helperText = (loading: boolean, totalCount: number) => {
+    if (totalCount > 0) {
       return (
         <span>
-          {totalCount} {getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TABLE_RECORDS_FOUND' })}
+          {totalCount} {getIntl().formatMessage({ id: "VISITS_OVERVIEW_TABLE_RECORDS_FOUND" })}
         </span>
       );
     } else if (!loading && totalCount === 0) {
-      return getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TABLE_NO_RECORDS' });
+      return getIntl().formatMessage({ id: "VISITS_OVERVIEW_TABLE_NO_RECORDS" });
     }
   };
+
+  private timePeriodOptions = () =>
+    TIME_PERIOD_OPTIONS.map((timePeriod) => ({
+      label: getIntl().formatMessage({
+        id: `VISITS_OVERVIEW_PREDEFINED_FILTERS_${timePeriod.toUpperCase()}_LABEL`,
+      }),
+      value: timePeriod,
+    }));
+
+  private renderTimePeriodSelect = () => (
+    <Select
+      options={this.timePeriodOptions()}
+      onChange={(timePeriod) => this.setState((state) => ({ filters: { ...state.filters, timePeriod } }))}
+      className="visits-select"
+      classNamePrefix="visits-select"
+      placeholder={getIntl().formatMessage({
+        id: "VISITS_OVERVIEW_PREDEFINED_FILTERS_PLACEHOLDER",
+        defaultMessage: Default.OVERVIEW_PREDEFINED_FILTERS_PLACEHOLDER,
+      })}
+      value={this.state.filters.timePeriod}
+      isSearchable={false}
+      theme={theme => ({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          primary: "#00455c",
+          primary25: "#e4e7e7"
+        }
+      })}
+    />
+  );
+
+  private visitStatusOptions = () =>
+    this.props.visitStatuses.map((status) => ({
+      label: status,
+      value: status,
+    }));
+
+  private renderVisitStatusSelect = () => (
+    <Select
+      options={this.visitStatusOptions()}
+      onChange={(visitStatus) => this.setState((state) => ({ filters: { ...state.filters, visitStatus } }))}
+      className="visits-select"
+      classNamePrefix="visits-select"
+      placeholder={getIntl().formatMessage({
+        id: "VISITS_OVERVIEW_VISIT_STATUS_PLACEHOLDER",
+        defaultMessage: Default.OVERVIEW_VISIT_STATUS_PLACEHOLDER,
+      })}
+      value={this.state.filters.visitStatus}
+      isSearchable={false}
+      isClearable
+      theme={theme => ({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          primary: "#00455c",
+          primary25: "#e4e7e7"
+        }
+      })}
+    />
+  );
+
+  private renderDateRangePicker = () => (
+    <DateRangePicker
+      startDate={this.state.filters.dateFrom}
+      startDateId="date_from"
+      endDate={this.state.filters.dateTo}
+      endDateId="date_to"
+      onDatesChange={({ startDate, endDate }) =>
+        this.setState((state) => ({ filters: { ...state.filters, dateFrom: startDate, dateTo: endDate } }))
+      }
+      focusedInput={this.state.focusedDatePicker}
+      onFocusChange={(focusedDatePicker) => this.setState({ focusedDatePicker })}
+      showClearDates
+      displayFormat={OVERVIEW_DATE_FORMAT}
+      hideKeyboardShortcutsPanel
+      isOutsideRange={() => false}
+      showDefaultInputIcon
+      orientation={window.screen.availWidth > MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH ? "horizontal" : "vertical"}
+      small={window.screen.availWidth < MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH}
+    />
+  );
 
   private renderSearchBar = () => {
     return (
       <>
-        <Form onSubmit={this.onSearchClick}>
+        <Form>
           <FormGroup className="visit-search">
             <div className="search-bar">
               <img src={searchIcon} alt="search" className="search-icon" />
               <Input
                 placeholder={getIntl().formatMessage({
-                  id: 'VISITS_OVERVIEW_SEARCH_PLACEHOLDER'
+                  id: "VISITS_OVERVIEW_SEARCH_PLACEHOLDER",
                 })}
                 value={this.state.query}
                 onChange={this.onQueryChange}
-                className="search-input"
+                className="search-input form-control"
               />
             </div>
-            {// TODO: Once AGRE-1584 is developed, date range filter
-            // among other additional filters will be delivered in AGRE-1593
-            /*
-            <DateRangePicker
-              startDate={this.state.startDate}
-              startDateId="start_planned_date_id"
-              endDate={this.state.endDate}
-              endDateId="end_planned_date_id"
-              onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
-              focusedInput={this.state.focusedDatePicker}
-              onFocusChange={focusedDatePicker => this.setState({ focusedDatePicker })}
-              regular
-              showClearDates
-              displayFormat={OVERVIEW_DATE_FORMAT}
-            />
-            */}
+            {this.renderDateRangePicker()}
+            {this.renderVisitStatusSelect()}
+            {this.renderTimePeriodSelect()}
           </FormGroup>
         </Form>
       </>
     );
-  }
+  };
 
   private renderTable = () => {
     return (
@@ -210,50 +279,82 @@ class OverviewVisits extends React.Component<IProps, IState> {
           {this.props.loading ? (
             <div className="spinner-border spinner-border-sm" />
           ) : (
-            this.helperText(this.state.query, this.props.loading, this.props.visits.length)
+            this.helperText(this.props.loading, this.props.visits.length)
           )}
         </div>
-        {this.state.query.length >= SEARCH_INPUT_MIN_CHARS && (
-          <OverviewVisitTable
-            data={this.props.visits.map(visit => {
-              return {
-                ...visit,
-                startDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.startDate),
-                actualDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.actualDate)
-              }
-            })}
-            columns={[
-              this.getIdCell(),
-              this.getNameCell(),
-              this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TYPE_HEADER', defaultMessage: Default.OVERVIEW_TYPE_HEADER }), TYPE_ACCESSOR),
-              this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TIME_HEADER', defaultMessage: Default.OVERVIEW_TIME_HEADER }), TIME_ACCESSOR),
-              this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_DATE_HEADER', defaultMessage: Default.OVERVIEW_DATE_HEADER }), START_DATE_ACCESSOR),
-              this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_ACTUAL_DATE_HEADER', defaultMessage: Default.OVERVIEW_ACTUAL_DATE_HEADER }), ACTUAL_DATE_ACCESSOR),
-              this.getCell(getIntl().formatMessage({ id: 'VISITS_OVERVIEW_STATUS_HEADER', defaultMessage: Default.OVERVIEW_STATUS_HEADER }), STATUS_ACCESSOR)
-            ]}
-            query={this.props.search}
-            pages={this.props.pages}
-            loading={this.props.loading}
-            fetchDataCallback={this.getVisits}
-            sortable={false}
-            multiSort={false}
-            showPagination={this.props.pages > SINGLE_PAGE_NUMBER}
-            resizable={false}
-            onRowClick={this.onRowClick}
-          />
-        )}
+        <OverviewVisitTable
+          data={this.props.visits.map((visit) => {
+            return {
+              ...visit,
+              startDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.startDate),
+              actualDate: formatDateIfDefined(OVERVIEW_DATE_FORMAT, visit.actualDate),
+            };
+          })}
+          columns={[
+            this.getIdCell(),
+            this.getNameCell(),
+            this.getCell(
+              getIntl().formatMessage({
+                id: "VISITS_OVERVIEW_TYPE_HEADER",
+                defaultMessage: Default.OVERVIEW_TYPE_HEADER,
+              }),
+              TYPE_ACCESSOR
+            ),
+            this.getCell(
+              getIntl().formatMessage({
+                id: "VISITS_OVERVIEW_TIME_HEADER",
+                defaultMessage: Default.OVERVIEW_TIME_HEADER,
+              }),
+              TIME_ACCESSOR
+            ),
+            this.getCell(
+              getIntl().formatMessage({
+                id: "VISITS_OVERVIEW_DATE_HEADER",
+                defaultMessage: Default.OVERVIEW_DATE_HEADER,
+              }),
+              START_DATE_ACCESSOR
+            ),
+            this.getCell(
+              getIntl().formatMessage({
+                id: "VISITS_OVERVIEW_ACTUAL_DATE_HEADER",
+                defaultMessage: Default.OVERVIEW_ACTUAL_DATE_HEADER,
+              }),
+              ACTUAL_DATE_ACCESSOR
+            ),
+            this.getCell(
+              getIntl().formatMessage({
+                id: "VISITS_OVERVIEW_STATUS_HEADER",
+                defaultMessage: Default.OVERVIEW_STATUS_HEADER,
+              }),
+              STATUS_ACCESSOR
+            ),
+          ]}
+          query={this.state.query}
+          filters={this.state.filters}
+          pages={this.props.pages}
+          loading={false}
+          fetchDataCallback={this.getVisits}
+          sortable={false}
+          multiSort={false}
+          showPagination={this.props.pages > SINGLE_PAGE_NUMBER}
+          resizable={false}
+          onRowClick={this.onRowClick}
+        />
       </div>
     );
-  }
+  };
 
   render = () => {
     return (
       <div className="body-wrapper">
         <div className="content">
           <div className="overview-visits">
-            <h2>{getIntl().formatMessage({ id: 'VISITS_OVERVIEW_TITLE', defaultMessage: Default.OVERVIEW_TITLE })}</h2>
+            <h2>{getIntl().formatMessage({ id: "VISITS_OVERVIEW_TITLE", defaultMessage: Default.OVERVIEW_TITLE })}</h2>
             <div className="helper-text">
-              {getIntl().formatMessage({ id: 'VISITS_OVERVIEW_DESCRIPTION', defaultMessage: Default.OVERVIEW_DESCRIPTION })}
+              {getIntl().formatMessage({
+                id: "VISITS_OVERVIEW_DESCRIPTION",
+                defaultMessage: Default.OVERVIEW_DESCRIPTION,
+              })}
             </div>
             <div className="search-section">
               {this.renderSearchBar()}
@@ -266,27 +367,24 @@ class OverviewVisits extends React.Component<IProps, IState> {
   };
 }
 
-const mapStateToProps = ({ overview, openmrs }: IRootState) => ({
+const mapStateToProps = ({ overview, scheduleVisit }: IRootState) => ({
   visits: overview.visits,
   pages: overview.pages,
   loading: overview.loading,
-  search: overview.search,
-  locationUuid: overview.locationUuid
+  locationUuid: overview.locationUuid,
+  visitStatuses: scheduleVisit.visitStatuses,
   // ToDo: When CFLM-626 will be fixed please use
   // location: openmrs.session.sessionLocation
   // instead of locationUuid: overview.locationUuid
 });
 
-const mapDispatchToProps = ({
+const mapDispatchToProps = {
   getOverviewPage,
-  updateSearch,
-  getLocation
-});
+  getLocation,
+  getVisitStatuses,
+};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OverviewVisits);
+export default connect(mapStateToProps, mapDispatchToProps)(OverviewVisits);
