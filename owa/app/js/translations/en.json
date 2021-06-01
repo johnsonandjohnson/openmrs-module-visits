@@ -40,8 +40,13 @@
     "VISITS_OVERVIEW_SEARCH_TITLE": "Search",
     "VISITS_OVERVIEW_DESCRIPTION": "The results presented below are related to the current location.",
     "VISITS_OVERVIEW_SEARCH_PLACEHOLDER": "Filter by id or name",
-    "VISITS_OVERVIEW_TABLE_ENTER_SEARCH": "For the search results to appear, enter at least 3 characters.",
     "VISITS_OVERVIEW_TABLE_NO_RECORDS": "No records.",
     "VISITS_OVERVIEW_TABLE_RECORDS_FOUND": "records found.",
-    "VISITS_MANAGE_VISITS_DESCRIPTION": "Create, edit and delete visits."
+    "VISITS_MANAGE_VISITS_DESCRIPTION": "Create, edit and delete visits.",
+    "VISITS_OVERVIEW_VISIT_STATUS_PLACEHOLDER": "Visit Status",
+    "VISITS_OVERVIEW_PREDEFINED_FILTERS_PLACEHOLDER": "Predefined Filters",
+    "VISITS_OVERVIEW_PREDEFINED_FILTERS_TODAY_LABEL": "Scheduled visits today",
+    "VISITS_OVERVIEW_PREDEFINED_FILTERS_WEEK_LABEL": "Scheduled visits week",
+    "VISITS_OVERVIEW_PREDEFINED_FILTERS_MONTH_LABEL": "Scheduled visits month",
+    "VISITS_OVERVIEW_PREDEFINED_FILTERS_ALL_LABEL": "Scheduled visits all"
 }

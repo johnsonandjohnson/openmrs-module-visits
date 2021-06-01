@@ -58,3 +58,5 @@ export const OVERVIEW_TYPE_HEADER = 'Type';
 export const OVERVIEW_STATUS_HEADER = 'Status';
 export const OVERVIEW_SEARCH_TITLE = 'Search';
 export const OVERVIEW_DESCRIPTION = 'The results presented below are related to the current location.';
+export const OVERVIEW_VISIT_STATUS_PLACEHOLDER = 'Visit Status';
+export const OVERVIEW_PREDEFINED_FILTERS_PLACEHOLDER = 'Predefined Filters';
