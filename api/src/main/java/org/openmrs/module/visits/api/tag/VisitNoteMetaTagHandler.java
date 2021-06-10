@@ -25,6 +25,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated Use {@link org.openmrs.module.visits.api.htmlformentry.action.VisitStatusUpdateAction} instead this
+ */
+@Deprecated
 public class VisitNoteMetaTagHandler extends SubstitutionTagHandler {
 
     private static final Log LOGGER = LogFactory.getLog(VisitNoteMetaTagHandler.class);
