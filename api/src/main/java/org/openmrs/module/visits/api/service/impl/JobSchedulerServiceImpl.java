@@ -39,8 +39,13 @@ public class JobSchedulerServiceImpl extends BaseOpenmrsService implements JobSc
         if (previousTask == null) {
             scheduleTask(newTask);
         } else {
-            shutdownTask(newTask.getName());
-            scheduleTask(newTask);
+            try {
+                schedulerService.shutdownTask(previousTask);
+                schedulerService.deleteTask(previousTask.getId());
+                scheduleTask(newTask);
+            } catch (SchedulerException ex) {
+                LOGGER.error(ex);
+            }
         }
     }
 
@@ -115,17 +120,5 @@ public class JobSchedulerServiceImpl extends BaseOpenmrsService implements JobSc
 
     public void setDaemonToken(DaemonToken daemonToken) {
         this.daemonToken = daemonToken;
-    }
-
-    private void shutdownTask(String taskName) {
-        try {
-            TaskDefinition taskDefinition = schedulerService.getTaskByName(taskName);
-            if (taskDefinition != null) {
-                schedulerService.shutdownTask(taskDefinition);
-                schedulerService.deleteTask(taskDefinition.getId());
-            }
-        } catch (SchedulerException ex) {
-            LOGGER.error(ex);
-        }
     }
 }
