@@ -17,11 +17,11 @@
     </description>
 
     <scm>
-        <connection>scm:git:git@bitbucket.org:soldevelo/omrs-visits.git</connection>
-        <developerConnection>scm:git:git@bitbucket.org:soldevelo/omrs-visits.git</developerConnection>
-        <url>https://bitbucket.org/soldevelo/omrs-visits/</url>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/omrs-visits.git</connection>
+        <developerConnection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/omrs-visits.git</developerConnection>
+        <url>https://sourcecode.jnj.com/scm/itx-bpv/omrs-visits.git</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>api</module>
