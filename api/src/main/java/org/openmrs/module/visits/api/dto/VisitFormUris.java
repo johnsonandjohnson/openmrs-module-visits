@@ -102,9 +102,8 @@ public class VisitFormUris {
         }
         if (encounters.size() > ONE) {
             LOGGER.warn(String.format(
-                    "The CFL visits module assumes that a visit has at most 1 encounter, but %d found for encounter %d",
-                    encounters.size(),
-                    encounter.getId()));
+                    "The CFL visits module assumes that a visit has at most 1 Encounter, but %d found for Visit ID: %d. " +
+                            "Using Encounter ID: %d", encounters.size(), visit.getId(), encounter.getId()));
         }
         return encounter;
     }
