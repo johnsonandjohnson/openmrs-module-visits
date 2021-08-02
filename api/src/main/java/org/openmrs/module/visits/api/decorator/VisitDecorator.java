@@ -3,6 +3,7 @@ package org.openmrs.module.visits.api.decorator;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
+import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttribute;
 import org.openmrs.VisitType;
@@ -34,6 +35,14 @@ public class VisitDecorator extends ObjectDecorator<Visit> {
 
     public void setStartDatetime(Date startDate) {
         getObject().setStartDatetime(startDate);
+    }
+
+    public void setDateChanged(Date dateChanged) {
+        getObject().setDateChanged(dateChanged);
+    }
+
+    public void setChangedBy(User changedBy) {
+        getObject().setChangedBy(changedBy);
     }
 
     public void setLocation(Location locationByUuid) {

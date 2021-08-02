@@ -10,6 +10,8 @@ import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.VisitService;
 
+import java.util.Date;
+
 /**
  * The VisitStatusUpdateAction Class.
  * <p>
@@ -33,6 +35,8 @@ public class VisitStatusUpdateAction implements CustomFormSubmissionAction {
         if (formEntrySession.getContext().getVisit() != null) {
             final VisitDecorator visitDecorator = new VisitDecorator((Visit) formEntrySession.getContext().getVisit());
             visitDecorator.setStatus(getConfigService().getStatusOfOccurredVisit());
+            visitDecorator.setDateChanged(new Date());
+            visitDecorator.setChangedBy(Context.getAuthenticatedUser());
             getVisitService().saveOrUpdate(visitDecorator.getObject());
             LOGGER.info(String.format("Visit with uuid: %s has successfully changed the status.", visitDecorator.getUuid()));
         }

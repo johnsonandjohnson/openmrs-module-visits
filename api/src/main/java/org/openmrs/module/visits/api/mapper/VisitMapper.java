@@ -6,6 +6,7 @@ import org.openmrs.Visit;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
@@ -13,6 +14,7 @@ import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.service.ConfigService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,7 +57,9 @@ public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
     @Override
     public Visit fromDto(VisitDTO dto) {
         Visit result = visitService.getVisitByUuid(dto.getUuid());
+        boolean isNewVisit = false;
         if (result == null) {
+            isNewVisit = true;
             result = new Visit();
         }
         result.setPatient(patientService.getPatientByUuid(dto.getPatientUuid()));
@@ -67,6 +71,12 @@ public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
         resultDecorator.setStatus(dto.getStatus());
         resultDecorator.setTime(dto.getTime());
         resultDecorator.setActualDate(dto.getActualDate());
+
+        if (!isNewVisit) {
+            resultDecorator.setDateChanged(new Date());
+            resultDecorator.setChangedBy(Context.getAuthenticatedUser());
+        }
+
         return resultDecorator.getObject();
     }
 

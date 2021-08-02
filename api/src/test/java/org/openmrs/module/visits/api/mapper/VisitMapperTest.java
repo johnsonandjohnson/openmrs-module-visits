@@ -3,8 +3,10 @@ package org.openmrs.module.visits.api.mapper;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttributeType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.ContextMockedTest;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
@@ -19,9 +21,12 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.openmrs.module.visits.api.util.TestConstants.VISIT_URI_MAP_JSON;
 
 public class VisitMapperTest extends ContextMockedTest {
@@ -56,16 +61,40 @@ public class VisitMapperTest extends ContextMockedTest {
     }
 
     @Test
-    public void shouldMapFromDto() {
+    public void shouldMapFromDtoWhenVisitIsNew() {
         final Patient patient = new PatientBuilder().build();
         doReturn(new VisitAttributeType())
                 .when(getVisitService()).getVisitAttributeTypeByUuid(anyString());
-        doReturn(patient).when(getPatientService()).getPatientByUuid(any());
+        doReturn(patient)
+                .when(getPatientService()).getPatientByUuid(any());
         VisitDTO visitDTO = new VisitDTOBuilder().build();
         Visit visit = visitMapper.fromDto(visitDTO);
 
         assertEquals(visitDTO.getStartDate(), visit.getStartDatetime());
         assertEquals(patient.getUuid(), visit.getPatient().getUuid());
+    }
+
+    @Test
+    public void shouldMapFromDtoWhenVisitAlreadyExists() {
+        final Patient patient = new PatientBuilder().build();
+        doReturn(new VisitAttributeType())
+                .when(getVisitService()).getVisitAttributeTypeByUuid(anyString());
+        doReturn(patient)
+                .when(getPatientService()).getPatientByUuid(any());
+        Visit testVisit = new Visit(1);
+        when(getVisitService().getVisitByUuid(anyString())).thenReturn(testVisit);
+        when(Context.getAuthenticatedUser()).thenReturn(new User(1));
+
+        assertNull(testVisit.getDateChanged());
+        assertNull(testVisit.getChangedBy());
+
+        VisitDTO visitDTO = new VisitDTOBuilder().build();
+        Visit visit = visitMapper.fromDto(visitDTO);
+
+        assertEquals(visitDTO.getStartDate(), visit.getStartDatetime());
+        assertEquals(patient.getUuid(), visit.getPatient().getUuid());
+        assertNotNull(testVisit.getDateChanged());
+        assertNotNull(testVisit.getChangedBy());
     }
 
     @Test(expected = IllegalStateException.class)
