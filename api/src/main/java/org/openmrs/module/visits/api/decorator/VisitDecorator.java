@@ -3,7 +3,6 @@ package org.openmrs.module.visits.api.decorator;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
-import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttribute;
 import org.openmrs.VisitType;

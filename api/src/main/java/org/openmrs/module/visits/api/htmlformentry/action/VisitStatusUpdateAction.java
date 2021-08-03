@@ -10,8 +10,6 @@ import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.VisitService;
 
-import java.util.Date;
-
 /**
  * The VisitStatusUpdateAction Class.
  * <p>
