@@ -6,8 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttributeType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.ContextMockedTest;
 import org.openmrs.module.visits.api.dao.BaseOpenmrsPageableDao;
 import org.openmrs.module.visits.api.dao.impl.VisitDaoImpl;
@@ -25,6 +27,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class VisitServiceImplTest extends ContextMockedTest {
 
@@ -91,6 +94,7 @@ public class VisitServiceImplTest extends ContextMockedTest {
                 .when(getVisitService()).getVisitAttributeTypeByUuid(anyString());
         doReturn(visit)
                 .when(dao).saveOrUpdate(any(Visit.class));
+        when(Context.getAuthenticatedUser()).thenReturn(new User(1));
 
         visitService.changeStatusForMissedVisits();
         verify(dao, times(1)).saveOrUpdate(any(Visit.class));

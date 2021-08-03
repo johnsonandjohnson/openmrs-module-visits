@@ -16,6 +16,7 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
@@ -90,9 +91,9 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
                         visitDecorator.getId(), visitDecorator.getStatus(), missedVisitStatus));
             }
             visitDecorator.setStatus(missedVisitStatus);
+            visitDecorator.setChanged();
             saveOrUpdate(visitDecorator.getObject());
         }
-
     }
 
     public void setVisitMapper(VisitMapper visitMapper) {
