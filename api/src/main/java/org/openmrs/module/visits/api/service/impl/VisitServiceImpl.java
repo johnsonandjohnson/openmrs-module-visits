@@ -91,8 +91,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
                         visitDecorator.getId(), visitDecorator.getStatus(), missedVisitStatus));
             }
             visitDecorator.setStatus(missedVisitStatus);
-            visitDecorator.setDateChanged(new Date());
-            visitDecorator.setChangedBy(Context.getAuthenticatedUser());
+            visitDecorator.setChanged();
             saveOrUpdate(visitDecorator.getObject());
         }
     }

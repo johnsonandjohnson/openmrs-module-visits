@@ -35,8 +35,7 @@ public class VisitStatusUpdateAction implements CustomFormSubmissionAction {
         if (formEntrySession.getContext().getVisit() != null) {
             final VisitDecorator visitDecorator = new VisitDecorator((Visit) formEntrySession.getContext().getVisit());
             visitDecorator.setStatus(getConfigService().getStatusOfOccurredVisit());
-            visitDecorator.setDateChanged(new Date());
-            visitDecorator.setChangedBy(Context.getAuthenticatedUser());
+            visitDecorator.setChanged();
             getVisitService().saveOrUpdate(visitDecorator.getObject());
             LOGGER.info(String.format("Visit with uuid: %s has successfully changed the status.", visitDecorator.getUuid()));
         }

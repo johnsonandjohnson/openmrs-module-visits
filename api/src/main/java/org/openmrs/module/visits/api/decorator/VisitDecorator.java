@@ -37,12 +37,9 @@ public class VisitDecorator extends ObjectDecorator<Visit> {
         getObject().setStartDatetime(startDate);
     }
 
-    public void setDateChanged(Date dateChanged) {
-        getObject().setDateChanged(dateChanged);
-    }
-
-    public void setChangedBy(User changedBy) {
-        getObject().setChangedBy(changedBy);
+    public void setChanged() {
+        getObject().setDateChanged(new Date());
+        getObject().setChangedBy(Context.getAuthenticatedUser());
     }
 
     public void setLocation(Location locationByUuid) {
