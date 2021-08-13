@@ -1,10 +1,10 @@
 import { parse } from 'date-fns';
 import moment from 'moment';
 
-const today = moment();
-const week = moment().add(6, 'days');
-const month = moment().add(1, 'months');
-const clearDate = null;
+const TODAY = moment();
+const WEEK = moment().add(6, 'days');
+const MONTH = moment().add(1, 'months');
+const CLEAR_DATE = null;
 
 export function getCommaSeparatedDateString(date?: Date, defaultValue?: string) {
   if (!!date) {
@@ -32,19 +32,19 @@ export const parseOrNow = (date?: string): Date => {
 
 export const getDatesByPeriod = {
   TODAY: () => ({
-    dateFrom: today,
-    dateTo: today
+    dateFrom: TODAY,
+    dateTo: TODAY
   }),
   WEEK: () => ({
-    dateFrom: today,
-    dateTo: week
+    dateFrom: TODAY,
+    dateTo: WEEK
   }),
   MONTH: () => ({
-    dateFrom: today,
-    dateTo: month
+    dateFrom: TODAY,
+    dateTo: MONTH
   }),
   ALL: () => ({
-    dateFrom: clearDate,
-    dateTo: clearDate
+    dateFrom: CLEAR_DATE,
+    dateTo: CLEAR_DATE
   }),
 };
