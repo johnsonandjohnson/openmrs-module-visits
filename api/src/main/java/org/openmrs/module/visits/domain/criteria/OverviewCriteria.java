@@ -50,7 +50,6 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
     private static final String ATTRIBUTE_TYPE = "attributeType";
     private static final String NAME = "name";
     private static final String VISIT_STATUS_ATTRIBUTE_TYPE_NAME = "Visit Status";
-    private static final String SCHEDULED_VISIT_STATUS = "SCHEDULED";
     private static final int ONE = 1;
     private static final int SIX = 6;
 
@@ -96,7 +95,7 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
         addQueryCriteria(hibernateCriteria);
         addVisitDateRangeCriteria(hibernateCriteria);
         addVisitStatusCriteria(hibernateCriteria);
-        addScheduledVisitsTimePeriodCriteria(hibernateCriteria);
+        addVisitsTimePeriodCriteria(hibernateCriteria);
         if (sortResults) {
             addResultSorting(hibernateCriteria);
         }
@@ -134,7 +133,7 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
                 .add(Restrictions.eq(VOIDED_PROPERTY, false));
     }
 
-    private void addScheduledVisitsTimePeriodCriteria(Criteria criteria) {
+    private void addVisitsTimePeriodCriteria(Criteria criteria) {
         if (StringUtils.isNotBlank(timePeriod)) {
             Date today = DateUtil.getDateIgnoringTime(DateUtil.now());
            if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.TODAY.name())) {
@@ -147,9 +146,6 @@ public class OverviewCriteria extends BaseCriteria implements Serializable {
            } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.MONTH.name())) {
                Date monthLaterDate = DateUtil.getDatePlusMonths(today, ONE);
                criteria.add(Restrictions.between(START_DATE_TIME_FIELD_NAME, today, monthLaterDate));
-           } else if (StringUtils.equalsIgnoreCase(timePeriod, TimePeriod.ALL.name())) {
-               DetachedCriteria detachedCriteria = getVisitStatusesSubQuery(SCHEDULED_VISIT_STATUS);
-               criteria.add(Property.forName(VISIT_ID_PROPERTY).in(detachedCriteria));
            }
         }
     }
