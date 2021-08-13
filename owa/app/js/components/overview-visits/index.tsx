@@ -38,6 +38,8 @@ const OVERVIEW_DATE_FORMAT = "DD MMM YYYY";
 const DAY = "day";
 const MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH = 768;
 const DEFAULT_TIME_PERIOD = "TODAY";
+const SCHEDULED_STATUS = 'SCHEDULED';
+const TIME_PERIOD_ALL = 'ALL';
 
 const searchIcon = require("../../../img/search.png");
 
@@ -62,13 +64,35 @@ interface IState {
   focusedDatePicker: any;
 }
 
-class OverviewVisits extends React.Component<IProps, IState> {
+const getDatesByPeriod = {
+  TODAY: () => ({
+    dateFrom: moment(),
+    dateTo: moment()
+  }),
+  WEEK: () => ({
+    dateFrom: moment(),
+    dateTo: moment().add(6, 'days')
+  }),
+  MONTH: () => ({
+    dateFrom: moment(),
+    dateTo: moment().add(1, 'months')
+  }),
+  ALL: () => ({
+    dateFrom: null,
+    dateTo: null
+  }),
+};
+
+export class OverviewVisits extends React.Component<IProps, IState> {
   state = {
     query: "",
     filters: {
-      dateFrom: null,
-      dateTo: null,
-      visitStatus: null,
+      dateFrom: moment(),
+      dateTo: moment(),
+      visitStatus: {
+        label: SCHEDULED_STATUS,
+        value: SCHEDULED_STATUS,
+      },
       timePeriod: {
         label: getIntl().formatMessage({
           id: `VISITS_OVERVIEW_PREDEFINED_FILTERS_${DEFAULT_TIME_PERIOD}_LABEL`,
@@ -91,12 +115,17 @@ class OverviewVisits extends React.Component<IProps, IState> {
     filters?: IFilters,
     query?: string
   ) => {
+    const timePeriod = filters?.timePeriod?.value;
+    const timePeriodAll = timePeriod === TIME_PERIOD_ALL;
+    const dateFrom = timePeriodAll ? filters?.dateFrom?.startOf(DAY).valueOf() : null ;
+    const dateTo = timePeriodAll ? filters?.dateTo?.endOf(DAY).valueOf() : null;
     const preparedFilters = {
-      dateFrom: filters?.dateFrom?.startOf(DAY).valueOf(),
-      dateTo: filters?.dateTo?.endOf(DAY).valueOf(),
+      dateFrom,
+      dateTo,
       visitStatus: filters?.visitStatus?.value,
-      timePeriod: filters?.timePeriod?.value,
+      timePeriod,
     };
+
     if (!!this.props.locationUuid) {
       this.props.getOverviewPage(activePage, itemsPerPage, this.props.locationUuid, preparedFilters, query);
     } else {
@@ -176,7 +205,10 @@ class OverviewVisits extends React.Component<IProps, IState> {
   private renderTimePeriodSelect = () => (
     <Select
       options={this.timePeriodOptions()}
-      onChange={(timePeriod) => this.setState((state) => ({ filters: { ...state.filters, timePeriod } }))}
+      onChange={(timePeriod) => {
+        const { dateFrom, dateTo } = getDatesByPeriod[timePeriod.value]();
+        this.setState((state) => ({ filters: { ...state.filters, timePeriod, dateFrom, dateTo} }))
+      }}
       className="visits-select"
       classNamePrefix="visits-select"
       placeholder={getIntl().formatMessage({
@@ -226,26 +258,38 @@ class OverviewVisits extends React.Component<IProps, IState> {
     />
   );
 
-  private renderDateRangePicker = () => (
-    <DateRangePicker
-      startDate={this.state.filters.dateFrom}
-      startDateId="date_from"
-      endDate={this.state.filters.dateTo}
-      endDateId="date_to"
-      onDatesChange={({ startDate, endDate }) =>
-        this.setState((state) => ({ filters: { ...state.filters, dateFrom: startDate, dateTo: endDate } }))
-      }
-      focusedInput={this.state.focusedDatePicker}
-      onFocusChange={(focusedDatePicker) => this.setState({ focusedDatePicker })}
-      showClearDates
-      displayFormat={OVERVIEW_DATE_FORMAT}
-      hideKeyboardShortcutsPanel
-      isOutsideRange={() => false}
-      showDefaultInputIcon
-      orientation={window.screen.availWidth > MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH ? "horizontal" : "vertical"}
-      small={window.screen.availWidth < MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH}
-    />
-  );
+  private renderDateRangePicker = () => {
+    const {
+      focusedDatePicker,
+      filters: {
+        timePeriod: { value: timePeriodValue },
+        dateFrom,
+        dateTo,
+      },
+    } = this.state;
+
+    return (
+      <DateRangePicker
+        startDate={dateFrom}
+        startDateId="date_from"
+        endDate={dateTo}
+        endDateId="date_to"
+        onDatesChange={({ startDate, endDate }) =>
+          this.setState((state) => ({ filters: { ...state.filters, dateFrom: startDate, dateTo: endDate } }))
+        }
+        focusedInput={focusedDatePicker}
+        onFocusChange={(focusedDatePicker) => this.setState({ focusedDatePicker })}
+        showClearDates={timePeriodValue === TIME_PERIOD_ALL}
+        displayFormat={OVERVIEW_DATE_FORMAT}
+        hideKeyboardShortcutsPanel
+        isOutsideRange={() => false}
+        showDefaultInputIcon
+        orientation={window.screen.availWidth > MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH ? "horizontal" : "vertical"}
+        small={window.screen.availWidth < MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH}
+        disabled={timePeriodValue !== TIME_PERIOD_ALL}
+      />
+    )
+  };
 
   private renderSearchBar = () => {
     return (
