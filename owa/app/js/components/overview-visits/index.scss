@@ -149,10 +149,9 @@
 
     .DateRangePickerInput__disabled {
       .DateRangePickerInput_calendarIcon,
-      .DateInput_input__disabled {
-        &:hover {
-          cursor: not-allowed;
-        }
+      .DateInput_input__disabled, 
+      &:hover {
+        cursor: not-allowed;
       }
 
       .DateRangePickerInput_calendarIcon {

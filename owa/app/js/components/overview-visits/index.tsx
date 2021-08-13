@@ -19,7 +19,7 @@ import * as Default from "../../shared/utils/messages";
 import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { getOverviewPage, getLocation } from "../../reducers/overview-visits.reducer";
 import { getVisitStatuses } from "../../reducers/schedule-visit.reducer";
-import { formatDateIfDefined } from "../../shared/utils/date-util";
+import { formatDateIfDefined, getDatesByPeriod } from "../../shared/utils/date-util";
 import { IRootState } from "../../reducers";
 import "./index.scss";
 import OverviewVisitTable from "./table";
@@ -38,8 +38,8 @@ const OVERVIEW_DATE_FORMAT = "DD MMM YYYY";
 const DAY = "day";
 const MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH = 768;
 const DEFAULT_TIME_PERIOD = "TODAY";
-const SCHEDULED_STATUS = 'SCHEDULED';
-const TIME_PERIOD_ALL = 'ALL';
+const SCHEDULED_STATUS = "SCHEDULED";
+const TIME_PERIOD_ALL = "ALL";
 
 const searchIcon = require("../../../img/search.png");
 
@@ -64,26 +64,7 @@ interface IState {
   focusedDatePicker: any;
 }
 
-const getDatesByPeriod = {
-  TODAY: () => ({
-    dateFrom: moment(),
-    dateTo: moment()
-  }),
-  WEEK: () => ({
-    dateFrom: moment(),
-    dateTo: moment().add(6, 'days')
-  }),
-  MONTH: () => ({
-    dateFrom: moment(),
-    dateTo: moment().add(1, 'months')
-  }),
-  ALL: () => ({
-    dateFrom: null,
-    dateTo: null
-  }),
-};
-
-export class OverviewVisits extends React.Component<IProps, IState> {
+class OverviewVisits extends React.Component<IProps, IState> {
   state = {
     query: "",
     filters: {
@@ -116,10 +97,10 @@ export class OverviewVisits extends React.Component<IProps, IState> {
     query?: string
   ) => {
     const timePeriod = filters?.timePeriod?.value;
-    const timePeriodAll = timePeriod === TIME_PERIOD_ALL;
-    const dateFrom = timePeriodAll ? filters?.dateFrom?.startOf(DAY).valueOf() : null ;
-    const dateTo = timePeriodAll ? filters?.dateTo?.endOf(DAY).valueOf() : null;
-    const preparedFilters = {
+    const isTimePeriodAll = timePeriod === TIME_PERIOD_ALL;
+    const dateFrom = isTimePeriodAll ? filters?.dateFrom?.startOf(DAY).valueOf() : null ;
+    const dateTo = isTimePeriodAll ? filters?.dateTo?.endOf(DAY).valueOf() : null;
+    const predefinedFilters = {
       dateFrom,
       dateTo,
       visitStatus: filters?.visitStatus?.value,
@@ -127,9 +108,9 @@ export class OverviewVisits extends React.Component<IProps, IState> {
     };
 
     if (!!this.props.locationUuid) {
-      this.props.getOverviewPage(activePage, itemsPerPage, this.props.locationUuid, preparedFilters, query);
+      this.props.getOverviewPage(activePage, itemsPerPage, this.props.locationUuid, predefinedFilters, query);
     } else {
-      this.props.getLocation(activePage, itemsPerPage, preparedFilters, query);
+      this.props.getLocation(activePage, itemsPerPage, predefinedFilters, query);
     }
   };
 
