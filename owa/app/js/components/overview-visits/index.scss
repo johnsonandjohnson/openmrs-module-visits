@@ -143,7 +143,24 @@
 
       .DateRangePickerInput_clearDates {
         margin: 0 5px;
-        line-height: 90%;
+        line-height: 80%;
+      }
+    }
+
+    .DateRangePickerInput__disabled {
+      .DateRangePickerInput_calendarIcon,
+      .DateInput_input__disabled, 
+      &:hover {
+        cursor: not-allowed;
+      }
+
+      .DateRangePickerInput_calendarIcon {
+        background-color: #f2f2f2;
+        border: none;
+      }
+
+      .DateInput_input__disabled {
+        background-color: transparent;
       }
     }
   }
