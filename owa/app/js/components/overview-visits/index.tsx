@@ -23,7 +23,14 @@ import { formatDateIfDefined, getDatesByPeriod } from "../../shared/utils/date-u
 import { IRootState } from "../../reducers";
 import "./index.scss";
 import OverviewVisitTable from "./table";
-import { SINGLE_PAGE_NUMBER, TIME_PERIOD_OPTIONS, DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER} from "./table/constants";
+import {
+  SINGLE_PAGE_NUMBER,
+  TIME_PERIOD_OPTIONS,
+  DEFAULT_ACTIVE_PAGE,
+  DEFAULT_ITEMS_PER_PAGE,
+  DEFAULT_SORT,
+  DEFAULT_ORDER
+} from "./table/constants";
 import { DateRangePicker } from "react-dates";
 import moment from "moment";
 
@@ -94,7 +101,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
     const { filters, query } = this.state
     
     if (locationUuid !== prevLocationUuid) {
-      this.getVisits(0, DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, filters, query);
+      this.getVisits(DEFAULT_ACTIVE_PAGE, DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, filters, query);
     }
   }
 
