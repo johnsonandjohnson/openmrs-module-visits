@@ -23,7 +23,7 @@ import { formatDateIfDefined, getDatesByPeriod } from "../../shared/utils/date-u
 import { IRootState } from "../../reducers";
 import "./index.scss";
 import OverviewVisitTable from "./table";
-import { SINGLE_PAGE_NUMBER, TIME_PERIOD_OPTIONS } from "./table/constants";
+import { SINGLE_PAGE_NUMBER, TIME_PERIOD_OPTIONS, DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER} from "./table/constants";
 import { DateRangePicker } from "react-dates";
 import moment from "moment";
 
@@ -88,6 +88,16 @@ class OverviewVisits extends React.Component<IProps, IState> {
     this.props.getVisitStatuses();
   }
 
+  componentDidUpdate(prevProps) {
+    const locationUuid = this.props.location?.uuid;
+    const prevLocationUuid = prevProps.location?.uuid;
+    const { filters, query } = this.state
+    
+    if (locationUuid !== prevLocationUuid) {
+      this.getVisits(0, DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, filters, query);
+    }
+  }
+
   private getVisits = (
     activePage: number,
     itemsPerPage: number,
@@ -106,9 +116,10 @@ class OverviewVisits extends React.Component<IProps, IState> {
       visitStatus: filters?.visitStatus?.value,
       timePeriod,
     };
+    const locationUuid = this.props.location?.uuid;
 
-    if (!!this.props.locationUuid) {
-      this.props.getOverviewPage(activePage, itemsPerPage, this.props.locationUuid, predefinedFilters, query);
+    if (locationUuid) {
+      this.props.getOverviewPage(activePage, itemsPerPage, locationUuid, predefinedFilters, query);
     } else {
       this.props.getLocation(activePage, itemsPerPage, predefinedFilters, query);
     }
@@ -392,15 +403,12 @@ class OverviewVisits extends React.Component<IProps, IState> {
   };
 }
 
-const mapStateToProps = ({ overview, scheduleVisit }: IRootState) => ({
+const mapStateToProps = ({ overview, scheduleVisit, openmrs }: IRootState) => ({
   visits: overview.visits,
   pages: overview.pages,
   loading: overview.loading,
-  locationUuid: overview.locationUuid,
+  location: openmrs.session.sessionLocation,
   visitStatuses: scheduleVisit.visitStatuses,
-  // ToDo: When CFLM-626 will be fixed please use
-  // location: openmrs.session.sessionLocation
-  // instead of locationUuid: overview.locationUuid
 });
 
 const mapDispatchToProps = {
