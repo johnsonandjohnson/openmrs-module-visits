@@ -23,8 +23,7 @@ export const ACTION_TYPES = {
 const initialState = {
   visits: [] as Array<IVisitOverview>,
   loading: false,
-  pages: 0,
-  locationUuid: null as string | null
+  pages: 0
 };
 
 export type OverviewVisitState = Readonly<typeof initialState>;
@@ -55,10 +54,8 @@ export default (state = initialState, action) => {
         loading: false
       };
     case SUCCESS(ACTION_TYPES.GET_LOCATION):
-      const session: ISession = action.payload.data;
       return {
         ...state,
-        locationUuid: session.sessionLocation.uuid,
         loading: false
       };
     case ACTION_TYPES.RESET:
