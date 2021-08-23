@@ -17,7 +17,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import * as Default from "../../shared/utils/messages";
 import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
-import { getOverviewPage, getLocation } from "../../reducers/overview-visits.reducer";
+import { getOverviewPage } from "../../reducers/overview-visits.reducer";
 import { getVisitStatuses } from "../../reducers/schedule-visit.reducer";
 import { formatDateIfDefined, getDatesByPeriod } from "../../shared/utils/date-util";
 import { IRootState } from "../../reducers";
@@ -127,9 +127,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
     if (locationUuid) {
       this.props.getOverviewPage(activePage, itemsPerPage, locationUuid, predefinedFilters, query);
-    } else {
-      this.props.getLocation(activePage, itemsPerPage, predefinedFilters, query);
-    }
+    } 
   };
 
   private getNameCell = () => {
@@ -420,7 +418,6 @@ const mapStateToProps = ({ overview, scheduleVisit, openmrs }: IRootState) => ({
 
 const mapDispatchToProps = {
   getOverviewPage,
-  getLocation,
   getVisitStatuses,
 };
 

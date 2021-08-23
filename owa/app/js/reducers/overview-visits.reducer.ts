@@ -12,11 +12,9 @@ import _ from 'lodash';
 import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axiosInstance from '@bit/soldevelo-omrs.cfl-components.shared/axios'
 import IVisitOverview from '../shared/model/visit-overview.model';
-import { ISession } from '../shared/model/session.model';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'overviewVisitReducer/GET_VISITS',
-  GET_LOCATION: 'overviewVisitReducer/GET_LOCATION',
   RESET: 'overviewVisitReducer/RESET'
 };
 
@@ -35,13 +33,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: true
       };
-    case REQUEST(ACTION_TYPES.GET_LOCATION):
-      return {
-        ...state,
-        loading: true
-      };
     case FAILURE(ACTION_TYPES.GET_VISITS):
-    case FAILURE(ACTION_TYPES.GET_LOCATION):
       return {
         ...state,
         loading: false
@@ -51,11 +43,6 @@ export default (state = initialState, action) => {
         ...state,
         visits: action.payload.data.content,
         pages: action.payload.data.pageCount,
-        loading: false
-      };
-    case SUCCESS(ACTION_TYPES.GET_LOCATION):
-      return {
-        ...state,
         loading: false
       };
     case ACTION_TYPES.RESET:
@@ -90,17 +77,6 @@ export const getOverviewPage = (page: number, size: number, locationUuid: string
   });
 };
 
-export const getLocation = (page: number, size: number, filters?: {}, query?: string) => async (dispatch) => {
-  const url = '/ws/rest/v1/appui/session';
-  let result = await dispatch({
-    type: ACTION_TYPES.GET_LOCATION,
-    payload: axiosInstance.get(url)
-  });
-  const session: ISession = result.value.data;
-  dispatch(
-    getOverviewPage(page, size, session.sessionLocation.uuid, filters, query)
-  );
-};
 
 export const reset = () => {
   return {
