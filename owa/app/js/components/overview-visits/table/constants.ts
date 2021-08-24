@@ -1,3 +1,4 @@
+export const DEFAULT_ACTIVE_PAGE = 0;
 export const DEFAULT_ITEMS_PER_PAGE = 100;
 export const DEFAULT_SORT = 'id';
 export const DEFAULT_ORDER = 'desc';
