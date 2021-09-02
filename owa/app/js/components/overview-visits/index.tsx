@@ -201,6 +201,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
   private renderTimePeriodSelect = () => (
     <Select
+      inputId="visits-overview-filter-period"
       options={this.timePeriodOptions()}
       onChange={(timePeriod) => {
         const { dateFrom, dateTo } = getDatesByPeriod[timePeriod.value]();
@@ -233,6 +234,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
   private renderVisitStatusSelect = () => (
     <Select
+      inputId="visits-overview-filter-status"
       options={this.visitStatusOptions()}
       onChange={(visitStatus) => this.setState((state) => ({ filters: { ...state.filters, visitStatus } }))}
       className="visits-select"
@@ -296,6 +298,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
             <div className="search-bar">
               <img src={searchIcon} alt="search" className="search-icon" />
               <Input
+                id="visits-overview-filter-name"
                 placeholder={getIntl().formatMessage({
                   id: "VISITS_OVERVIEW_SEARCH_PLACEHOLDER",
                 })}
