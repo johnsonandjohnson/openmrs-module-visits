@@ -81,7 +81,11 @@ class ManageVisits extends React.Component<IProps, IState> {
 
   private renderScheduleVisitButton = () => {
     return (
-      <Button className="btn btn-success btn-md add-btn" onClick={this.handleScheduleVisitButton}>
+      <Button
+        id="visit-schedule-button"
+        className="btn btn-success btn-md add-btn"
+        onClick={this.handleScheduleVisitButton}
+      >
         {getIntl().formatMessage({ id: 'VISITS_SCHEDULE_VISIT', defaultMessage: Default.SCHEDULE_VISIT })}
       </Button>
     );

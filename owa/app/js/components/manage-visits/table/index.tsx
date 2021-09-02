@@ -109,23 +109,34 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
         };
       },
       Cell: (row) => {
+        const { viewIndex } = row;
         const visit: IVisit = row.original;
+
         return (
           <>
             {!!visit.formUri && (
               <span className="action-button">
-                <a href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}>
+                <a
+                  id={`visit-note-button-${viewIndex}`}
+                  href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}
+                >
                   <FontAwesomeIcon icon={faStethoscope} size="1x" />
                 </a>
               </span>
             )}
             <span className="action-button">
-              <i onClick={() => this.update(visit)}>
+              <i
+                id={`visit-update-button-${viewIndex}`}
+                onClick={() => this.update(visit)}
+              >
                 <FontAwesomeIcon icon={faPencilAlt} size="1x" />
               </i>
             </span>
             <span className="action-button">
-              <i onClick={() => this.delete(visit)}>
+              <i
+                id={`visit-delete-button-${viewIndex}`}
+                onClick={() => this.delete(visit)}
+              >
                 <FontAwesomeIcon icon={faTrashAlt} size="1x"  />
               </i>
             </span>
