@@ -1,0 +1,101 @@
+common:
+  pipelineType: maven
+  buildAnalysis:
+    announcements:
+      enabled: false
+    enabled: false
+  lint:
+    configLocation: checkstyle.xml
+    enabled: false
+    type: maven-checkstyle
+    violationSeverity: error
+  mergeConflict:
+    enabled: true
+  staticAnalysis:
+    enabled: false
+    type: sonar
+    createEmptyAnalyis: false
+    longLivedAnalysis: false
+    shortLivedAnalysis: false
+  unitTest:
+    enabled: false
+    type: maven
+    dockerImage: jnj.artifactrepo.jnj.com/jpm/maven:3.6.3-jdk-8
+    executeOnError: false
+    ignoreError: false
+  versionCalculation:
+    enabled: false
+    confirmVersion: false
+    patternType: jnj-dev-branch
+    type: gitversion
+  publish:
+    enabled: false
+  maven:
+    repositories:
+      - id: taur-maven-release
+        name: taur-maven-release
+        url: https://artifactrepo.jnj.com/artifactory/taur-maven-release
+        credentialsId: sourcecode-bitbucket
+        snapshots: false
+        plugins: true
+      - id: taur-maven-snapshot
+        name: taur-maven-snapshot
+        url: https://artifactrepo.jnj.com/artifactory/taur-maven-snapshot
+        credentialsId: sourcecode-bitbucket
+        snapshots: true
+        plugins: true
+      - id: jnj-java
+        name: jnj-java
+        url: https://artifactrepo.jnj.com/artifactory/jnj-java
+        credentialsId: sourcecode-bitbucket
+        snapshots: false
+        plugins: true
+
+environments:
+  PREDEV:
+    lint:
+      enabled: false
+    unitTest:
+      enabled: true
+    staticAnalysis:
+      enabled: true
+      shortLivedAnalysis: true
+      longLivedAnalysis: true
+  DEV:
+    lint:
+      enabled: true
+    staticAnalysis:
+      enabled: true
+      shortLivedAnalysis: false
+      longLivedAnalysis: true
+    unitTest:
+      enabled: true
+    versionCalculation:
+      enabled: true
+    package:
+      enabled: true
+    publish:
+      allowBuildParameters: true
+      enabled: true
+      server: https://artifactrepo.jnj.com/artifactory/taur-maven-snapshot
+      credentialsId: jnj-eat-artifactory-build
+  Staging:
+      versionCalculation:
+        allowBuildParameters: true
+        enabled: true
+        type: maven
+        groupId: org.openmrs.module
+        artifactId: licensemanagement
+      resolveArtifacts:
+        allowBuildParameters: true
+        enabled: true
+        groupId: org.openmrs.module
+        artifactId: licensemanagement
+      package:
+        enabled: false
+        type: maven
+      publish:
+        allowBuildParameters: true
+        enabled: true
+        server: https://artifactrepo.jnj.com/artifactory/taur-maven-release
+        credentialsId: jnj-eat-artifactory-build

@@ -168,6 +168,12 @@
                 <version>${javax.servlet.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.jacoco</groupId>
+                <artifactId>org.jacoco.agent</artifactId>
+                <classifier>runtime</classifier>
+                <version>${jacocoVersion}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -251,6 +257,11 @@
                         <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -278,14 +289,54 @@
                 <version>${surefireVersion}</version>
                 <configuration>
                     <argLine>-Dlog4j.configuration=file:src/test/resources/log4j.properties</argLine>
+                    <!-- Workaround to https://code.google.com/p/powermock/issues/detail?id=504 -->
+                    <argLine>-XX:-UseSplitVerifier</argLine>
+                    <systemPropertyVariables>
+                        <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+                    </systemPropertyVariables>
                     <reuseForks>false</reuseForks>
                 </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacocoVersion}</version>
+                <executions>
+                    <execution>
+                        <id>coverage-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-instrument</id>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-restore-instrumented-classes</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>restore-instrumented-classes</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>coverage-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <profile>
+      <!--  <profile>
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -299,69 +350,7 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>code-coverage</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.agent</artifactId>
-                    <classifier>runtime</classifier>
-                    <version>${jacocoVersion}</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${jacocoVersion}</version>
-                        <executions>
-                            <!-- Off line instrumentation is needed to compute coverage for Power Mock tests -->
-                            <execution>
-                                <id>default-instrument</id>
-                                <goals>
-                                    <goal>instrument</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>default-restore-instrumented-classes</id>
-                                <goals>
-                                    <goal>restore-instrumented-classes</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>default-report</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${surefireVersion}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.maven.surefire</groupId>
-                                <artifactId>surefire-junit47</artifactId>
-                                <version>${surefireVersion}</version>
-                            </dependency>
-                        </dependencies>
-                        <configuration>
-                            <!-- Workaround to https://code.google.com/p/powermock/issues/detail?id=504 -->
-                            <argLine>-XX:-UseSplitVerifier</argLine>
-                            <systemPropertyVariables>
-                                <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
-                            </systemPropertyVariables>
-                            <reuseForks>false</reuseForks>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+        </profile>-->
         <profile>
             <id>dev</id>
             <build>
