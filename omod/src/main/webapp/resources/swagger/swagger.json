@@ -7,8 +7,6 @@
   },
   "basePath" : "/openmrs/ws",
   "tags" : [ {
-    "name" : "Fetch All Notification Details"
-  }, {
     "name" : "REST API for managing Visit information(create,update and get details)"
   }, {
     "name" : "REST API for visit overview"
@@ -38,31 +36,6 @@
           },
           "500" : {
             "description" : "Visit not created"
-          }
-        }
-      }
-    },
-    "/rest/v1/visits/notifications" : {
-      "get" : {
-        "tags" : [ "Fetch All Notification Details" ],
-        "summary" : "Get notifications",
-        "description" : "Get notifications",
-        "operationId" : "getNotifications",
-        "responses" : {
-          "200" : {
-            "description" : "On successful retrieval of visit times",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object"
-              }
-            }
-          },
-          "400" : {
-            "description" : "Request recieved was not proper"
-          },
-          "500" : {
-            "description" : "Error occurred"
           }
         }
       }
