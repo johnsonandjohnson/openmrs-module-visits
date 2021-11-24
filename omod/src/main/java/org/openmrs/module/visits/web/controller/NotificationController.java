@@ -1,11 +1,5 @@
 package org.openmrs.module.visits.web.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import java.net.HttpURLConnection;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.module.visits.util.VisitsUiConstants;
 import org.openmrs.module.visits.web.model.Notification;
@@ -25,9 +19,6 @@ import java.util.List;
 /**
  * Exposes the endpoints related to system notifications
  */
-@Api(
-    value = "Notification Details",
-    tags = {"Fetch All Notification Details"})
 @Controller
 @RequestMapping("/rest/v1/visits")
 public class NotificationController extends BaseRestController {
@@ -39,28 +30,10 @@ public class NotificationController extends BaseRestController {
      *
      * @return a list of system notification
      */
-    @ApiOperation(
-        value = "Get notifications",
-        notes = "Get notifications",
-        response = List.class
-    )
-    @ApiResponses(
-        value = {
-            @ApiResponse(
-                code = HttpURLConnection.HTTP_OK,
-                message = "On successful retrieval of visit times"),
-            @ApiResponse(
-                code = HttpURLConnection.HTTP_BAD_REQUEST,
-                message = "Request recieved was not proper"),
-            @ApiResponse(
-                code = HttpURLConnection.HTTP_INTERNAL_ERROR,
-                message = "Error occurred")
-        })
     @RequestMapping(value = "/notifications", method = RequestMethod.GET)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public List<Notification> getNotifications(
-        @ApiParam(hidden = true) HttpServletRequest request) {
+    public List<Notification> getNotifications(HttpServletRequest request) {
         final List<Notification> notifications = new ArrayList<>();
         final HttpSession session = request.getSession();
         final String toastMessage = toStringWithEscape(session.getAttribute(VisitsUiConstants.EMR_TOAST_MESSAGE));
