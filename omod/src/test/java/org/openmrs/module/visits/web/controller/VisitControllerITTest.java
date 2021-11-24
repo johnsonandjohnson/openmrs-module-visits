@@ -85,7 +85,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
         Visit visit4 = prepareVisitForPatient(PATIENT_1_UUID);
         prepareVisitForPatient(PATIENT_2_UUID);
         prepareVisitForPatient(PATIENT_2_UUID);
-        mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID))
+        mockMvc.perform(get("/rest/v1/visits/patient/{uuid}", PATIENT_1_UUID))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.[*].uuid")
@@ -106,7 +106,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
         Visit visit2 = prepareVisitForPatient(PATIENT_1_UUID);
         prepareVisitForPatient(PATIENT_1_UUID);
         prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/patient/{uuid}", PATIENT_1_UUID)
             .param(PAGE_PARAM, String.valueOf(PAGE_1))
             .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
             .andExpect(status().is(HttpStatus.OK.value()))
@@ -121,7 +121,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
         prepareVisitForPatient(PATIENT_1_UUID);
         Visit visit3 = prepareVisitForPatient(PATIENT_1_UUID);
         Visit visit4 = prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/patient/{uuid}", PATIENT_1_UUID)
             .param(PAGE_PARAM, String.valueOf(PAGE_2))
             .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
             .andExpect(status().is(HttpStatus.OK.value()))
@@ -134,7 +134,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
     public void shouldReturnBadRequestForNonExistingPatient() throws Exception {
         prepareVisitForPatient(PATIENT_1_UUID);
         prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/patient/{uuid}", NON_EXISTING_PATIENT_UUID))
+        mockMvc.perform(get("/rest/v1/visits/patient/{uuid}", NON_EXISTING_PATIENT_UUID))
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
             .andReturn();
     }
@@ -143,7 +143,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
     public void shouldReturnBadRequestForBadPageNumber() throws Exception {
         prepareVisitForPatient(PATIENT_1_UUID);
         prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/patient/{uuid}", PATIENT_1_UUID)
             .param(PAGE_PARAM, String.valueOf(BAD_PAGE_NUMBER))
             .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT)))
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
@@ -154,7 +154,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
     public void shouldReturnBadRequestForBadRowsNumber() throws Exception {
         prepareVisitForPatient(PATIENT_1_UUID);
         prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/patient/{uuid}", PATIENT_1_UUID)
             .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
             .param(ROWS_PARAM, String.valueOf(BAD_ROWS_COUNT)))
             .andExpect(status().isBadRequest())
@@ -165,7 +165,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
     @Test
     public void shouldReturnValidVisitFormUriAlongWithDTO() throws Exception {
         Visit visit = prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/patient/{uuid}", PATIENT_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/patient/{uuid}", PATIENT_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT)))
                 .andExpect(status().is(HttpStatus.OK.value()))
@@ -180,7 +180,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
     @Test
     public void shouldReturnVisitDecoratedWithNames() throws Exception {
         Visit visit = prepareVisitForPatient(PATIENT_1_UUID);
-        mockMvc.perform(get("/visits/{uuid}", visit.getUuid()))
+        mockMvc.perform(get("/rest/v1/visits/{uuid}", visit.getUuid()))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.uuid").value(visit.getUuid()))
@@ -200,7 +200,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
             .setType(visit.getVisitType().getUuid());
         VisitDetailsDTO visitDetailsDTO = new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName());
 
-        mockMvc.perform(post("/visits")
+        mockMvc.perform(post("/rest/v1/visits/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json(visitDetailsDTO)))
                 .andExpect(status().is(HttpStatus.OK.value()));
@@ -217,7 +217,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
             .setType(visit.getVisitType().getUuid());
         VisitDetailsDTO visitDetailsDTO = new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName());
 
-        mockMvc.perform(post("/visits")
+        mockMvc.perform(post("/rest/v1/visits/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json(visitDetailsDTO)))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));

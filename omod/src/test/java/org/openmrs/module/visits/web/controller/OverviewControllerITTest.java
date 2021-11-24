@@ -125,7 +125,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit4 = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_2_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_2_UUID);
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID))
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.[*].uuid")
@@ -146,7 +146,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(PAGE_1))
                 .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
                 .andExpect(status().is(HttpStatus.OK.value()))
@@ -161,7 +161,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(PAGE_2))
                 .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
                 .andExpect(status().is(HttpStatus.OK.value()))
@@ -174,7 +174,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     public void shouldReturnBadRequestForNonExistingLocation() throws Exception {
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
-        mockMvc.perform(get("/visits/overview/{uuid}", NON_EXISTING_LOCATION_UUID))
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", NON_EXISTING_LOCATION_UUID))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
                 .andReturn();
     }
@@ -183,7 +183,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     public void shouldReturnBadRequestForBadPageNumber() throws Exception {
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(BAD_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT)))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
@@ -194,7 +194,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     public void shouldReturnBadRequestForBadRowsNumber() throws Exception {
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(BAD_ROWS_COUNT)))
                 .andExpect(status().isBadRequest())
@@ -205,7 +205,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     @Test
     public void shouldReturnValidVisitOverview() throws Exception {
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(PAGE_1))
                 .param(ROWS_PARAM, String.valueOf(PAGE_SIZE_2)))
                 .andExpect(status().is(HttpStatus.OK.value()))
@@ -237,7 +237,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Another";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -256,7 +256,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Sick";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -275,7 +275,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Person";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -294,7 +294,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Anot";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -313,7 +313,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "BBC123ABC123";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -332,7 +332,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "123AB";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -353,7 +353,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Anot";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -374,7 +374,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit3 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit4 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Person";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -400,7 +400,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Another Sick Person";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -422,7 +422,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Another   Sick  Person";
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -443,7 +443,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         Visit visit2 = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         final String searchTerm = "Another   Sick  Person";
-        MvcResult result = mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        MvcResult result = mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(QUERY_PARAM, searchTerm))
@@ -470,7 +470,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visitThreeDaysLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         visitThreeDaysLater.setStartDatetime(DateUtil.getDatePlusDays(DateUtil.now(), 3));
 
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(TIME_PERIOD, TODAY))
@@ -490,7 +490,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visitTwoWeeksLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         visitTwoWeeksLater.setStartDatetime(DateUtil.getDatePlusDays(DateUtil.now(), 14));
 
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(TIME_PERIOD, WEEK))
@@ -510,7 +510,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         Visit visitThreeMonthsLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         visitThreeMonthsLater.setStartDatetime(DateUtil.getDatePlusMonths(DateUtil.now(), 3));
 
-        mockMvc.perform(get("/visits/overview/{uuid}", LOCATION_1_UUID)
+        mockMvc.perform(get("/rest/v1/visits/overview/{uuid}", LOCATION_1_UUID)
                 .param(PAGE_PARAM, String.valueOf(DEFAULT_PAGE_NUMBER))
                 .param(ROWS_PARAM, String.valueOf(DEFAULT_ROWS_COUNT))
                 .param(TIME_PERIOD, MONTH))
