@@ -20,7 +20,7 @@ import java.util.List;
  * Exposes the endpoints related to system notifications
  */
 @Controller
-@RequestMapping("/rest/v1/visits")
+@RequestMapping("/visits")
 public class NotificationController extends BaseRestController {
 
     /**

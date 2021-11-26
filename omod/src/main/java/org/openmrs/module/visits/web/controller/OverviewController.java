@@ -32,7 +32,7 @@ import java.util.List;
     tags = {"REST API for visit overview"}
 )
 @Controller
-@RequestMapping("/rest/v1/visits/overview")
+@RequestMapping("/visits/overview")
 public class OverviewController extends BaseRestController {
 
     @Autowired

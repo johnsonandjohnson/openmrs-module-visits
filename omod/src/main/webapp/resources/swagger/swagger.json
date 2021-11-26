@@ -12,7 +12,7 @@
     "name" : "REST API for visit overview"
   } ],
   "paths" : {
-    "/rest/v1/visits/create" : {
+    "/visits/create" : {
       "post" : {
         "tags" : [ "REST API for managing Visit information(create,update and get details)" ],
         "summary" : "Create a new visit",
@@ -40,7 +40,7 @@
         }
       }
     },
-    "/rest/v1/visits/overview/{uuid}" : {
+    "/visits/overview/{uuid}" : {
       "get" : {
         "tags" : [ "REST API for visit overview" ],
         "summary" : "Get visits for location",
@@ -101,7 +101,7 @@
         }
       }
     },
-    "/rest/v1/visits/patient/{uuid}" : {
+    "/visits/patient/{uuid}" : {
       "get" : {
         "tags" : [ "REST API for managing Visit information(create,update and get details)" ],
         "summary" : "Get visit details of a patient",
@@ -130,7 +130,7 @@
         }
       }
     },
-    "/rest/v1/visits/statuses" : {
+    "/visits/statuses" : {
       "get" : {
         "tags" : [ "REST API for managing Visit information(create,update and get details)" ],
         "summary" : "Get visit statuses",
@@ -152,7 +152,7 @@
         }
       }
     },
-    "/rest/v1/visits/times" : {
+    "/visits/times" : {
       "get" : {
         "tags" : [ "REST API for managing Visit information(create,update and get details)" ],
         "summary" : "Get visit times",
@@ -174,7 +174,7 @@
         }
       }
     },
-    "/rest/v1/visits/{uuid}" : {
+    "/visits/{uuid}" : {
       "get" : {
         "tags" : [ "REST API for managing Visit information(create,update and get details)" ],
         "summary" : "Get visit with uuid",

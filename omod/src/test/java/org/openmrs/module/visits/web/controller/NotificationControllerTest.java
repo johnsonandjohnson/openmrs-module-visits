@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class NotificationControllerTest extends BaseModuleWebContextSensitiveTest {
 
-    private static final String VISITS_NOTIFICATIONS_URL = "/rest/v1/visits/notifications";
+    private static final String VISITS_NOTIFICATIONS_URL = "/visits/notifications";
     private static final String SUCCESS_MESSAGE = "Success message";
     private static final String ERROR_MESSAGE = "Error message";
     private static final String NOT_IMPORTANT_MESSAGE = "Not important message";

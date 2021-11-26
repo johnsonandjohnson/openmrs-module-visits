@@ -35,7 +35,7 @@ import java.util.List;
     value = "Visit Details",
     tags = {"REST API for managing Visit information(create,update and get details)"})
 @Controller
-@RequestMapping("/rest/v1/visits")
+@RequestMapping("/visits")
 public class VisitController extends BaseRestController {
 
     @Autowired
