@@ -59,7 +59,7 @@ public class VisitNoteMetaTagHandler extends SubstitutionTagHandler {
 
         @Override
         public Collection<FormSubmissionError> validateSubmission(FormEntryContext context, HttpServletRequest request) {
-            return null;
+            return Collections.EMPTY_LIST;
         }
 
         @Override

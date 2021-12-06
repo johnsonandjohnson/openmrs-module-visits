@@ -9,7 +9,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VisitDTO implements Serializable {
 
-  private static final long serialVersionUID = -6043667045678304408L;
+  private static final long serialVersionUID = 3L;
 
   private String uuid;
   private Date startDate;

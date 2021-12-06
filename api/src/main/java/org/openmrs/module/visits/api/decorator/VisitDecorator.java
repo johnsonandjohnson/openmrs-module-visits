@@ -123,7 +123,7 @@ public class VisitDecorator extends ObjectDecorator<Visit> {
 
   private void voidAllAttributesWithType(String typeUuid) {
     for (VisitAttribute attribute : getAttributesOfType(typeUuid)) {
-      attribute.setVoided(true);
+      attribute.setVoided(Boolean.TRUE);
     }
   }
 
