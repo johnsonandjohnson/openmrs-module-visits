@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public abstract class AbstractDTO implements Serializable {
 
-    private static final long serialVersionUID = 9L;
+    private static final long serialVersionUID = 1533338555501675215L;
 
     @Override
     public boolean equals(Object o) {
