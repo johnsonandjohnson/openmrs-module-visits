@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class OverviewDTO implements Serializable {
 
-    private static final long serialVersionUID = 4539000117834015411L;
+    private static final long serialVersionUID = 7L;
 
     private String uuid;
     private String patientIdentifier;
