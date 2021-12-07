@@ -155,7 +155,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                 .andReturn();
     }
 
-   /* @Test
+    @Test
     public void shouldReturnAllForLocationOneForPage2() throws Exception {
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
@@ -168,7 +168,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.length()").value(PAGE_SIZE_2))
                 .andReturn();
-    }*/
+    }
 
     @Test
     public void shouldReturnBadRequestForNonExistingLocation() throws Exception {
@@ -436,7 +436,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
                 .andReturn();
     }
 
-   /* @Test
+    @Test
     public void shouldReturnExpectedStructureOfResponse() throws Exception {
         prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
         prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
@@ -462,7 +462,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         assertThat(actual.getContentSize(), is(expected.getContentSize()));
         assertThat(actual.getTotalRecords(), is(expected.getTotalRecords()));
         assertThat(actual.getContent().size(), is(expected.getContent().size()));
-    }*/
+    }
 
     @Test
     public void shouldReturnAllScheduledVisitForToday() throws Exception {
