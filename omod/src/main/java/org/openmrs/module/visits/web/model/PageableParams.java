@@ -1,7 +1,5 @@
 package org.openmrs.module.visits.web.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.domain.PagingInfo;
 
@@ -65,7 +63,7 @@ public class PageableParams extends AbstractDTO {
         return this;
     }
 
-    @Override
+   /* @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -77,11 +75,11 @@ public class PageableParams extends AbstractDTO {
 
         return EqualsBuilder.reflectionEquals(this, o);
     }
-
-    @Override
+*/
+    /*@Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
-    }
+    }*/
 
     private void validatePageIndex(Integer pageIndex) {
         if (pageIndex != null && pageIndex <= 0) {

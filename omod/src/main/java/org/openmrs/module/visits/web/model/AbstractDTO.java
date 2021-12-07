@@ -11,8 +11,18 @@ public abstract class AbstractDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
+        /*if (this == o) {
+            return true;
+        }
+
+        return EqualsBuilder.reflectionEquals(this, o);*/
+
         if (this == o) {
             return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
 
         return EqualsBuilder.reflectionEquals(this, o);
