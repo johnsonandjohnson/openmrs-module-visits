@@ -82,7 +82,10 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
 
         // TODO formModifiedTimestamp and encounterModifiedTimestamp
 
-        boolean editMode = encounter != null;
+        boolean editMode = false;
+        if (encounter != null) {
+            editMode = true;
+        }
 
         FormEntrySession fes = getFormEntrySession(patient, hf, encounter, request);
 
@@ -180,7 +183,7 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
                 afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{encounter.id\\}\\}",
                         session.getEncounter().getId().toString());
             }
-            return SimpleObject.create("success", true, "encounterId", encounter == null ? null : encounter.getId(),
+            return SimpleObject.create("success", Boolean.TRUE, "encounterId", encounter == null ? null : encounter.getId(),
                     "goToUrl", afterSaveUrl);
         } else {
             Map<String, String> errors = new HashMap<String, String>();
@@ -191,7 +194,7 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
                     errors.put(err.getId(), err.getError());
                 }
             }
-            return SimpleObject.create("success", false, "errors", errors);
+            return SimpleObject.create("success", Boolean.FALSE, "errors", errors);
         }
     }
 
