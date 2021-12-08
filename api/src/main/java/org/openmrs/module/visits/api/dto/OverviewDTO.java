@@ -51,7 +51,7 @@ public class OverviewDTO implements Serializable {
         if (null != startDate) {
             return new Date(startDate.getTime());
         } else {
-            return startDate;
+            return null;
         }
     }
 
@@ -100,7 +100,7 @@ public class OverviewDTO implements Serializable {
         if (null != actualDate) {
             return new Date(actualDate.getTime());
         } else {
-            return actualDate;
+            return null;
         }
     }
 
