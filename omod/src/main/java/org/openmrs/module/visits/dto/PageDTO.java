@@ -82,8 +82,13 @@ public class PageDTO<T> {
     }
 
     public Integer getPageCount() {
-        pageCount = totalRecords == null ? null :
-            (int) Math.ceil((double) totalRecords / (double) pageSize);
+        /*pageCount = totalRecords == null ? null :
+            (int) Math.ceil((double) totalRecords / (double) pageSize);*/
+        if (totalRecords == null) {
+            pageCount = 0;
+        } else {
+            pageCount = (int) Math.ceil((double) totalRecords / (double) pageSize);
+        }
         return pageCount;
     }
 
