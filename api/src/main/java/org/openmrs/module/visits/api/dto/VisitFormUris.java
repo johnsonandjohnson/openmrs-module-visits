@@ -100,10 +100,10 @@ public class VisitFormUris {
         if (!encounters.isEmpty()) {
             encounter = encounters.get(0);
         }
-        if (encounters.size() > ONE && null != encounter) {
+        if (encounters.size() > ONE) {
             LOGGER.warn(String.format(
                     "The CFL visits module assumes that a visit has at most 1 Encounter, but %d found for Visit ID: %d. " +
-                            "Using Encounter ID: %d", encounters.size(), visit.getId(), encounter.getId()));
+                            "Using Encounter ID: %d", encounters.size(), visit.getId(), (encounter == null ? "null" : encounter.getId())));
         }
         return encounter;
     }
