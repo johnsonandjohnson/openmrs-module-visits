@@ -1,45 +1,36 @@
 package org.openmrs.module.visits.web.model;
 
-/**
- * System notification DTO object.
- */
+/** System notification DTO object. */
 public class Notification extends AbstractDTO {
 
-    private static final long serialVersionUID = 12L;
+  private static final long serialVersionUID = 12L;
 
-    /**
-     * Indicates the notification type.
-     */
-    private boolean errorMessage;
+  /** Indicates the notification type. */
+  private boolean errorMessage;
 
-    /**
-     * Provides the notification message.
-     */
-    private String message;
+  /** Provides the notification message. */
+  private String message;
 
-    public boolean isErrorMessage() {
-        return errorMessage;
-    }
+  public boolean isErrorMessage() {
+    return errorMessage;
+  }
 
-    public Notification setErrorMessage(boolean errorMessage) {
-        this.errorMessage = errorMessage;
-        return this;
-    }
+  public Notification setErrorMessage(boolean errorMessage) {
+    this.errorMessage = errorMessage;
+    return this;
+  }
 
-    public String getMessage() {
-        return message;
-    }
+  public String getMessage() {
+    return message;
+  }
 
-    public Notification setMessage(String message) {
-        this.message = message;
-        return this;
-    }
+  public Notification setMessage(String message) {
+    this.message = message;
+    return this;
+  }
 
-    @Override
-    public String toString() {
-        return "Notification{" +
-                "errorMessage=" + errorMessage +
-                ", message='" + message + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Notification{" + "errorMessage=" + errorMessage + ", message='" + message + '\'' + '}';
+  }
 }

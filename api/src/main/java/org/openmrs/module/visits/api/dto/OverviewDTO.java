@@ -97,11 +97,7 @@ public class OverviewDTO implements Serializable {
     }
 
     public Date getActualDate() {
-        if (null != actualDate) {
-            return new Date(actualDate.getTime());
-        } else {
-            return null;
-        }
+        return actualDate;
     }
 
     public OverviewDTO setActualDate(Date actualDate) {

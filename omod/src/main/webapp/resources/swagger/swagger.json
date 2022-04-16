@@ -313,6 +313,25 @@
         },
         "patientUuid" : {
           "type" : "string"
+        },
+        "visitDateDTO" : {
+          "$ref" : "#/definitions/VisitDateDTO"
+        }
+      }
+    },
+    "VisitDateDTO" : {
+      "type" : "object",
+      "properties" : {
+        "startDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "time" : {
+          "type" : "string"
+        },
+        "actualDate" : {
+          "type" : "string",
+          "format" : "date-time"
         }
       }
     },
@@ -347,6 +366,9 @@
         },
         "patientUuid" : {
           "type" : "string"
+        },
+        "visitDateDTO" : {
+          "$ref" : "#/definitions/VisitDateDTO"
         },
         "locationName" : {
           "type" : "string"
