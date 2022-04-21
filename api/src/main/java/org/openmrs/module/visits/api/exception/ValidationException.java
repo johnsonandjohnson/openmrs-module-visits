@@ -7,27 +7,27 @@ import java.util.List;
 
 public class ValidationException extends RuntimeException {
 
-    private static final long serialVersionUID = 4L;
+  private static final long serialVersionUID = 4L;
 
-    private ErrorResponseDTO errorResponse;
+  private final ErrorResponseDTO errorResponse;
 
-    public ValidationException(String error) {
-        this.errorResponse = new ErrorResponseDTO(error);
-    }
+  public ValidationException(String error) {
+    this.errorResponse = new ErrorResponseDTO(error);
+  }
 
-    public ValidationException(String error, List<ErrorMessage> errorMessages) {
-        this.errorResponse = new ErrorResponseDTO(error, errorMessages);
-    }
+  public ValidationException(String error, List<ErrorMessage> errorMessages) {
+    this.errorResponse = new ErrorResponseDTO(error, errorMessages);
+  }
 
-    public ValidationException(List<ErrorMessage> errorMessages) {
-        this.errorResponse = new ErrorResponseDTO(errorMessages);
-    }
+  public ValidationException(List<ErrorMessage> errorMessages) {
+    this.errorResponse = new ErrorResponseDTO(errorMessages);
+  }
 
-    public ValidationException(ErrorMessage errorMessage) {
-        this.errorResponse = new ErrorResponseDTO(errorMessage);
-    }
+  public ValidationException(ErrorMessage errorMessage) {
+    this.errorResponse = new ErrorResponseDTO(errorMessage);
+  }
 
-    public ErrorResponseDTO getErrorResponse() {
-        return errorResponse;
-    }
+  public ErrorResponseDTO getErrorResponse() {
+    return errorResponse;
+  }
 }

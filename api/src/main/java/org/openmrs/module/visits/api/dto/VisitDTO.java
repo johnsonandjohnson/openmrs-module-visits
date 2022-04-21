@@ -20,6 +20,7 @@ public class VisitDTO implements Serializable {
   private String formUri;
   private Date actualDate;
   private String patientUuid;
+  private VisitDateDTO visitDateDTO;
 
   public VisitDTO() {}
 
@@ -27,34 +28,35 @@ public class VisitDTO implements Serializable {
    * Constructor of a Visit DTO object
    *
    * @param uuid uuid of the visit
-   * @param startDate start date of visit (planned date)
-   * @param time time of day of the visit (eg. morning)
    * @param location location of the visit
    * @param type type of the visit (eg. follow-up)
    * @param status status of the visit (eg. SCHEDULED)
    * @param formUri visit form URI
-   * @param actualDate actual date of the visit
    * @param patientUuid uuid of the patient
    */
   @SuppressWarnings("checkstyle:parameternumber")
   public VisitDTO(
       String uuid,
-      Date startDate,
-      String time,
       String location,
       String type,
       String status,
       String formUri,
-      Date actualDate,
-      String patientUuid) {
+      String patientUuid,
+      VisitDateDTO visitDateDTO) {
     this.uuid = uuid;
-    this.startDate = (startDate != null ? new Date(startDate.getTime()) : null );
-    this.time = time;
+    this.startDate =
+        (visitDateDTO.getStartDate() != null
+            ? new Date(visitDateDTO.getStartDate().getTime())
+            : null);
+    this.time = visitDateDTO.getTime();
     this.location = location;
     this.type = type;
     this.status = status;
     this.formUri = formUri;
-    this.actualDate = (actualDate != null ? new Date(actualDate.getTime()) : null);
+    this.actualDate =
+        (visitDateDTO.getActualDate() != null
+            ? new Date(visitDateDTO.getActualDate().getTime())
+            : null);
     this.patientUuid = patientUuid;
   }
 
@@ -69,6 +71,7 @@ public class VisitDTO implements Serializable {
     this.formUri = visitDTO.getFormUri();
     this.actualDate = visitDTO.getActualDate();
     this.patientUuid = visitDTO.getPatientUuid();
+    this.visitDateDTO = visitDTO.getVisitDateDTO();
   }
 
   public String getUuid() {
@@ -77,24 +80,6 @@ public class VisitDTO implements Serializable {
 
   public VisitDTO setUuid(String uuid) {
     this.uuid = uuid;
-    return this;
-  }
-
-  public Date getStartDate() {
-    return startDate != null ? new Date(startDate.getTime()) : null;
-  }
-
-  public VisitDTO setStartDate(Date startDate) {
-    this.startDate = startDate != null ? new Date(startDate.getTime()) : null;
-    return this;
-  }
-
-  public String getTime() {
-    return time;
-  }
-
-  public VisitDTO setTime(String time) {
-    this.time = time;
     return this;
   }
 
@@ -134,15 +119,6 @@ public class VisitDTO implements Serializable {
     return this;
   }
 
-  public Date getActualDate() {
-    return actualDate != null ? new Date(actualDate.getTime()) : null;
-  }
-
-  public VisitDTO setActualDate(Date actualDate) {
-    this.actualDate = actualDate != null ? new Date(actualDate.getTime()) : null;
-    return this;
-  }
-
   public String getPatientUuid() {
     return patientUuid;
   }
@@ -150,5 +126,41 @@ public class VisitDTO implements Serializable {
   public VisitDTO setPatientUuid(String patientUuid) {
     this.patientUuid = patientUuid;
     return this;
+  }
+
+  public VisitDTO setVisitDateDTO(VisitDateDTO visitDateDTO) {
+    this.visitDateDTO = visitDateDTO;
+    return this;
+  }
+
+  public VisitDateDTO getVisitDateDTO() {
+    return visitDateDTO;
+  }
+
+  public VisitDTO setStartDate(Date startDate) {
+    this.startDate = startDate;
+    return this;
+  }
+
+  public Date getStartDate() {
+    return startDate;
+  }
+
+  public VisitDTO setTime(String time) {
+    this.time = time;
+    return this;
+  }
+
+  public String getTime() {
+    return time;
+  }
+
+  public VisitDTO setActualDate(Date actualDate) {
+    this.actualDate = actualDate;
+    return this;
+  }
+
+  public Date getActualDate() {
+    return actualDate;
   }
 }

@@ -17,6 +17,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.dto.VisitDTO;
+import org.openmrs.module.visits.api.dto.VisitDateDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.mapper.VisitMapper;
 import org.openmrs.module.visits.api.service.ConfigService;
@@ -63,8 +64,10 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   public void createVisit(VisitDTO visitDTO) {
     VisitDTO clone = new VisitDTO(visitDTO);
     clone.setStatus(configService.getVisitInitialStatus());
-    if (clone.getStartDate() == null) {
-      clone.setStartDate(new Date());
+
+    VisitDateDTO visitDateDTO = clone.getVisitDateDTO();
+    if (visitDateDTO.getStartDate() == null) {
+      visitDateDTO.setStartDate(new Date());
     }
 
     saveOrUpdate(visitMapper.fromDto(clone));

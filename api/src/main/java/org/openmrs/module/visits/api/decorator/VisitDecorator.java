@@ -16,9 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID;
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID;
-
 public class VisitDecorator extends ObjectDecorator<Visit> {
 
   public VisitDecorator(Visit object) {
@@ -51,7 +48,7 @@ public class VisitDecorator extends ObjectDecorator<Visit> {
   }
 
   public String getTime() {
-    return getAttribute(VISIT_TIME_ATTRIBUTE_TYPE_UUID);
+    return getAttribute(ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID);
   }
 
   public void setTime(String time) {
@@ -59,7 +56,7 @@ public class VisitDecorator extends ObjectDecorator<Visit> {
   }
 
   public String getStatus() {
-    return getAttribute(VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
+    return getAttribute(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
   }
 
   public void setStatus(String status) {

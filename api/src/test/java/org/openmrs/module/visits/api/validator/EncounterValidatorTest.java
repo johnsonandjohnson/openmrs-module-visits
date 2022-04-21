@@ -16,7 +16,7 @@ public class EncounterValidatorTest extends ContextMockedTest {
     @Test
     public void shouldSupportValidation() {
         final class SubEncounter extends Encounter {
-            private static final long serialVersionUID = 5269565291876343029L;
+            private static final long serialVersionUID = 17L;
         }
 
         assertTrue(encounterValidator.supports(SubEncounter.class));

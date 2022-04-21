@@ -14,17 +14,21 @@ import org.openmrs.module.visits.ContextMockedTest;
 import org.openmrs.module.visits.api.dao.BaseOpenmrsPageableDao;
 import org.openmrs.module.visits.api.dao.impl.VisitDaoImpl;
 import org.openmrs.module.visits.api.dto.VisitDTO;
+import org.openmrs.module.visits.api.dto.VisitDateDTO;
 import org.openmrs.module.visits.api.service.impl.VisitServiceImpl;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -52,7 +56,82 @@ public class VisitServiceImplTest extends ContextMockedTest {
     visit = new Visit(1);
     visitDTO = new VisitDTO();
     visitDTO.setUuid("123-456-789");
+    visitDTO.setVisitDateDTO(new VisitDateDTO(new Date(), null, null));
     location = new Location(1);
+  }
+
+  @Test
+  public void shouldGetVisitById() {
+    doReturn(visit).when(dao).getById(1);
+
+    visitService.getById(1);
+
+    verify(dao).getById(1);
+  }
+
+  @Test
+  public void shouldGetVisitByUuid() {
+    String visitUuid = "774f7d52-be41-11ec-a2fb-0242ac130002";
+    visit.setUuid(visitUuid);
+    doReturn(visit).when(dao).getByUuid(visitUuid);
+
+    visitService.getByUuid(visitUuid);
+
+    verify(dao).getByUuid(visitUuid);
+  }
+
+  @Test
+  public void shouldDeleteVisit() {
+    doNothing().when(dao).delete(visit);
+
+    visitService.delete(visit);
+
+    verify(dao).delete(visit);
+  }
+
+  @Test
+  public void shouldDeleteListOfVisits() {
+    doNothing().when(dao).delete(visit);
+
+    visitService.delete(Arrays.asList(visit, visit, visit));
+
+    verify(dao, times(3)).delete(visit);
+  }
+
+  @Test
+  public void shouldSaveListOfVisits() {
+    doReturn(visit).when(dao).saveOrUpdate(visit);
+
+    visitService.saveOrUpdate(Arrays.asList(visit, visit, visit));
+
+    verify(dao, times(3)).saveOrUpdate(visit);
+  }
+
+  @Test
+  public void shouldGetAllVisits() {
+    doReturn(Collections.singletonList(visit)).when(dao).getAll(false);
+
+    visitService.getAll(false);
+
+    verify(dao).getAll(false);
+  }
+
+  @Test
+  public void shouldGetAllVisitsUsingPagination() {
+    doReturn(Arrays.asList(visit, visit)).when(dao).getAll(false, 1, 2);
+
+    visitService.getAll(false, 1, 2);
+
+    verify(dao).getAll(false, 1, 2);
+  }
+
+  @Test
+  public void shouldCountAllVisits() {
+    doReturn(2).when(dao).getAllCount(false);
+
+    visitService.getAllCount(false);
+
+    verify(dao).getAllCount(false);
   }
 
   @Test

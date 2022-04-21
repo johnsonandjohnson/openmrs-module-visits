@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 public class OverviewMapperTest extends ContextMockedTest {
 
-    private OverviewMapper overviewMapper = new OverviewMapper();
+    private final OverviewMapper overviewMapper = new OverviewMapper();
 
     @Test
     public void shouldMapToDto() {

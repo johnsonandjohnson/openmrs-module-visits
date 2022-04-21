@@ -1,88 +1,90 @@
 package org.openmrs.module.visits.domain;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
+
 public class PagingInfo implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private int page;
-    private int pageSize;
-    private Long totalRecordCount;
-    private boolean loadRecordCount;
+  private int page;
+  private int pageSize;
+  private Long totalRecordCount;
+  private boolean loadRecordCount;
 
-    public PagingInfo() { }
+  public PagingInfo() {}
 
-    /**
-     * Creates a new {@link PagingInfo} instance.
-     * @param page The 1-based number of the page being requested.
-     * @param pageSize The number of records to include on each page.
-     */
-    public PagingInfo(int page, int pageSize) {
-        this.page = page;
-        this.pageSize = pageSize;
-        this.loadRecordCount = true;
+  /**
+   * Creates a new {@link PagingInfo} instance.
+   *
+   * @param page The 1-based number of the page being requested.
+   * @param pageSize The number of records to include on each page.
+   */
+  public PagingInfo(int page, int pageSize) {
+    this.page = page;
+    this.pageSize = pageSize;
+    this.loadRecordCount = true;
+  }
+
+  public int getPage() {
+    return page;
+  }
+
+  public void setPage(int page) {
+    this.page = page;
+  }
+
+  public int getPageSize() {
+    return pageSize;
+  }
+
+  public void setPageSize(int pageSize) {
+    this.pageSize = pageSize;
+  }
+
+  public Long getTotalRecordCount() {
+    return totalRecordCount;
+  }
+
+  public void setTotalRecordCount(Long totalRecordCount) {
+    this.totalRecordCount = totalRecordCount;
+
+    // If the total records is set to anything other than null, than don't reload the count
+    this.loadRecordCount = totalRecordCount == null;
+  }
+
+  public boolean shouldLoadRecordCount() {
+    return loadRecordCount;
+  }
+
+  public void setLoadRecordCount(boolean loadRecordCount) {
+    this.loadRecordCount = loadRecordCount;
+  }
+
+  public boolean hasMoreResults() {
+    if (totalRecordCount == null) {
+      return false;
+    }
+    return ((long) page * pageSize) < totalRecordCount;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
 
-    public int getPage() {
-        return page;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
 
-    public void setPage(int page) {
-        this.page = page;
-    }
+    return EqualsBuilder.reflectionEquals(this, o);
+  }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public Long getTotalRecordCount() {
-        return totalRecordCount;
-    }
-
-    public void setTotalRecordCount(Long totalRecordCount) {
-        this.totalRecordCount = totalRecordCount;
-
-        // If the total records is set to anything other than null, than don't reload the count
-        this.loadRecordCount = totalRecordCount == null;
-    }
-
-    public boolean shouldLoadRecordCount() {
-        return loadRecordCount;
-    }
-
-    public void setLoadRecordCount(boolean loadRecordCount) {
-        this.loadRecordCount = loadRecordCount;
-    }
-
-    public boolean hasMoreResults() {
-        if (totalRecordCount == null) {
-            return false;
-        }
-        return (page * pageSize) < totalRecordCount;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        return EqualsBuilder.reflectionEquals(this, o);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
 }

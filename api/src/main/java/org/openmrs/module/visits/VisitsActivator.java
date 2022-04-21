@@ -19,13 +19,11 @@ import org.openmrs.module.DaemonTokenAware;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.appframework.service.AppFrameworkService;
-import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.visits.api.exception.VisitsRuntimeException;
 import org.openmrs.module.visits.api.scheduler.job.JobRepeatInterval;
 import org.openmrs.module.visits.api.scheduler.job.MissedVisitsStatusChangerJobDefinition;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.JobSchedulerService;
-import org.openmrs.module.visits.api.tag.VisitNoteMetaTagHandler;
 import org.openmrs.module.visits.api.util.ConfigConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtils;
@@ -102,13 +100,6 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
   private void disableUnusedApps(AppFrameworkService appFrameworkService) {
     if (appFrameworkService.getApp(ConfigConstants.COREAPPS_RECENT_VISITS_FRAGMENT) != null) {
       appFrameworkService.disableApp(ConfigConstants.COREAPPS_RECENT_VISITS_FRAGMENT);
-    }
-  }
-
-  public void contextRefreshed() {
-    if (ModuleFactory.isModuleStarted("htmlformentry")) {
-      HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
-      htmlFormEntryService.addHandler("visitNoteMetaTag", new VisitNoteMetaTagHandler());
     }
   }
 
