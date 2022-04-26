@@ -138,7 +138,7 @@ public class VisitDTO implements Serializable {
   }
 
   public VisitDTO setStartDate(Date startDate) {
-    this.startDate = startDate;
+    this.startDate = startDate != null ? new Date(startDate.getTime()) : null;
     return this;
   }
 
@@ -156,7 +156,7 @@ public class VisitDTO implements Serializable {
   }
 
   public VisitDTO setActualDate(Date actualDate) {
-    this.actualDate = actualDate;
+    this.actualDate = actualDate != null ? new Date(actualDate.getTime()) : null;
     return this;
   }
 
