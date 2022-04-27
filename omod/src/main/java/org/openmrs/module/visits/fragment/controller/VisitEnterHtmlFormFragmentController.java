@@ -173,24 +173,7 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
     return getValidationResults(null, fes, formEncounter);
   }
 
-  // we couldn't change the FormEntrySession code
-  @SuppressWarnings({"PMD.SignatureDeclareThrowsException"})
-  private FormEntrySession getFormEntrySession(
-      Patient patient, HtmlForm hf, Encounter encounter, HttpServletRequest request)
-      throws Exception {
-
-    FormEntrySession fes;
-    if (encounter != null) {
-      fes =
-          new FormEntrySession(
-              patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
-    } else {
-      fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
-    }
-    return fes;
-  }
-
-  private SimpleObject getValidationResults(
+  public SimpleObject getValidationResults(
       List<FormSubmissionError> validationErrors, FormEntrySession session, Encounter encounter) {
     if (CollectionUtils.isEmpty(validationErrors)) {
       String afterSaveUrl = session.getAfterSaveUrlTemplate();
@@ -220,6 +203,23 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
       }
       return SimpleObject.create("success", Boolean.FALSE, "errors", errors);
     }
+  }
+
+  // we couldn't change the FormEntrySession code
+  @SuppressWarnings({"PMD.SignatureDeclareThrowsException"})
+  private FormEntrySession getFormEntrySession(
+      Patient patient, HtmlForm hf, Encounter encounter, HttpServletRequest request)
+      throws Exception {
+
+    FormEntrySession fes;
+    if (encounter != null) {
+      fes =
+          new FormEntrySession(
+              patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
+    } else {
+      fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
+    }
+    return fes;
   }
 
   private boolean isTimeAvailable(Date date) {

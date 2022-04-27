@@ -23,9 +23,9 @@ public class VisitDateDTO implements Serializable {
   public VisitDateDTO() {}
 
   public VisitDateDTO(Date startDate, String time, Date actualDate) {
-    this.startDate = startDate;
+    this.startDate = startDate != null ? new Date(startDate.getTime()) : null;
     this.time = time;
-    this.actualDate = actualDate;
+    this.actualDate = actualDate != null ? new Date(actualDate.getTime()) : null;
   }
 
   public Date getStartDate() {
@@ -33,7 +33,7 @@ public class VisitDateDTO implements Serializable {
   }
 
   public void setStartDate(Date startDate) {
-    this.startDate = startDate;
+    this.startDate = startDate != null ? new Date(startDate.getTime()) : null;
   }
 
   public String getTime() {
@@ -49,6 +49,6 @@ public class VisitDateDTO implements Serializable {
   }
 
   public void setActualDate(Date actualDate) {
-    this.actualDate = actualDate;
+    this.actualDate = actualDate != null ? new Date(actualDate.getTime()) : null;
   }
 }
