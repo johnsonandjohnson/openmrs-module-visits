@@ -10,7 +10,6 @@ import org.openmrs.api.db.VisitDAO;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.dto.VisitDateDTO;
 import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
-import org.openmrs.module.visits.api.service.VisitService;
 import org.openmrs.module.visits.web.BaseModuleWebContextSensitiveWithActivatorTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -54,10 +52,6 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
   private static final String LOCATION_NAME = "LocationName";
 
   @Autowired private WebApplicationContext webApplicationContext;
-
-  @Autowired
-  @Qualifier("visits.visitService")
-  private VisitService visitService;
 
   @Autowired
   @Qualifier("visitDAO")
@@ -99,8 +93,6 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
 
   @Test
   public void shouldReturnAllForPatientOneForPage1() throws Exception {
-    Visit visit1 = prepareVisitForPatient(PATIENT_1_UUID);
-    Visit visit2 = prepareVisitForPatient(PATIENT_1_UUID);
     prepareVisitForPatient(PATIENT_1_UUID);
     prepareVisitForPatient(PATIENT_1_UUID);
     mockMvc
@@ -118,8 +110,8 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
   public void shouldReturnAllForPatientOneForPage2() throws Exception {
     prepareVisitForPatient(PATIENT_1_UUID);
     prepareVisitForPatient(PATIENT_1_UUID);
-    Visit visit3 = prepareVisitForPatient(PATIENT_1_UUID);
-    Visit visit4 = prepareVisitForPatient(PATIENT_1_UUID);
+    prepareVisitForPatient(PATIENT_1_UUID);
+    prepareVisitForPatient(PATIENT_1_UUID);
     mockMvc
         .perform(
             get("/visits/patient/{uuid}", PATIENT_1_UUID)
@@ -240,13 +232,6 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json(visitDetailsDTO)))
         .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
-  }
-
-  private Date getDateShiftedByDays(Date date, int plusDays) {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    cal.add(Calendar.DATE, plusDays);
-    return cal.getTime();
   }
 
   private Visit prepareVisitForPatient(String patientUuid) {

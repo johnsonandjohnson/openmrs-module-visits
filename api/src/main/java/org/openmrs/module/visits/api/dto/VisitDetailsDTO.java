@@ -1,9 +1,7 @@
 package org.openmrs.module.visits.api.dto;
 
-import java.io.Serializable;
-
 /** Object representing a visit DTO extended with the additional properties */
-public class VisitDetailsDTO extends VisitDTO implements Serializable {
+public class VisitDetailsDTO extends VisitDTO {
 
   private static final long serialVersionUID = 15L;
 

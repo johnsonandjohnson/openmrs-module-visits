@@ -9,7 +9,6 @@
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
     ui.includeJavascript("uicommons", "emr.js")
     ui.includeJavascript("uicommons", "moment.js")
-    // TODO setup "confirm before navigating" functionality
 %>
 
 <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.js"></script>
@@ -51,8 +50,6 @@
     jq(function() {
 
         // configure the encounter date widget
-        // TODO this probably should be handled in HFE itself when configuring the widget? could handle this when implementing HTML-480?
-        // TODO use a utility method to strip the time component (and replace the split('T')[0]
         // we use this convoluted approach because:
         // 1) if we don't strip off the time component, and the client time zone is different than the server time zone, the client will convert to it's time zone when parsing (potentially leading to the wrong date)
         // 2) if we strip off the time component, but just do a straight new Date("2014-05-05"), some browsers will interpret the time zone as UTC and convert (again potentially leading to the wrong date)

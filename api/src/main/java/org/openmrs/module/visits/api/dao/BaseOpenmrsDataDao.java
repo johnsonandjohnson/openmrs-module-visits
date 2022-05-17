@@ -32,8 +32,7 @@ public abstract class BaseOpenmrsDataDao<T extends BaseOpenmrsData> extends Hibe
             criteria.loadHibernateCriteria(hibernateCriteria);
         }
         loadPagingTotal(paging, hibernateCriteria);
-        createPagingCriteria(paging, hibernateCriteria);
-        return hibernateCriteria.list();
+        return createPagingCriteria(paging, hibernateCriteria).list();
     }
 
     private Criteria createCriteria() {
@@ -60,7 +59,7 @@ public abstract class BaseOpenmrsDataDao<T extends BaseOpenmrsData> extends Hibe
      * @param criteria The {@link Criteria} to add the paging settings to, or {@code null} to create a new one.
      * @return The {@link Criteria} object with the paging settings applied.
      */
-    protected Criteria createPagingCriteria(PagingInfo pagingInfo, Criteria criteria) {
+    private Criteria createPagingCriteria(PagingInfo pagingInfo, Criteria criteria) {
         if (pagingInfo != null && pagingInfo.getPage() > 0 && pagingInfo.getPageSize() > 0) {
             criteria.setFirstResult((pagingInfo.getPage() - 1) * pagingInfo.getPageSize());
             criteria.setMaxResults(pagingInfo.getPageSize());

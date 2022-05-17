@@ -17,12 +17,11 @@ import org.openmrs.VisitAttribute;
 import org.openmrs.module.visits.api.model.TimePeriod;
 import org.openmrs.module.visits.api.util.DateUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OverviewCriteria extends BaseCriteria implements Serializable {
+public class OverviewCriteria extends BaseCriteria {
 
     private static final long serialVersionUID = 8L;
 

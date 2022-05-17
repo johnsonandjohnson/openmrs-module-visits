@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Objects;
 
-/** Base Rest Controller All controllers in this module extend this for easy error handling */
+/**
+ * Base Rest Controller All controllers in this module extend this for easy error handling
+ */
 public abstract class BaseRestController {
 
   private final Log logger = LogFactory.getLog(getClass());
@@ -30,8 +32,7 @@ public abstract class BaseRestController {
   @ResponseBody
   public ErrorResponseDTO handleIllegalArgumentException(IllegalArgumentException e) {
     logger.error(e.getMessage(), e);
-    return new ErrorResponseDTO(
-        new ErrorMessage(ErrorMessageEnum.ERR_BAD_PARAM.getCode(), e.getMessage()));
+    return new ErrorResponseDTO(new ErrorMessage(ErrorMessageEnum.ERR_BAD_PARAM.getCode(), e.getMessage()));
   }
 
   /**
@@ -45,8 +46,7 @@ public abstract class BaseRestController {
   @ResponseBody
   public ErrorResponseDTO handleException(Exception e) {
     logger.error(e.getMessage(), e);
-    return new ErrorResponseDTO(
-        new ErrorMessage(ErrorMessageEnum.ERR_SYSTEM.getCode(), e.getMessage()));
+    return new ErrorResponseDTO(new ErrorMessage(ErrorMessageEnum.ERR_SYSTEM.getCode(), e.getMessage()));
   }
 
   /**
