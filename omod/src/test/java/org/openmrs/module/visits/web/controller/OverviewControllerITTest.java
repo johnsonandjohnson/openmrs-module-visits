@@ -21,7 +21,7 @@ import org.openmrs.VisitType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.db.VisitDAO;
-import org.openmrs.module.visits.api.service.VisitService;
+import org.openmrs.module.visits.api.dto.OverviewDTO;
 import org.openmrs.module.visits.api.util.ConfigConstants;
 import org.openmrs.module.visits.api.util.DateUtil;
 import org.openmrs.module.visits.domain.PagingInfo;
@@ -85,7 +85,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
   private static final String TODAY = "today";
   private static final String WEEK = "week";
   private static final String MONTH = "month";
-  private static final TypeReference<PageDTO<Visit>> VISIT_PAGE_DTO_TYPE = new TypeReference<PageDTO<Visit>>() {
+  private static final TypeReference<PageDTO<OverviewDTO>> VISIT_OVERVIEW_DTO_TYPE = new TypeReference<PageDTO<OverviewDTO>>() {
   };
 
   private MockMvc mockMvc;
@@ -94,12 +94,10 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
 
   private VisitAttributeType timeAttributeType;
 
-  @Autowired
-  private WebApplicationContext webApplicationContext;
+  private ObjectMapper visitMapper;
 
   @Autowired
-  @Qualifier("visits.visitService")
-  private VisitService visitService;
+  private WebApplicationContext webApplicationContext;
 
   @Autowired
   @Qualifier("visitDAO")
@@ -122,6 +120,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
 
     statusAttributeType = visitDAO.getVisitAttributeTypeByUuid(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
     timeAttributeType = visitDAO.getVisitAttributeTypeByUuid(ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID);
+
+    visitMapper = new ObjectMapper();
   }
 
   @Test
@@ -444,7 +444,7 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     PageDTO<Visit> expected =
         new PageDTO<>(Arrays.asList(visit, visit2), new PagingInfo(DEFAULT_PAGE_NUMBER, DEFAULT_ROWS_COUNT));
     expected.setTotalRecords(TOTAL_RECORDS);
-    PageDTO<Visit> actual = getPageDTO(result);
+    PageDTO<OverviewDTO> actual = getPageOverviewDTO(result);
     assertThat(actual.getPageIndex(), is(expected.getPageIndex()));
     assertThat(actual.getPageCount(), is(expected.getPageCount()));
     assertThat(actual.getPageSize(), is(expected.getPageSize()));
@@ -509,8 +509,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         .andReturn();
   }
 
-  private PageDTO<Visit> getPageDTO(MvcResult result) throws java.io.IOException {
-    return new ObjectMapper().readValue(result.getResponse().getContentAsString(), VISIT_PAGE_DTO_TYPE);
+  private PageDTO<OverviewDTO> getPageOverviewDTO(MvcResult result) throws java.io.IOException {
+    return visitMapper.readValue(result.getResponse().getContentAsString(), VISIT_OVERVIEW_DTO_TYPE);
   }
 
   private Visit prepareVisitForPatientWithLocation(String patientUuid, String locationUuid) {
