@@ -1,3 +1,13 @@
+%{--
+  - This Source Code Form is subject to the terms of the Mozilla Public License,
+  - v. 2.0. If a copy of the MPL was not distributed with this file, You can
+  - obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+  - the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+  - <p>
+  - Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+  - graphic logo is a trademark of OpenMRS Inc.
+  --}%
+
 <%
     // fragment copied from htmlformentryui (1.7.0) in order to override the submit action. One difference is form action.
     // config supports style (css style on div around form)
@@ -9,7 +19,6 @@
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
     ui.includeJavascript("uicommons", "emr.js")
     ui.includeJavascript("uicommons", "moment.js")
-    // TODO setup "confirm before navigating" functionality
 %>
 
 <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.js"></script>
@@ -51,8 +60,6 @@
     jq(function() {
 
         // configure the encounter date widget
-        // TODO this probably should be handled in HFE itself when configuring the widget? could handle this when implementing HTML-480?
-        // TODO use a utility method to strip the time component (and replace the split('T')[0]
         // we use this convoluted approach because:
         // 1) if we don't strip off the time component, and the client time zone is different than the server time zone, the client will convert to it's time zone when parsing (potentially leading to the wrong date)
         // 2) if we strip off the time component, but just do a straight new Date("2014-05-05"), some browsers will interpret the time zone as UTC and convert (again potentially leading to the wrong date)

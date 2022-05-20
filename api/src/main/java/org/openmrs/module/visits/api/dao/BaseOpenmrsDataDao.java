@@ -1,3 +1,13 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+ * <p>
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
+ */
+
 package org.openmrs.module.visits.api.dao;
 
 import java.util.List;
@@ -32,8 +42,7 @@ public abstract class BaseOpenmrsDataDao<T extends BaseOpenmrsData> extends Hibe
             criteria.loadHibernateCriteria(hibernateCriteria);
         }
         loadPagingTotal(paging, hibernateCriteria);
-        createPagingCriteria(paging, hibernateCriteria);
-        return hibernateCriteria.list();
+        return createPagingCriteria(paging, hibernateCriteria).list();
     }
 
     private Criteria createCriteria() {
@@ -60,7 +69,7 @@ public abstract class BaseOpenmrsDataDao<T extends BaseOpenmrsData> extends Hibe
      * @param criteria The {@link Criteria} to add the paging settings to, or {@code null} to create a new one.
      * @return The {@link Criteria} object with the paging settings applied.
      */
-    protected Criteria createPagingCriteria(PagingInfo pagingInfo, Criteria criteria) {
+    private Criteria createPagingCriteria(PagingInfo pagingInfo, Criteria criteria) {
         if (pagingInfo != null && pagingInfo.getPage() > 0 && pagingInfo.getPageSize() > 0) {
             criteria.setFirstResult((pagingInfo.getPage() - 1) * pagingInfo.getPageSize());
             criteria.setMaxResults(pagingInfo.getPageSize());

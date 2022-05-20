@@ -1,3 +1,13 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+ * <p>
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
+ */
+
 /**
  * The contents of this file are subject to the OpenMRS Public License Version 1.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the
@@ -12,7 +22,7 @@
 package org.openmrs.module.visits.fragment.controller;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -51,43 +61,32 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
    * visit form.
    *
    * @param sessionContext UI session context
-   * @param patient visit patient
-   * @param hf html visit form
-   * @param encounter encounter object related to a visit
-   * @param visit object representing a visit
-   * @param createVisit flag determining if a new visit should be created
-   * @param returnUrl url which is used to redirect after committing a submit action
-   * @param adtService object representing ADT service
+   * @param patient        visit patient
+   * @param hf             html visit form
+   * @param encounter      encounter object related to a visit
+   * @param visit          object representing a visit
+   * @param createVisit    flag determining if a new visit should be created
+   * @param returnUrl      url which is used to redirect after committing a submit action
+   * @param adtService     object representing ADT service
    * @param featureToggles object representing feature toggles used to set up a velocity context
-   * @param ui utils related to UI
-   * @param request passed HTTP request
+   * @param ui             utils related to UI
+   * @param request        passed HTTP request
    * @return a key-value map related to UI framework
    * @throws Exception when there is any form submission error
    */
-  @SuppressWarnings({
-    "checkstyle:parameterNumber",
-    "checkstyle:cyclomaticComplexity",
-    "checkstyle:parameterAssignment",
-    "PMD.ExcessiveParameterList",
-    "PMD.CyclomaticComplexity",
-    "PMD.NPathComplexity",
-    "PMD.AvoidReassigningParameters"
-  })
+  @SuppressWarnings({"checkstyle:parameterNumber", "checkstyle:cyclomaticComplexity", "checkstyle:parameterAssignment",
+      "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.AvoidReassigningParameters"})
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public SimpleObject submit(
-      UiSessionContext sessionContext,
-      @RequestParam("personId") Patient patient,
-      @RequestParam("htmlFormId") HtmlForm hf,
-      @RequestParam(value = "encounterId", required = false) Encounter encounter,
-      @RequestParam(value = "visitId", required = false) Visit visit,
-      @RequestParam(value = "createVisit", required = false) Boolean createVisit,
-      @RequestParam(value = "returnUrl", required = false) String returnUrl,
-      @SpringBean("adtService") AdtService adtService,
-      @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
-      UiUtils ui,
-      HttpServletRequest request)
-      throws Exception {
+  public SimpleObject submit(UiSessionContext sessionContext, @RequestParam("personId") Patient patient,
+                             @RequestParam("htmlFormId") HtmlForm hf,
+                             @RequestParam(value = "encounterId", required = false) Encounter encounter,
+                             @RequestParam(value = "visitId", required = false) Visit visit,
+                             @RequestParam(value = "createVisit", required = false) Boolean createVisit,
+                             @RequestParam(value = "returnUrl", required = false) String returnUrl,
+                             @SpringBean("adtService") AdtService adtService,
+                             @SpringBean("featureToggles") FeatureToggleProperties featureToggles, UiUtils ui,
+                             HttpServletRequest request) throws Exception {
 
     boolean editMode = encounter != null;
 
@@ -99,8 +98,7 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
     fes.getHtmlToDisplay(); // needs to happen before we validate or process a form
 
     // Validate and return with errors if any are found
-    List<FormSubmissionError> validationErrors =
-        fes.getSubmissionController().validateSubmission(fes.getContext(), request);
+    List<FormSubmissionError> validationErrors = fes.getSubmissionController().validateSubmission(fes.getContext(), request);
     if (CollectionUtils.isNotEmpty(validationErrors)) {
       return getValidationResults(validationErrors, fes, null);
     }
@@ -113,30 +111,25 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
       StringWriter sw = new StringWriter();
       ex.printStackTrace(new PrintWriter(sw));
       validationErrors.add(
-          new FormSubmissionError(
-              "general-form-error", "Form submission error " + ex.getMessage() + "<br/>" + sw));
+          new FormSubmissionError("general-form-error", "Form submission error " + ex.getMessage() + "<br/>" + sw));
       return getValidationResults(validationErrors, fes, null);
     }
 
     // Check this form will actually create an encounter if its supposed to
-    if (fes.getContext().getMode() == FormEntryContext.Mode.ENTER
-        && fes.hasEncouterTag()
-        && (fes.getSubmissionActions().getEncountersToCreate() == null
-            || CollectionUtils.isEmpty(fes.getSubmissionActions().getEncountersToCreate()))) {
+    if (fes.getContext().getMode() == FormEntryContext.Mode.ENTER && fes.hasEncouterTag() &&
+        (fes.getSubmissionActions().getEncountersToCreate() == null ||
+            CollectionUtils.isEmpty(fes.getSubmissionActions().getEncountersToCreate()))) {
       throw new IllegalArgumentException("This form is not going to create an encounter");
     }
 
-    Encounter formEncounter =
-        fes.getContext().getMode() == FormEntryContext.Mode.ENTER
-            ? fes.getSubmissionActions().getEncountersToCreate().get(0)
-            : encounter;
+    Encounter formEncounter = fes.getContext().getMode() == FormEntryContext.Mode.ENTER ?
+        fes.getSubmissionActions().getEncountersToCreate().get(0) : encounter;
 
     // this will handled in HFE (and could be removed from here) as-of HFE 3.9.0,
     // see: https://issues.openmrs.org/browse/HTML-678
     // we don't want to lose any time information just because we edited it with a form that only
     // collects date
-    if (fes.getContext().getMode() == FormEntryContext.Mode.EDIT
-        && isTimeAvailable(formEncounter.getEncounterDatetime())) {
+    if (fes.getContext().getMode() == FormEntryContext.Mode.EDIT && isTimeAvailable(formEncounter.getEncounterDatetime())) {
       setAppropriateEncounterDate(fes.getContext().getPreviousEncounterDate(), formEncounter);
     }
 
@@ -160,38 +153,24 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
 
     request
         .getSession()
-        .setAttribute(
-            "emr.infoMessage",
-            ui.message(
-                editMode
-                    ? "htmlformentryui.editHtmlForm.successMessage"
-                    : "htmlformentryui.enterHtmlForm.successMessage",
-                ui.format(hf.getForm()),
-                ui.escapeJs(ui.format(patient))));
+        .setAttribute("emr.infoMessage", ui.message(
+            editMode ? "htmlformentryui.editHtmlForm.successMessage" : "htmlformentryui.enterHtmlForm.successMessage",
+            ui.format(hf.getForm()), ui.escapeJs(ui.format(patient))));
     request.getSession().setAttribute("emr.toastMessage", "true");
 
     return getValidationResults(null, fes, formEncounter);
   }
 
-  public SimpleObject getValidationResults(
-      List<FormSubmissionError> validationErrors, FormEntrySession session, Encounter encounter) {
+  public SimpleObject getValidationResults(List<FormSubmissionError> validationErrors, FormEntrySession session,
+                                           Encounter encounter) {
     if (CollectionUtils.isEmpty(validationErrors)) {
       String afterSaveUrl = session.getAfterSaveUrlTemplate();
       if (afterSaveUrl != null) {
-        afterSaveUrl =
-            afterSaveUrl.replaceAll(
-                "\\{\\{patient.id\\}\\}", session.getPatient().getId().toString());
-        afterSaveUrl =
-            afterSaveUrl.replaceAll(
-                "\\{\\{encounter.id\\}\\}", session.getEncounter().getId().toString());
+        afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{patient.id}}", session.getPatient().getId().toString());
+        afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{encounter.id}}", session.getEncounter().getId().toString());
       }
-      return SimpleObject.create(
-          "success",
-          Boolean.TRUE,
-          "encounterId",
-          encounter == null ? null : encounter.getId(),
-          "goToUrl",
-          afterSaveUrl);
+      return SimpleObject.create("success", Boolean.TRUE, "encounterId", encounter == null ? null : encounter.getId(),
+          "goToUrl", afterSaveUrl);
     } else {
       Map<String, String> errors = new HashMap<>();
       for (FormSubmissionError err : validationErrors) {
@@ -207,15 +186,12 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
 
   // we couldn't change the FormEntrySession code
   @SuppressWarnings({"PMD.SignatureDeclareThrowsException"})
-  private FormEntrySession getFormEntrySession(
-      Patient patient, HtmlForm hf, Encounter encounter, HttpServletRequest request)
+  private FormEntrySession getFormEntrySession(Patient patient, HtmlForm hf, Encounter encounter, HttpServletRequest request)
       throws Exception {
 
     FormEntrySession fes;
     if (encounter != null) {
-      fes =
-          new FormEntrySession(
-              patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
+      fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
     } else {
       fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
     }
@@ -223,22 +199,22 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
   }
 
   private boolean isTimeAvailable(Date date) {
-    return new DateMidnight(date).toDate().equals(date);
+    return getAtStartOfDay(date).toDate().equals(date);
   }
 
-  //    private void keepTimeComponentOfEncounterIfDateComponentHasNotChanged(Date
-  // previousEncounterDate,
   private void setAppropriateEncounterDate(Date previousEncounterDate, Encounter formEncounter) {
-    if (previousEncounterDate != null
-        && new DateMidnight(previousEncounterDate)
-            .equals(new DateMidnight(formEncounter.getEncounterDatetime()))) {
+    if (previousEncounterDate != null &&
+        getAtStartOfDay(previousEncounterDate).equals(getAtStartOfDay(formEncounter.getEncounterDatetime()))) {
       formEncounter.setEncounterDatetime(previousEncounterDate);
     }
   }
 
+  private DateTime getAtStartOfDay(Date date) {
+    return new DateTime(date).withTimeAtStartOfDay();
+  }
+
   @SuppressWarnings({"checkstyle:parameterAssignment", "PMD.AvoidReassigningParameters"})
-  private VisitDomainWrapper getVisitWrapper(
-      Visit visit, Encounter encounter, AdtService adtService) {
+  private VisitDomainWrapper getVisitWrapper(Visit visit, Encounter encounter, AdtService adtService) {
     // if we don't have a visit, but the encounter has a visit, use that
     if (visit == null && encounter != null) {
       visit = encounter.getVisit();
@@ -246,6 +222,7 @@ public class VisitEnterHtmlFormFragmentController extends EnterHtmlFormFragmentC
     if (visit == null) {
       return null;
     } else {
+
       return adtService.wrap(visit);
     }
   }

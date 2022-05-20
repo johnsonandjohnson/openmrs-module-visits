@@ -1,3 +1,13 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+ * <p>
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
+ */
+
 package org.openmrs.module.visits.domain.criteria;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,12 +27,11 @@ import org.openmrs.VisitAttribute;
 import org.openmrs.module.visits.api.model.TimePeriod;
 import org.openmrs.module.visits.api.util.DateUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OverviewCriteria extends BaseCriteria implements Serializable {
+public class OverviewCriteria extends BaseCriteria {
 
     private static final long serialVersionUID = 8L;
 
