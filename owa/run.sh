@@ -1,7 +1,7 @@
 #!/bin/bash
 
 HOME_DIR=~
-VISITS_REPO=$HOME_DIR/cfl/omrs-visits
+VISITS_REPO=$HOME_DIR/cfl/openmrs-module-visits
 VISITS_OMOD=visits-1.0.0-SNAPSHOT.omod
 VISITS_OMOD_PREFIX=visits
 CFL_REPO=$HOME_DIR/cfl/cfl-openmrs

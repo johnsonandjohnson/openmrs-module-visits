@@ -17,9 +17,9 @@
     </description>
 
     <scm>
-        <connection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/omrs-visits.git</connection>
-        <developerConnection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/omrs-visits.git</developerConnection>
-        <url>https://sourcecode.jnj.com/scm/itx-bpv/omrs-visits.git</url>
+        <connection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/openmrs-module-visits.git</connection>
+        <developerConnection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/openmrs-module-visits.git</developerConnection>
+        <url>https://sourcecode.jnj.com/scm/itx-bpv/openmrs-module-visits.git</url>
         <tag>HEAD</tag>
     </scm>
 
