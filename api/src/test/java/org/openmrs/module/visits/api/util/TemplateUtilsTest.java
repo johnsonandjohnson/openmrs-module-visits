@@ -1,0 +1,50 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+ * <p>
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
+ */
+
+package org.openmrs.module.visits.api.util;
+
+import org.junit.Test;
+import org.openmrs.module.visits.BaseTest;
+
+import java.util.HashMap;
+
+import static org.junit.Assert.assertEquals;
+
+public class TemplateUtilsTest extends BaseTest {
+    private static final String VALUE = "123";
+
+    @Test
+    public void shouldReplaceParam() {
+        String actual = TemplateUtils.fillTemplate("-{{param}}-", "param", VALUE);
+        assertEquals("-123-", actual);
+    }
+
+    @Test
+    public void shouldReplaceMultipleOccurrencesOfTheSameParam() {
+        String actual = TemplateUtils.fillTemplate("-{{param}}-{{param}}-", "param", VALUE);
+        assertEquals("-123-123-", actual);
+    }
+
+    @Test
+    public void shouldNotThrowExceptionIfParamNotExistsInTemplate() {
+        String actual = TemplateUtils.fillTemplate("--", "param", VALUE);
+        assertEquals("--", actual);
+    }
+
+    @Test
+    public void shouldReplaceMultipleParams() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("param1", "ABC");
+        params.put("param2", "CBA");
+
+        String actual = TemplateUtils.fillTemplate("-{{param1}}-{{param2}}-", params);
+        assertEquals("-ABC-CBA-", actual);
+    }
+}

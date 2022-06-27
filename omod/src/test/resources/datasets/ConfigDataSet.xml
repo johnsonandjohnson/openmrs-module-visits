@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ This Source Code Form is subject to the terms of the Mozilla Public License,
+  ~ v. 2.0. If a copy of the MPL was not distributed with this file, You can
+  ~ obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+  ~ the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+  ~ <p>
+  ~ Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+  ~ graphic logo is a trademark of OpenMRS Inc.
+  -->
+
+<dataset>
+    <global_property
+            property="visits.visit-form-uris"
+            property_value='
+            {
+                "default":{
+                    "create":"/htmlformentryui/htmlform/enterHtmlFormWithStandardUi.page?patientId={{patientId}}&amp;visitId={{visitId}}&amp;definitionUiResource=cfl:htmlforms/cfl-visit-note.xml",
+                    "edit":"/htmlformentryui/htmlform/editHtmlFormWithStandardUi.page?patientId={{patientId}}&amp;encounterId={{encounterId}}"
+                }
+            }'
+            uuid="03b40777-4c60-483d-8df1-489d22fb6e37"/>
+</dataset>
