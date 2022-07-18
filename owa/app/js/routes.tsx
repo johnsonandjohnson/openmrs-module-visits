@@ -15,8 +15,8 @@ import BreadCrumb from './components/bread-crumb';
 import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
 import { withNotifications } from './components/hoc/with-notifications';
 import OverviewVisits from './components/overview-visits';
-import Customize from '@bit/soldevelo-cfl.omrs-components.customize'
-import { initializeLocalizationWrapper } from '@bit/soldevelo-omrs.cfl-components.localization-wrapper';
+import Customize from './components/customize/customize'
+import { initializeLocalizationWrapper } from './components/localization-wrapper/localization-wrapper';
 import messagesEN from "./translations/en.json";
 
 initializeLocalizationWrapper({

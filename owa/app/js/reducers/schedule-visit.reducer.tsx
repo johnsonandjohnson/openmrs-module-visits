@@ -11,12 +11,12 @@
 import _ from 'lodash';
 
 import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
-import axiosInstance from '@bit/soldevelo-omrs.cfl-components.shared/axios'
+import axiosInstance from '../components/shared/axios'
 import IVisitType from '../shared/model/visit-type';
 import VisitUI from '../shared/model/visit-ui';
 import * as Default from '../shared/utils/messages';
 import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
-import { handleRequest } from '@bit/soldevelo-omrs.cfl-components.request-toast-handler';
+import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
 import ILocation from '../shared/model/location';
 import IVisitDetails from '../shared/model/visit-details';
 import IModalParams from '../components/manage-visits/modal-params';

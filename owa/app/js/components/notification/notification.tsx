@@ -17,7 +17,7 @@ import {
   removeFirstNotification
 } from '../../reducers/notification.reducer';
 import { IRootState } from '../../reducers';
-import { successToast, errorToast } from '@bit/soldevelo-omrs.cfl-components.toast-handler';
+import { successToast, errorToast } from '../toast-handler/toast-handler';
 
 interface IProps extends DispatchProps, StateProps { }
 
