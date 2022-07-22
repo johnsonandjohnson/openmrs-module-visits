@@ -15,11 +15,11 @@ import scheduleVisit, { ScheduleVisitState } from './schedule-visit.reducer';
 import overview, { OverviewVisitState } from './overview-visits.reducer';
 import notification, { NotificationState } from './notification.reducer';
 import customizeReducer, { CustomizeState } 
-  from '@bit/soldevelo-cfl.omrs-components.customize/customize.reducer';
+  from '../components/customize/customize.reducer';
 import person, { PersonState }
-  from '@bit/soldevelo-omrs.cfl-components.person-header/person-header/person.reducer';
+  from '../components/person-header/person.reducer';
 import personStatus, { PersonStatusState } 
-  from '@bit/soldevelo-omrs.cfl-components.person-status/person-status/person-status.reducer';
+  from '../components/person-status/person-status.reducer';
 
 export interface IRootState {
   readonly openmrs: any;

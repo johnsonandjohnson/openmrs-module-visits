@@ -8,11 +8,11 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import Header from '@bit/soldevelo-omrs.cfl-components.person-header';
+import Header from '../person-header/person-header';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import ManageVisits from '../manage-visits/manage-visits';
-import PersonStatus from '@bit/soldevelo-omrs.cfl-components.person-status';
+import PersonStatus from '../person-status/person-status';
 
 interface IWrappedComponentProps extends RouteComponentProps<{ patientUuid: string }> {
   isNew?: boolean;
