@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.UserService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
@@ -57,6 +58,9 @@ public abstract class ContextMockedTest extends BaseTest {
     @Mock
     private MissedVisitService missedVisitService;
 
+    @Mock
+    private UserService userService;
+
     @Before
     public void setUp() {
         mockStatic(Context.class);
@@ -69,6 +73,7 @@ public abstract class ContextMockedTest extends BaseTest {
         when(Context.getLocationService()).thenReturn(locationService);
         when(Context.getSchedulerService()).thenReturn(schedulerService);
         when(Context.getService(MissedVisitService.class)).thenReturn(missedVisitService);
+        when(Context.getUserService()).thenReturn(userService);
     }
 
     public AdministrationService getAdministrationService() {
