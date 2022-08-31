@@ -10,6 +10,24 @@
 
 package org.openmrs.module.visits.web.controller;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
+import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.junit.Before;
@@ -20,7 +38,9 @@ import org.openmrs.VisitAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.db.VisitDAO;
+import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.OverviewDTO;
 import org.openmrs.module.visits.api.util.ConfigConstants;
 import org.openmrs.module.visits.api.util.DateUtil;
@@ -36,21 +56,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Arrays;
-import java.util.Date;
-
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
-import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebAppConfiguration
 public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithActivatorTest {
@@ -79,7 +84,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
   private static final String LOCATION_1_NAME = "Test Parent Location";
   private static final String STATUS_SCHEDULED = "SCHEDULED";
   private static final String TIME_MORNING = "Morning";
-  private static final String PATIENT_2_URL = "/openmrs/coreapps/clinicianfacing/patient.page?patientId=" + PATIENT_2_UUID;
+  private static final String PATIENT_2_URL =
+      "/openmrs/coreapps/clinicianfacing/patient.page?patientId=" + PATIENT_2_UUID;
   private static final long TOTAL_RECORDS = 2L;
   private static final String TIME_PERIOD = "timePeriod";
   private static final String TODAY = "today";
@@ -87,6 +93,12 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
   private static final String MONTH = "month";
   private static final TypeReference<PageDTO<OverviewDTO>> VISIT_OVERVIEW_DTO_TYPE = new TypeReference<PageDTO<OverviewDTO>>() {
   };
+
+  private static final String VISIT_1_UUID = "16f280e0-3e91-48b4-acb2-c29c30595b45";
+
+  private static final String VISIT_2_UUID = "c558c650-acfc-4e35-9245-ab203074ce42";
+
+  private static final String MISSED_VISIT_STATUS = "MISSED";
 
   private MockMvc mockMvc;
 
@@ -111,6 +123,9 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
   @Qualifier("locationService")
   private LocationService locationService;
 
+  @Autowired
+  private VisitService visitService;
+
   @Before
   public void setUp() throws Exception {
     mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -118,8 +133,10 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
     executeDataSet(XML_DATA_SET_PATH + "PatientDataSet.xml");
     executeDataSet(XML_DATA_SET_PATH + "LocationDataSet.xml");
 
-    statusAttributeType = visitDAO.getVisitAttributeTypeByUuid(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
-    timeAttributeType = visitDAO.getVisitAttributeTypeByUuid(ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID);
+    statusAttributeType = visitDAO.getVisitAttributeTypeByUuid(
+        ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
+    timeAttributeType = visitDAO.getVisitAttributeTypeByUuid(
+        ConfigConstants.VISIT_TIME_ATTRIBUTE_TYPE_UUID);
 
     visitMapper = new ObjectMapper();
   }
@@ -224,7 +241,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         .andExpect(jsonPath("$.content.[*].patientIdentifier").value(hasItem(PATIENT_2_IDENTIFIER)))
         .andExpect(jsonPath("$.content.[*].nameUrl.name").value(hasItem(PATIENT_2_FULL_NAME)))
         .andExpect(jsonPath("$.content.[*].nameUrl.url").value(hasItem(PATIENT_2_URL)))
-        .andExpect(jsonPath("$.content.[*].startDate").value(hasItem(visit.getStartDatetime().getTime())))
+        .andExpect(
+            jsonPath("$.content.[*].startDate").value(hasItem(visit.getStartDatetime().getTime())))
         .andExpect(jsonPath("$.content.[*].time").value(hasItem(TIME_MORNING)))
         .andExpect(jsonPath("$.content.[*].type").value(hasItem(VISIT_TYPE_NAME)))
         .andExpect(jsonPath("$.content.[*].status").value(hasItem(STATUS_SCHEDULED)))
@@ -384,7 +402,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
   }
 
   @Test
-  public void shouldReturnPatientSecondWithGivenNameAndMiddleNameAndFamilyNameContainingSearchTerm() throws Exception {
+  public void shouldReturnPatientSecondWithGivenNameAndMiddleNameAndFamilyNameContainingSearchTerm()
+      throws Exception {
     prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
     prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
     Visit visit = prepareVisitForPatientWithLocation(PATIENT_2_UUID, LOCATION_1_UUID);
@@ -442,7 +461,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
 
     assertThat(result, is(notNullValue()));
     PageDTO<Visit> expected =
-        new PageDTO<>(Arrays.asList(visit, visit2), new PagingInfo(DEFAULT_PAGE_NUMBER, DEFAULT_ROWS_COUNT));
+        new PageDTO<>(Arrays.asList(visit, visit2),
+            new PagingInfo(DEFAULT_PAGE_NUMBER, DEFAULT_ROWS_COUNT));
     expected.setTotalRecords(TOTAL_RECORDS);
     PageDTO<OverviewDTO> actual = getPageOverviewDTO(result);
     assertThat(actual.getPageIndex(), is(expected.getPageIndex()));
@@ -467,7 +487,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         .andExpect(status().is(HttpStatus.OK.value()))
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.content.[*].uuid").value(hasItem(visitToday.getUuid())))
-        .andExpect(jsonPath("$.content.[*].uuid").value(not(hasItem(visitThreeDaysLater.getUuid()))))
+        .andExpect(
+            jsonPath("$.content.[*].uuid").value(not(hasItem(visitThreeDaysLater.getUuid()))))
         .andReturn();
   }
 
@@ -494,7 +515,8 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
   public void shouldReturnAllScheduledVisitForMonth() throws Exception {
     Visit visitWeekLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
     visitWeekLater.setStartDatetime(DateUtil.getDatePlusDays(DateUtil.now(), 7));
-    Visit visitThreeMonthsLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID, LOCATION_1_UUID);
+    Visit visitThreeMonthsLater = prepareVisitForPatientWithLocation(PATIENT_1_UUID,
+        LOCATION_1_UUID);
     visitThreeMonthsLater.setStartDatetime(DateUtil.getDatePlusMonths(DateUtil.now(), 3));
 
     mockMvc
@@ -505,12 +527,37 @@ public class OverviewControllerITTest extends BaseModuleWebContextSensitiveWithA
         .andExpect(status().is(HttpStatus.OK.value()))
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.content.[*].uuid").value(hasItem(visitWeekLater.getUuid())))
-        .andExpect(jsonPath("$.content.[*].uuid").value(not(hasItem(visitThreeMonthsLater.getUuid()))))
+        .andExpect(
+            jsonPath("$.content.[*].uuid").value(not(hasItem(visitThreeMonthsLater.getUuid()))))
         .andReturn();
   }
 
+  @Test
+  public void shouldUpdateVisitStatusesFromScheduledToMissed() throws Exception {
+    executeDataSet(XML_DATA_SET_PATH + "VisitDataSet.xml");
+
+    mockMvc.perform(post("/visits/overview/updateVisitStatuses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(prepareRequestBody())
+            .param("newVisitStatus", MISSED_VISIT_STATUS))
+        .andExpect(status().is(HttpStatus.OK.value()));
+
+    List<Visit> updatedVisits = visitService.getAllVisits().stream()
+        .filter(v -> Arrays.asList(VISIT_1_UUID, VISIT_2_UUID).contains(v.getUuid())).collect(
+            Collectors.toList());
+
+    updatedVisits.forEach(
+        visit -> assertEquals(MISSED_VISIT_STATUS, new VisitDecorator(visit).getStatus()));
+  }
+
+  private String prepareRequestBody() throws Exception {
+    String[] values = new String[]{VISIT_1_UUID, VISIT_2_UUID};
+    return new ObjectMapper().writeValueAsString(values);
+  }
+
   private PageDTO<OverviewDTO> getPageOverviewDTO(MvcResult result) throws java.io.IOException {
-    return visitMapper.readValue(result.getResponse().getContentAsString(), VISIT_OVERVIEW_DTO_TYPE);
+    return visitMapper.readValue(result.getResponse().getContentAsString(),
+        VISIT_OVERVIEW_DTO_TYPE);
   }
 
   private Visit prepareVisitForPatientWithLocation(String patientUuid, String locationUuid) {

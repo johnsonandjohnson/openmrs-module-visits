@@ -40,6 +40,40 @@
         }
       }
     },
+    "/visits/overview/updateVisitStatuses" : {
+      "post" : {
+        "tags" : [ "REST API for visit overview" ],
+        "summary" : "Updates visits with new status",
+        "description" : "Updates visits with new status",
+        "operationId" : "updateVisitStatuses",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "visitUuids",
+          "description" : "visitUuids",
+          "required" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "newVisitStatus",
+          "in" : "query",
+          "description" : "newVisitStatus",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Visits statuses changed successfully"
+          },
+          "500" : {
+            "description" : "An error occurred while updating visit statuses"
+          }
+        }
+      }
+    },
     "/visits/overview/{uuid}" : {
       "get" : {
         "tags" : [ "REST API for visit overview" ],

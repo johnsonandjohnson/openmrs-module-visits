@@ -10,6 +10,11 @@
 
 package org.openmrs.module.visits.api.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -17,6 +22,7 @@ import org.openmrs.VisitAttributeType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.dto.VisitDTO;
 import org.openmrs.module.visits.api.dto.VisitDateDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
@@ -28,13 +34,14 @@ import org.openmrs.module.visits.api.util.ConfigConstants;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.OverviewCriteria;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-/** Implements methods for creating, reading, updating and deleting Visit entities */
+/**
+ * Implements methods for creating, reading, updating and deleting Visit entities
+ */
 public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements VisitService {
+
+  private static final Log LOGGER = LogFactory.getLog(VisitServiceImpl.class);
 
   private static final Integer BATCH_SIZE = 25;
 
@@ -104,6 +111,35 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
         pagingInfo);
   }
 
+  @Override
+  @Transactional
+  public void changeVisitStatuses(List<String> visitUuids, String newVisitStatus) {
+    int numberOfIterations = (int) Math.ceil((double) visitUuids.size() / BATCH_SIZE);
+    for (int i = 0; i < numberOfIterations; i++) {
+      clearSessionCache();
+      processSingleBatch(getVisitsUuidsBatch(i, visitUuids), newVisitStatus);
+    }
+  }
+
+  private List<String> getVisitsUuidsBatch(int iterationNumber, List<String> visitUuids) {
+    int endIndex = Math.min((iterationNumber + 1) * BATCH_SIZE, visitUuids.size());
+    return visitUuids.subList(iterationNumber * BATCH_SIZE, endIndex);
+  }
+
+  private void processSingleBatch(List<String> visitUuids, String newVisitStatus) {
+    org.openmrs.api.VisitService visitService = Context.getVisitService();
+    for (String uuid : visitUuids) {
+      Visit visit = visitService.getVisitByUuid(uuid);
+      if (visit == null) {
+        LOGGER.warn(String.format("Visit with uuid: %s not found", uuid));
+        continue;
+      }
+      VisitDecorator visitDecorator = new VisitDecorator(visit);
+      visitDecorator.setStatus(newVisitStatus);
+      visitService.saveVisit(visitDecorator.getObject());
+    }
+  }
+
   public void setVisitMapper(VisitMapper visitMapper) {
     this.visitMapper = visitMapper;
   }
@@ -127,12 +163,12 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
         Context.getVisitService()
             .getVisitAttributeTypeByUuid(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
     int numOfIterations = (int) Math.ceil((float) visitsIds.size() / BATCH_SIZE);
+    MissedVisitService missedVisitService = Context.getService(MissedVisitService.class);
     for (int i = 0; i < numOfIterations; i++) {
       clearSessionCache();
       List<Integer> subList = getVisitIdsSubList(i, visitsIds);
-      Context.getService(MissedVisitService.class)
-          .changeVisitStatusesToMissed(
-              subList, visitStatuses, missedVisitStatus, visitStatusAttrType);
+      missedVisitService.changeVisitStatusesToMissed(subList, visitStatuses, missedVisitStatus,
+          visitStatusAttrType);
     }
   }
 
@@ -149,10 +185,10 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
 
   private List<Integer> getMissedVisitsIds(List<String> statusesEndingVisit) {
     return findAllByCriteria(
-            VisitCriteria.forMissedVisits(
-                configService.getMinimumVisitDelayToMarkItAsMissed(),
-                configService.getStatusOfMissedVisit(),
-                statusesEndingVisit))
+        VisitCriteria.forMissedVisits(
+            configService.getMinimumVisitDelayToMarkItAsMissed(),
+            configService.getStatusOfMissedVisit(),
+            statusesEndingVisit))
         .stream()
         .map(Visit::getVisitId)
         .collect(Collectors.toList());

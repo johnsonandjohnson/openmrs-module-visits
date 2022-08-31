@@ -10,9 +10,24 @@
 
 package org.openmrs.module.visits.api.service;
 
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -29,26 +44,14 @@ import org.openmrs.module.visits.api.service.impl.VisitServiceImpl;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class VisitServiceImplTest extends ContextMockedTest {
 
   @Spy private BaseOpenmrsPageableDao<Visit> dao = new VisitDaoImpl();
 
   @InjectMocks private VisitService visitService = new VisitServiceImpl();
+
+  @Mock
+  private org.openmrs.api.VisitService openMRSVisitService;
 
   private Patient patient;
 
@@ -68,6 +71,8 @@ public class VisitServiceImplTest extends ContextMockedTest {
     visitDTO.setUuid("123-456-789");
     visitDTO.setVisitDateDTO(new VisitDateDTO(new Date(), null, null));
     location = new Location(1);
+
+    when(Context.getVisitService()).thenReturn(openMRSVisitService);
   }
 
   @Test
@@ -206,5 +211,16 @@ public class VisitServiceImplTest extends ContextMockedTest {
         visitService.getVisitsForLocation(
             location.getUuid(), new PagingInfo(), null, null, null, null, null);
     assertThat(visitsForLocation, org.hamcrest.Matchers.contains(visit));
+  }
+
+  @Test
+  public void shouldChangeVisitStatuses() {
+    List<String> visitUuids = Arrays.asList("58631546-2907-11ed-8295-0242ac160002",
+        "58631546-2907-11ed-8295-0242ac160003", "58631546-2907-11ed-8295-0242ac160004",
+        "58631546-2907-11ed-8295-0242ac160005");
+
+    visitService.changeVisitStatuses(visitUuids, "MISSED");
+
+    verify(openMRSVisitService, times(4)).getVisitByUuid(anyString());
   }
 }
