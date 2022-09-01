@@ -127,16 +127,15 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   }
 
   private void processSingleBatch(List<String> visitUuids, String newVisitStatus) {
-    org.openmrs.api.VisitService visitService = Context.getVisitService();
     for (String uuid : visitUuids) {
-      Visit visit = visitService.getVisitByUuid(uuid);
+      Visit visit = getByUuid(uuid);
       if (visit == null) {
         LOGGER.warn(String.format("Visit with uuid: %s not found", uuid));
         continue;
       }
       VisitDecorator visitDecorator = new VisitDecorator(visit);
       visitDecorator.setStatus(newVisitStatus);
-      visitService.saveVisit(visitDecorator.getObject());
+      saveOrUpdate(visitDecorator.getObject());
     }
   }
 

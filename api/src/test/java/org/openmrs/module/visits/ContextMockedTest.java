@@ -10,10 +10,14 @@
 
 package org.openmrs.module.visits;
 
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.DatatypeService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
@@ -26,9 +30,6 @@ import org.openmrs.module.visits.api.service.MissedVisitService;
 import org.openmrs.scheduler.SchedulerService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Context.class, Daemon.class})
@@ -61,6 +62,9 @@ public abstract class ContextMockedTest extends BaseTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private DatatypeService datatypeService;
+
     @Before
     public void setUp() {
         mockStatic(Context.class);
@@ -74,6 +78,7 @@ public abstract class ContextMockedTest extends BaseTest {
         when(Context.getSchedulerService()).thenReturn(schedulerService);
         when(Context.getService(MissedVisitService.class)).thenReturn(missedVisitService);
         when(Context.getUserService()).thenReturn(userService);
+        when(Context.getDatatypeService()).thenReturn(datatypeService);
     }
 
     public AdministrationService getAdministrationService() {
@@ -106,5 +111,9 @@ public abstract class ContextMockedTest extends BaseTest {
 
     public MissedVisitService getMissedVisitService() {
         return missedVisitService;
+    }
+
+    public DatatypeService getDatatypeService() {
+        return datatypeService;
     }
 }

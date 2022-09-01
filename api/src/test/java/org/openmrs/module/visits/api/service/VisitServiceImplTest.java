@@ -27,7 +27,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Spy;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -35,6 +34,7 @@ import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.api.context.Context;
+import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.visits.ContextMockedTest;
 import org.openmrs.module.visits.api.dao.BaseOpenmrsPageableDao;
 import org.openmrs.module.visits.api.dao.impl.VisitDaoImpl;
@@ -49,9 +49,6 @@ public class VisitServiceImplTest extends ContextMockedTest {
   @Spy private BaseOpenmrsPageableDao<Visit> dao = new VisitDaoImpl();
 
   @InjectMocks private VisitService visitService = new VisitServiceImpl();
-
-  @Mock
-  private org.openmrs.api.VisitService openMRSVisitService;
 
   private Patient patient;
 
@@ -71,8 +68,6 @@ public class VisitServiceImplTest extends ContextMockedTest {
     visitDTO.setUuid("123-456-789");
     visitDTO.setVisitDateDTO(new VisitDateDTO(new Date(), null, null));
     location = new Location(1);
-
-    when(Context.getVisitService()).thenReturn(openMRSVisitService);
   }
 
   @Test
@@ -215,12 +210,24 @@ public class VisitServiceImplTest extends ContextMockedTest {
 
   @Test
   public void shouldChangeVisitStatuses() {
+    doReturn(new Visit()).when(dao).getByUuid(anyString());
+    doReturn(new Visit()).when(dao).saveOrUpdate(any(Visit.class));
+    when(getVisitService().getVisitAttributeTypeByUuid(anyString())).thenReturn(buildVisitAttributeType());
+    when(getDatatypeService().getDatatype(any(), any())).thenReturn(new FreeTextDatatype());
+
     List<String> visitUuids = Arrays.asList("58631546-2907-11ed-8295-0242ac160002",
         "58631546-2907-11ed-8295-0242ac160003", "58631546-2907-11ed-8295-0242ac160004",
         "58631546-2907-11ed-8295-0242ac160005");
 
     visitService.changeVisitStatuses(visitUuids, "MISSED");
 
-    verify(openMRSVisitService, times(4)).getVisitByUuid(anyString());
+    verify(dao, times(4)).getByUuid(anyString());
+  }
+
+  private VisitAttributeType buildVisitAttributeType() {
+    VisitAttributeType visitAttributeType = new VisitAttributeType();
+    visitAttributeType.setName("Visit Status");
+    visitAttributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.FreeTextDatatype");
+    return visitAttributeType;
   }
 }
