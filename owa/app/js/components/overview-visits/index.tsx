@@ -15,11 +15,13 @@ import Select from "react-select";
 import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Button } from "react-bootstrap";
 
 import * as Default from "../../shared/utils/messages";
 import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { getOverviewPage } from "../../reducers/overview-visits.reducer";
 import { getVisitStatuses } from "../../reducers/schedule-visit.reducer";
+import { updateVisitStatuses } from "../../reducers/overview-visits.reducer";
 import { formatDateIfDefined, getDatesByPeriod } from "../../shared/utils/date-util";
 import { IRootState } from "../../reducers";
 import "./index.scss";
@@ -34,6 +36,8 @@ import {
 } from "./table/constants";
 import { DateRangePicker } from "react-dates";
 import moment from "moment";
+import ChangeVisitsStatusesModal from "./change-visits-statuses-modal";
+import IChangeStatusesModalParams, { createChangeStatusesModalParams } from "./change-visits-statuses-modal-param";
 
 const IDENTIFIER_ACCESSOR = "patientIdentifier";
 const NAME_URL_ACCESSOR = "nameUrl";
@@ -70,6 +74,10 @@ interface IState {
   query: string;
   filters: IFilters;
   focusedDatePicker: any;
+  showChangeVisitsStatusesModal: boolean;
+  modalParams: IChangeStatusesModalParams | null;
+  saveButtonDisabled: boolean;
+  selectedVisitsUuids: string[];
 }
 
 class OverviewVisits extends React.Component<IProps, IState> {
@@ -90,6 +98,10 @@ class OverviewVisits extends React.Component<IProps, IState> {
       },
     },
     focusedDatePicker: null,
+    showChangeVisitsStatusesModal: false,
+    modalParams: null as IChangeStatusesModalParams | null,
+    saveButtonDisabled: true,
+    selectedVisitsUuids: [] as string[]
   };
 
   componentDidMount() {
@@ -130,6 +142,65 @@ class OverviewVisits extends React.Component<IProps, IState> {
       this.props.getOverviewPage(activePage, itemsPerPage, locationUuid, predefinedFilters, query);
     } 
   };
+
+  private getCheckboxCell = () => {
+    return {
+      width: 25,
+      accessor: "uuid",
+      Cell: (props) => {
+        return (
+          <div>
+            <input id={props.value} type="checkbox" className="checkbox-field" 
+              checked={this.state.selectedVisitsUuids.includes(props.value)} 
+              onClick={this.handleOnClickVisitCheckbox}/>
+          </div>  
+        );
+      }
+    };
+  };
+
+  private handleOnClickVisitCheckbox = (e) => {
+    e.stopPropagation();
+
+    const checkBoxElement = e.target;
+    const visitUuid = checkBoxElement.id;
+    let selections = this.state.selectedVisitsUuids;
+    let searchUuid = selections.indexOf(visitUuid);
+
+    if (searchUuid > -1) {
+      selections.splice(searchUuid, 1);
+    } else {
+      selections.push(visitUuid);
+    }
+
+    this.setState({ selectedVisitsUuids: selections })
+ 
+    const isAnyVisitSelected = this.state.selectedVisitsUuids.length > 0;
+    const visitStatus = this.getVisitStatusToUpdate();
+    if (isAnyVisitSelected && !!visitStatus) {
+      this.setState({ saveButtonDisabled: false })
+    } else {
+      this.setState({ saveButtonDisabled: true })
+    }
+  }
+
+  private getSelectedVisitsUuids = () => {
+    const checkboxesList = document.querySelectorAll('.checkbox-field');
+    
+    let visitUuids : string[] = [];
+    checkboxesList.forEach(function(checkbox) {
+      const castedElem = checkbox as HTMLInputElement;
+      if (castedElem.checked) {
+        visitUuids.push(castedElem.id);
+      }
+    })
+
+    return visitUuids;
+  }
+
+  private getVisitStatusToUpdate = () => {
+    return document.getElementsByClassName('change-status-select')[0].textContent;
+  }
 
   private getNameCell = () => {
     return {
@@ -258,6 +329,37 @@ class OverviewVisits extends React.Component<IProps, IState> {
     />
   );
 
+  private renderVisitStatusesSelectToChange = () => (
+    <Select
+      options={this.visitStatusOptions()}
+      onChange={(option) => this.handleVisitStatusToChangeOnChange(option)}
+      className="visits-select change-status-select"
+      classNamePrefix="visits-select"
+      placeholder=""
+      isSearchable={false}
+      isClearable
+      theme={theme => ({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          primary: "#00455c",
+          primary25: "#e4e7e7"
+        }
+      })}
+    />
+  );
+
+  handleVisitStatusToChangeOnChange = (option) => {
+    if (option == null) {
+      this.setState({ saveButtonDisabled: true })
+    } else {
+      const isAnyCheckboxSelected = this.state.selectedVisitsUuids.length > 0;
+      if (isAnyCheckboxSelected) {
+        this.setState({ saveButtonDisabled: false })
+      }
+    }
+  }
+
   private renderDateRangePicker = () => {
     const {
       focusedDatePicker,
@@ -317,6 +419,103 @@ class OverviewVisits extends React.Component<IProps, IState> {
     );
   };
 
+  renderChangeVisitsStatusesModal = () => {
+    return (
+      <ChangeVisitsStatusesModal 
+        show={this.state.showChangeVisitsStatusesModal}
+        modalParams={this.state.modalParams}
+        confirm={this.confirmChangeStatuses}
+        cancel={this.closeChangeVisitsStatusesModal}
+      />
+    );
+  }
+
+  confirmChangeStatuses = (modalParams: IChangeStatusesModalParams | null) => {
+    if (!!modalParams) {
+      const { visitsUuids, newVisitStatus } = modalParams;
+      this.props.updateVisitStatuses(visitsUuids, newVisitStatus);
+      this.closeChangeVisitsStatusesModal();
+      window.location.reload();
+    }
+  };
+
+  closeChangeVisitsStatusesModal = () => {
+    this.setState({ showChangeVisitsStatusesModal: false });
+  }
+
+  renderSaveButton() {
+    return (
+      <Button
+        className="btn btn-success btn-md add-btn"
+        onClick={this.handleSaveButton}
+        disabled={this.state.saveButtonDisabled}
+      >
+        {getIntl().formatMessage({ id: 'VISITS_OVERVIEW_SAVE_BUTTON_LABEL', defaultMessage: Default.SAVE_BUTTON_LABEL })}
+      </Button>
+    );
+  }
+
+  handleSaveButton = () => {
+    const visitUuids = this.getSelectedVisitsUuids();
+    const visitStatus = this.getVisitStatusToUpdate();
+    const modalParams: IChangeStatusesModalParams = createChangeStatusesModalParams(visitUuids, visitStatus);
+    
+    this.openChangeStatusesDialog(modalParams);
+  }
+
+  private openChangeStatusesDialog = (modalParams: IChangeStatusesModalParams) => {
+    if (modalParams.visitsUuids.length > 0 && !!modalParams.newVisitStatus) {
+      this.setState({showChangeVisitsStatusesModal: true, modalParams });
+    }
+  }
+
+  handleSelectAll = () => {
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox') as HTMLInputElement;
+    const checkboxesList = document.querySelectorAll('.checkbox-field');
+    
+    let visitUuids: string[] = [];
+    let saveButtonDisabled = true;
+    if (selectAllCheckbox.checked) {
+      checkboxesList.forEach(function(checbkox) {
+        const castedElem = checbkox as HTMLInputElement;
+        visitUuids.push(castedElem.id);
+      });
+
+      const visitStatus = this.getVisitStatusToUpdate();
+      const isAnyCheckboxSelected = visitUuids.length > 0;
+      if (isAnyCheckboxSelected && !!visitStatus) {
+        saveButtonDisabled = false;
+      }
+    }
+
+    this.setState({ selectedVisitsUuids: visitUuids, saveButtonDisabled: saveButtonDisabled})
+  }
+
+  private renderChangeVisitsStatusesSection = () => {
+    return (
+      <Form>
+        <FormGroup className="change-visits-statuses-form-group">
+          <div className="select-all-section">
+            <input type="checkbox" id="selectAllCheckbox" onClick={this.handleSelectAll}/>
+            <span id="selectAllSpan">Select all</span>
+          </div>
+          <div className="change-visits-statuses-select-section-parent">
+            <div className="change-visits-statuses-right-section">
+              <div className="set-selected-visits-div"><span>Set selected visits to:</span></div>
+              <div className="change-visits-statuses-dropdown-div">
+                {this.renderVisitStatusesSelectToChange()}
+              </div>
+              <div className="save-button-div">
+                {this.renderSaveButton()}
+              </div>
+            </div>
+            {this.renderChangeVisitsStatusesModal()}
+          </div>
+      </FormGroup>
+    </Form>
+    );
+  };
+
   private renderTable = () => {
     return (
       <div className="visit-table">
@@ -336,6 +535,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
             };
           })}
           columns={[
+            this.getCheckboxCell(),
             this.getIdCell(),
             this.getNameCell(),
             this.getCell(
@@ -403,6 +603,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
             </div>
             <div className="search-section">
               {this.renderSearchBar()}
+              {this.renderChangeVisitsStatusesSection()}
               {this.renderTable()}
             </div>
           </div>
@@ -423,6 +624,7 @@ const mapStateToProps = ({ overview, scheduleVisit, openmrs }: IRootState) => ({
 const mapDispatchToProps = {
   getOverviewPage,
   getVisitStatuses,
+  updateVisitStatuses,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
