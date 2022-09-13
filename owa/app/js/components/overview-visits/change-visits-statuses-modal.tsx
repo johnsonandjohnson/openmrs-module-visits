@@ -25,48 +25,44 @@ interface IProps {
 interface IState {
 }
 
-class ChangeVisitsStatusesModal extends React.PureComponent<IProps, IState> {
-    buildModal = (modalParams: IChangeStatusesModalParams) => {
-        const { show, confirm, cancel } = this.props;
-        const title = <LocalizedMessage
-            id="changeVisitsStatuses.modal.title"
-            defaultMessage="Change statuses" />;
-        const txt = <LocalizedMessage
-            id="changeVisitsStatuses.modal.txt"
-            defaultMessage="Please confirm you want to change the status of the selected visit(s)." />;
-        const confirmLabel = <LocalizedMessage
-            id="changeVisitsStatuses.modal.confirmLabel"
-            defaultMessage="YES" />;
-        const cancelLabel = <LocalizedMessage
-            id="changeVisitsStatuses.modal.cancelLabel"
-            defaultMessage="NO" />;
-
-        return (
-        <Modal id="change-visits-statuses-modal" show={show} onHide={cancel}>
-            <Modal.Body>
-            <div className="modal-title">{title}</div>
-            <p>{txt}</p>
-            <Button
-                bsClass="button confirm right"
-                onClick={() => {
-                    confirm(modalParams);
-                }}
-            >
-                {confirmLabel}
-            </Button>
-            <Button bsClass="button cancel" onClick={this.props.cancel}>
-                {cancelLabel}
-            </Button>
-            </Modal.Body>
-        </Modal>  
-        );
+const ChangeVisitsStatusesModal = ({ show, modalParams, confirm, cancel }: IProps) => {
+    if (!show && !modalParams) {
+      return null;
     }
-
-    render() {
-        return (
-          this.props.show && !!this.props.modalParams ? this.buildModal(this.props.modalParams) : null      
-        );
-    };
-}
+    
+    return (
+      <Modal id="change-visits-statuses-modal" show={show} onHide={cancel}>
+         <Modal.Body>
+           <div className="modal-title">
+             <LocalizedMessage
+                id="changeVisitsStatuses.modal.title"
+                defaultMessage="Change statuses"
+              />
+           </div>
+           <p>
+             <LocalizedMessage
+                id="changeVisitsStatuses.modal.txt"
+                defaultMessage="Please confirm you want to change the status of the selected visit(s)."
+              />
+           </p>
+            <Button
+              bsClass="button confirm right"
+              onClick={() => confirm(modalParams)}
+            >
+             <LocalizedMessage
+                id="changeVisitsStatuses.modal.confirmLabel"
+                defaultMessage="YES"
+              />
+              </Button>
+              <Button bsClass="button cancel" onClick={cancel}>
+                  <LocalizedMessage
+                     id="changeVisitsStatuses.modal.cancelLabel"
+                     defaultMessage="NO"
+                   />
+              </Button>
+              </Modal.Body>
+          </Modal>  
+    );
+  }
 
 export default ChangeVisitsStatusesModal;

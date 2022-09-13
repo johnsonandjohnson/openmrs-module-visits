@@ -96,7 +96,7 @@ export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any) =
     type: ACTION_TYPES.UPDATE_VISITS_STATUSES,
     payload: axiosInstance.post(url, visitUuids, {
       params: {
-        newVisitStatus: newVisitStatus
+        newVisitStatus
       }
     })
   }

@@ -13,9 +13,4 @@ export default class IChangeStatusesModalParams {
     newVisitStatus: string
 }
 
-export const createChangeStatusesModalParams = (visitsUuids: string[], newVisitStatus: any): IChangeStatusesModalParams => {
-    return {
-        visitsUuids: visitsUuids,
-        newVisitStatus: newVisitStatus
-    } as IChangeStatusesModalParams
-}
+export const createChangeStatusesModalParams = (visitsUuids: string[], newVisitStatus: string): IChangeStatusesModalParams => ({ visitsUuids, newVisitStatus })
