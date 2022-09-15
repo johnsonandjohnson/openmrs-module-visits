@@ -9,7 +9,6 @@
  */
 
 import React from 'react';
-import _ from 'lodash';
 import { Modal, Button } from 'react-bootstrap';
 import { LocalizedMessage } from '@openmrs/react-components';
 import IChangeStatusesModalParams from './change-visits-statuses-modal-param'
@@ -20,9 +19,6 @@ interface IProps {
     modalParams: IChangeStatusesModalParams | null,
     confirm: (modalParams: IChangeStatusesModalParams | null) => void,
     cancel: () => void
-}
-
-interface IState {
 }
 
 const ChangeVisitsStatusesModal = ({ show, modalParams, confirm, cancel }: IProps) => {

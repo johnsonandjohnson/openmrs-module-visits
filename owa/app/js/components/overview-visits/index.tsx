@@ -479,12 +479,13 @@ class OverviewVisits extends React.Component<IProps, IState> {
         <FormGroup className="change-visits-statuses-form-group">
           <div className="select-all-section">
             <input type="checkbox" id="selectAllCheckbox" onClick={this.handleSelectAll} checked={this.state.isAllVisitsChecked}/>
-            <span id="selectAllSpan">Select all</span>
+            <span id="selectAllSpan">{getIntl().formatMessage({ id: "VISITS_OVERVIEW_SELECT_ALL_HEADER", defaultMessage: Default.OVERVIEW_SELECT_ALL_HEADER })}</span>
           </div>
           <div className="change-visits-statuses-select-section-parent">
             <div className="change-visits-statuses-right-section">
               <div className="set-selected-visits-div">
-                <span>Set selected visits to:</span></div>
+                <span>{getIntl().formatMessage({ id: "VISITS_OVERVIEW_SET_SELECTED_VISITS_HEADER", defaultMessage: Default.OVERVIEW_SET_SELECTED_VISITS_HEADER })}</span>
+              </div>
               <div className="change-visits-statuses-dropdown-div">
                 {this.renderVisitStatusesSelectToChange()}
               </div>
