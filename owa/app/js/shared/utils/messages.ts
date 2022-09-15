@@ -61,3 +61,5 @@ export const OVERVIEW_SEARCH_TITLE = 'Search';
 export const OVERVIEW_DESCRIPTION = 'The results presented below are related to the current location.';
 export const OVERVIEW_VISIT_STATUS_PLACEHOLDER = 'Visit Status';
 export const OVERVIEW_PREDEFINED_FILTERS_PLACEHOLDER = 'Predefined Filters';
+export const OVERVIEW_SET_SELECTED_VISITS_HEADER = 'Set selected visits to:';
+export const OVERVIEW_SELECT_ALL_HEADER = 'Select all';

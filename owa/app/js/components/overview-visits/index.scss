@@ -44,6 +44,57 @@
       }
     }
 
+    .change-visits-statuses-form-group {
+      height: 50px;
+    }
+
+    .select-all-section {
+      display: flex;
+      float: left;
+      padding-top: 15px;
+      margin-right: auto;
+      margin-top: 5px;
+    }
+
+    #selectAllCheckbox {
+      height: 20px;
+      width: 20px;
+    }
+
+    #selectAllCheckbox:checked::after {
+      font-size: 20px;
+    }
+
+    #selectAllSpan {
+      font-size: 20px;
+    }
+
+    .change-visits-statuses-select-section-parent {
+      display: flex;
+      float: right;
+      padding-top: 15px;
+      margin-left: auto;
+    }
+
+    .change-visits-statuses-right-section {
+      display: flex;
+      float: right;
+    }
+
+    .set-selected-visits-div {
+      margin-right: 10px;
+      margin-top: 5px;
+      font-size: 20px;
+    }
+
+    .change-visits-statuses-dropdown-div {
+      margin-right: 10px
+    }
+
+    .save-button-div {
+      margin-top: 2px
+    }
+
     .visit-table .helper-text {
       font-size: 14px;
       padding: 0 0 0.5rem 2rem;
