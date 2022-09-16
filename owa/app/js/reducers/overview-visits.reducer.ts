@@ -26,7 +26,8 @@ export const ACTION_TYPES = {
 const initialState = {
   visits: [] as Array<IVisitOverview>,
   loading: false,
-  pages: 0
+  pages: 0,
+  isVisitStatusesUpdateSuccess: false
 };
 
 export type OverviewVisitState = Readonly<typeof initialState>;
@@ -49,6 +50,21 @@ export default (state = initialState, action) => {
         visits: action.payload.data.content,
         pages: action.payload.data.pageCount,
         loading: false
+      };
+    case REQUEST(ACTION_TYPES.UPDATE_VISITS_STATUSES):
+        return {
+          ...state,
+          isVisitStatusesUpdateSuccess: false
+        };
+    case FAILURE(ACTION_TYPES.UPDATE_VISITS_STATUSES):
+      return {
+        ...state,
+        isVisitStatusesUpdateSuccess: false
+      };
+    case SUCCESS(ACTION_TYPES.UPDATE_VISITS_STATUSES):
+      return {
+        ...state,
+        isVisitStatusesUpdateSuccess: true
       };
     case ACTION_TYPES.RESET:
       return {
@@ -81,7 +97,6 @@ export const getOverviewPage = (page: number, size: number, locationUuid: string
     payload: axiosInstance.get(url, { params })
   });
 };
-
 
 export const reset = () => {
   return {
