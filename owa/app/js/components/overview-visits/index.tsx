@@ -116,8 +116,9 @@ class OverviewVisits extends React.Component<IProps, IState> {
     const locationUuid = this.props.location?.uuid;
     const prevLocationUuid = prevProps.location?.uuid;
     const { filters, query } = this.state
-    
-    if (locationUuid !== prevLocationUuid) {
+    const { isVisitStatusesUpdateSuccess } = this.props;
+
+    if ((locationUuid !== prevLocationUuid) || (isVisitStatusesUpdateSuccess && !prevProps.isVisitStatusesUpdateSuccess)) {
       this.getVisits(DEFAULT_ACTIVE_PAGE, DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, filters, query);
     }
   }
@@ -423,11 +424,13 @@ class OverviewVisits extends React.Component<IProps, IState> {
       const { visitsUuids, newVisitStatus } = modalParams;
       this.props.updateVisitStatuses(visitsUuids, newVisitStatus);
       this.closeChangeVisitsStatusesModal();
-      window.location.reload();
+      this.clearCheckboxes();
     }
   };
 
   closeChangeVisitsStatusesModal = () => this.setState({ showChangeVisitsStatusesModal: false });
+
+  clearCheckboxes = () => this.setState({ selectedVisitsUuids: [], isAllVisitsChecked: false});
 
   renderSaveButton = () => (
     <Button
@@ -603,6 +606,7 @@ const mapStateToProps = ({ overview, scheduleVisit, openmrs }: IRootState) => ({
   loading: overview.loading,
   location: openmrs.session.sessionLocation,
   visitStatuses: scheduleVisit.visitStatuses,
+  isVisitStatusesUpdateSuccess: overview.isVisitStatusesUpdateSuccess
 });
 
 const mapDispatchToProps = {
