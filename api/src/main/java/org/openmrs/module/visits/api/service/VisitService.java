@@ -77,4 +77,12 @@ public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
    * @param visit visit DTO object
    */
   void createVisit(VisitDTO visit);
+
+  /**
+   * Changes visits statuses with new provided visit status.
+   *
+   * @param visitUuids list of visit uuids for which status will be changed
+   * @param newVisitStatus new visit status that will be set for visits
+   */
+  void changeVisitStatuses(List<String> visitUuids, String newVisitStatus);
 }

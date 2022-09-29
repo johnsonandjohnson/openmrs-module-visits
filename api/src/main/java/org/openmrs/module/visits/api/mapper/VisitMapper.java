@@ -34,6 +34,8 @@ public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
 
   private static final Log LOGGER = LogFactory.getLog(VisitMapper.class);
 
+  private static final String DAEMON_USERNAME = "daemon";
+
   private VisitService visitService;
 
   private LocationService locationService;
@@ -73,11 +75,13 @@ public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
     Visit result = visitService.getVisitByUuid(dto.getUuid());
     if (result == null) {
       result = new Visit();
+      result.setChangedBy(Context.getUserService().getUserByUsername(DAEMON_USERNAME));
     } else {
-      result.setDateChanged(new Date());
       result.setChangedBy(Context.getAuthenticatedUser());
     }
+
     result.setPatient(patientService.getPatientByUuid(dto.getPatientUuid()));
+    result.setDateChanged(new Date());
 
     VisitDecorator resultDecorator = new VisitDecorator(result);
     resultDecorator.setStartDatetime(dto.getVisitDateDTO().getStartDate());

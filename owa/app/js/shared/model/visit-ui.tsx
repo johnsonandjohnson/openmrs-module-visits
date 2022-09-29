@@ -8,13 +8,13 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import {ObjectUI} from "@bit/soldevelo-omrs.cfl-components.base-model";
-import {IForm} from "@bit/soldevelo-omrs.cfl-components.validation/model/form";
+import {ObjectUI} from "../../components/base-model/object-ui";
+import {IForm} from "../../components/validation/model/form";
 import * as Yup from "yup";
 import _ from 'lodash';
 import * as Default from '../../shared/utils/messages';
 import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
-import {validateFormSafely} from '@bit/soldevelo-omrs.cfl-components.validation';
+import {validateFormSafely} from '../../components/validation/validation';
 import IVisitDetails from "./visit-details";
 
 export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDetails, IForm {

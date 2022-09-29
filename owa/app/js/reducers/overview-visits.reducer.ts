@@ -11,18 +11,23 @@
 import _ from 'lodash';
 
 import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
-import axiosInstance from '@bit/soldevelo-omrs.cfl-components.shared/axios'
+import axiosInstance from '../components/shared/axios'
 import IVisitOverview from '../shared/model/visit-overview.model';
+import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
+import * as Default from '../shared/utils/messages';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'overviewVisitReducer/GET_VISITS',
-  RESET: 'overviewVisitReducer/RESET'
+  RESET: 'overviewVisitReducer/RESET',
+  UPDATE_VISITS_STATUSES: 'overviewVisitReducer/UPDATE_VISITS_STATUSES'
 };
 
 const initialState = {
   visits: [] as Array<IVisitOverview>,
   loading: false,
-  pages: 0
+  pages: 0,
+  isVisitStatusesUpdateSuccess: false
 };
 
 export type OverviewVisitState = Readonly<typeof initialState>;
@@ -45,6 +50,21 @@ export default (state = initialState, action) => {
         visits: action.payload.data.content,
         pages: action.payload.data.pageCount,
         loading: false
+      };
+    case REQUEST(ACTION_TYPES.UPDATE_VISITS_STATUSES):
+        return {
+          ...state,
+          isVisitStatusesUpdateSuccess: false
+        };
+    case FAILURE(ACTION_TYPES.UPDATE_VISITS_STATUSES):
+      return {
+        ...state,
+        isVisitStatusesUpdateSuccess: false
+      };
+    case SUCCESS(ACTION_TYPES.UPDATE_VISITS_STATUSES):
+      return {
+        ...state,
+        isVisitStatusesUpdateSuccess: true
       };
     case ACTION_TYPES.RESET:
       return {
@@ -78,9 +98,28 @@ export const getOverviewPage = (page: number, size: number, locationUuid: string
   });
 };
 
-
 export const reset = () => {
   return {
     type: ACTION_TYPES.RESET
   };
 }
+
+export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any) => async (dispatch) => {
+  const url = `${moduleUrl}/overview/updateVisitStatuses`;
+
+  const body = {
+    type: ACTION_TYPES.UPDATE_VISITS_STATUSES,
+    payload: axiosInstance.post(url, visitUuids, {
+      params: {
+        newVisitStatus
+      }
+    })
+  }
+
+  await handleRequest(
+    dispatch,
+    body,
+    getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
+    getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE })
+  );
+};

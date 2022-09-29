@@ -34,9 +34,9 @@ import {
   Row,
   Modal,
 } from "react-bootstrap";
-import ErrorDesc from '@bit/soldevelo-omrs.cfl-components.error-description';
-import FormLabel from '@bit/soldevelo-omrs.cfl-components.form-label';
-import OpenMrsDatePicker from '@bit/soldevelo-omrs.cfl-components.openmrs-date-picker';
+import ErrorDesc from '../error-description/error-desc';
+import FormLabel from '../form-label/form-label';
+import OpenMrsDatePicker from '../openmrs-date-picker/openmrs-date-picker';
 import * as Default from '../../shared/utils/messages';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
