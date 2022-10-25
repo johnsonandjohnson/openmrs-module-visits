@@ -23,8 +23,9 @@ import {
   getVisitTimes,
   getVisit,
   getVisitStatuses,
-  reset,
+  reset
 } from "../../reducers/schedule-visit.reducer";
+import { getExtraInfoModalEnabledGP, getHolidayWeekdaysGP } from "../../reducers/global-property.reducer"
 import {
   Form,
   FormGroup,
@@ -42,6 +43,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import "../schedule-visit/schedule-visit-modal.scss"
+import ExtraInformationModal from "./extra-information-modal";
+import IExtraInformationModalParams, { createExtraInfoModalParams } from "./extra-information-modal-param";
+import { getNumberOfDaysBetweenDates } from "../../shared/utils/date-util";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps {
   show: boolean;
@@ -55,14 +59,17 @@ interface IProps extends DispatchProps, StateProps, RouteComponentProps {
 
 interface IState {
   isSaveButtonDisabled: boolean;
+  showExtraInfoModal: boolean;
 }
 
 const FORM_CLASS = 'form-control';
 const ERROR_FORM_CLASS = FORM_CLASS + ' error-field';
+const ONE_DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
 
 class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   state = {
     isSaveButtonDisabled: true,
+    showExtraInfoModal: false
   };
 
   componentDidMount() {
@@ -88,6 +95,8 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
     this.props.getLocations();
     this.props.getVisitTimes();
     this.props.getVisitStatuses();
+    this.props.getExtraInfoModalEnabledGP();
+    this.props.getHolidayWeekdaysGP();
 
     this.handleChange(this.props.patientUuid, "patientUuid");
   };
@@ -110,6 +119,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
 
   saveVisitCallback = () => {
     this.closeModal();
+    this.closeExtraInfoModal();
     this.props.refetchVisits();
   };
 
@@ -224,19 +234,27 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
       ))
     );
 
-  renderSaveButton = () => (
-    <Button
-      id="schedule-visit-save"
-      className="btn btn-success btn-md pull-right confirm"
-      onClick={this.handleSave}
-      disabled={this.state.isSaveButtonDisabled}
-    >
-      {getIntl().formatMessage({
-        id: this.isEdit() ? "VISITS_SAVE_BUTTON_LABEL" : "VISITS_SCHEDULE_VISIT_BUTTON_LABEL",
-        defaultMessage: Default.SAVE_BUTTON_LABEL,
-      })}
-    </Button>
-  );
+  openExtraInfoModal = () => {
+    this.setState({ showExtraInfoModal: true })
+  };
+
+  renderSaveButton = () => {
+    const isExtraInformationEnabled = this.props.isExtraInformationEnabled!['value'];
+    return (
+      <Button
+        id="schedule-visit-save"
+        className="btn btn-success btn-md pull-right confirm"
+        // onClick={this.handleSave}
+        onClick={isExtraInformationEnabled === 'true' ? this.openExtraInfoModal : this.handleSave}
+        disabled={this.state.isSaveButtonDisabled}
+      >
+        {getIntl().formatMessage({
+          id: this.isEdit() ? "VISITS_SAVE_BUTTON_LABEL" : "VISITS_SCHEDULE_VISIT_BUTTON_LABEL",
+          defaultMessage: Default.SAVE_BUTTON_LABEL,
+        })}
+      </Button>
+    );
+  };
 
   renderCancelButton = () => (
     <Button id="schedule-visit-cancel" onClick={this.closeModal}>
@@ -280,18 +298,105 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
     );
   };
 
+  findNumberOfDaysBetweenCurrentAndNearestFutureVisit = (allVisitDates: Date[], currentVisitDate: Date) => {
+    const laterVisits = allVisitDates.filter(date => date > currentVisitDate);
+    
+    if (laterVisits.length == 0) {
+      return null;
+    }
+
+    const searchedDate = new Date(Math.min.apply(null, laterVisits));
+
+    return getNumberOfDaysBetweenDates(currentVisitDate, searchedDate);
+  }
+
+  findNumberOfDaysBetweenCurrentAndNearestPastVisit = (allVisitDates: Date[], currentVisitDate: Date) => {
+    const previousVisits = allVisitDates.filter(date => date < currentVisitDate);
+      
+    if (previousVisits.length == 0) {
+      return null;
+    }
+
+    const searchedDate = new Date(Math.max.apply(null, previousVisits));
+
+    return getNumberOfDaysBetweenDates(currentVisitDate, searchedDate);
+  }
+
+  getPatientVisitsDates = () => {
+    let { patientVisits } = this.props;
+
+    if (this.isEdit()) {
+      patientVisits = patientVisits.filter(v => v.uuid != this.props.visitUuid);
+    }
+
+    const allPatientVisitsDates = [] as Date[];
+    patientVisits.forEach(v => allPatientVisitsDates.push(new Date(v.startDate)));
+
+    return allPatientVisitsDates;
+  }
+
+  renderExtraInfoModal = () => {
+    const { visit } = this.props;  
+
+    const isExtraInformationEnabledGP = this.props.isExtraInformationEnabled;
+    const holidayWeekdaysGP = this.props.holidayWeekdays;
+    
+    if (isExtraInformationEnabledGP == null || holidayWeekdaysGP == null) {
+      return;
+    }
+
+    const holidayWeekdays: string = holidayWeekdaysGP['value'];
+    const currentVisitWeekDay = new Date(visit.startDate).toLocaleDateString('en-us', { weekday: 'long' });
+    const isDayHolidayWeekday = holidayWeekdays.split(",").includes(currentVisitWeekDay);
+    const currentVisitDate = new Date(visit.startDate);
+    const patientVisitsDates = this.getPatientVisitsDates();
+
+    const modalParams: IExtraInformationModalParams = createExtraInfoModalParams(
+      visit.startDate,
+      currentVisitWeekDay,
+      this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(patientVisitsDates, currentVisitDate),
+      this.findNumberOfDaysBetweenCurrentAndNearestFutureVisit(patientVisitsDates, currentVisitDate),
+      isDayHolidayWeekday
+    );
+    
+    return (
+      <ExtraInformationModal
+        show={this.state.showExtraInfoModal}
+        modalParams={modalParams}
+        confirm={this.confirmSavingVisitOnExtraInfoModal}
+        cancel={this.closeExtraInfoModal}
+      />
+    );
+  }
+
+  confirmSavingVisitOnExtraInfoModal = () => {
+    this.handleSave();
+  }
+
+  closeExtraInfoModal = () => {
+    this.setState({ showExtraInfoModal: false })
+  }
+
   render() {
     this.validate();
-    return this.props.show ? this.buildModal() : null;
+    return (
+      <>
+        {this.props.show ? this.buildModal() : null}
+        {this.renderExtraInfoModal()}
+      </>
+    );
   }
 }
 
-const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
+const mapStateToProps = ({ scheduleVisit, globalPropertyReducer }: IRootState) => ({
   visit: scheduleVisit.visit,
   visitTypes: scheduleVisit.visitTypes,
   visitStatuses: scheduleVisit.visitStatuses,
   visitTimes: scheduleVisit.visitTimes,
-  locations: scheduleVisit.locations
+  locations: scheduleVisit.locations,
+  patientVisits: scheduleVisit.visits,
+  isExtraInformationEnabled: globalPropertyReducer.isExtraInfoModalEnabled,
+  holidayWeekdays: globalPropertyReducer.holidayWeekdays
 });
 
 const mapDispatchToProps = ({
@@ -302,7 +407,9 @@ const mapDispatchToProps = ({
   saveVisit,
   getVisit,
   getVisitStatuses,
-  reset
+  reset,
+  getExtraInfoModalEnabledGP,
+  getHolidayWeekdaysGP
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
