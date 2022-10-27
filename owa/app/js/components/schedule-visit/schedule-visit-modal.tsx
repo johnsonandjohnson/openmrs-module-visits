@@ -44,7 +44,6 @@ import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import "../schedule-visit/schedule-visit-modal.scss"
 import ExtraInformationModal from "./extra-information-modal";
-import IExtraInformationModalParams, { createExtraInfoModalParams } from "./extra-information-modal-param";
 import { getNumberOfDaysBetweenDates } from "../../shared/utils/date-util";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps {
@@ -64,7 +63,6 @@ interface IState {
 
 const FORM_CLASS = 'form-control';
 const ERROR_FORM_CLASS = FORM_CLASS + ' error-field';
-const ONE_DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
 
 class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   state = {
@@ -244,8 +242,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
       <Button
         id="schedule-visit-save"
         className="btn btn-success btn-md pull-right confirm"
-        // onClick={this.handleSave}
-        onClick={isExtraInformationEnabled === 'true' ? this.openExtraInfoModal : this.handleSave}
+        onClick={isExtraInformationEnabled ? this.openExtraInfoModal : this.handleSave}
         disabled={this.state.isSaveButtonDisabled}
       >
         {getIntl().formatMessage({
@@ -301,7 +298,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   findNumberOfDaysBetweenCurrentAndNearestFutureVisit = (allVisitDates: Date[], currentVisitDate: Date) => {
     const laterVisits = allVisitDates.filter(date => date > currentVisitDate);
     
-    if (laterVisits.length == 0) {
+    if (!laterVisits.length) {
       return null;
     }
 
@@ -313,7 +310,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   findNumberOfDaysBetweenCurrentAndNearestPastVisit = (allVisitDates: Date[], currentVisitDate: Date) => {
     const previousVisits = allVisitDates.filter(date => date < currentVisitDate);
       
-    if (previousVisits.length == 0) {
+    if (!previousVisits.length) {
       return null;
     }
 
@@ -326,39 +323,35 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
     let { patientVisits } = this.props;
 
     if (this.isEdit()) {
-      patientVisits = patientVisits.filter(v => v.uuid != this.props.visitUuid);
+      patientVisits = patientVisits.filter(({ uuid }) => uuid != this.props.visitUuid);
     }
 
     const allPatientVisitsDates = [] as Date[];
-    patientVisits.forEach(v => allPatientVisitsDates.push(new Date(v.startDate)));
+    patientVisits.forEach(({ startDate }) => allPatientVisitsDates.push(new Date(startDate)));
 
     return allPatientVisitsDates;
   }
 
   renderExtraInfoModal = () => {
-    const { visit } = this.props;  
-
-    const isExtraInformationEnabledGP = this.props.isExtraInformationEnabled;
-    const holidayWeekdaysGP = this.props.holidayWeekdays;
+    const { visit, holidayWeekdays, isExtraInformationEnabled } = this.props;  
     
-    if (isExtraInformationEnabledGP == null || holidayWeekdaysGP == null) {
+    if (!isExtraInformationEnabled || !holidayWeekdays) {
       return;
     }
 
-    const holidayWeekdays: string = holidayWeekdaysGP['value'];
-    const currentVisitWeekDay = new Date(visit.startDate).toLocaleDateString('en-us', { weekday: 'long' });
-    const isDayHolidayWeekday = holidayWeekdays.split(",").includes(currentVisitWeekDay);
+    const holidayWeekdaysValue: string = holidayWeekdays!['value'];
+    const currentVisitWeekday = new Date(visit.startDate).toLocaleDateString('en-us', { weekday: 'long' });
+    const isDayHolidayWeekday = holidayWeekdaysValue.split(",").includes(currentVisitWeekday);
     const currentVisitDate = new Date(visit.startDate);
     const patientVisitsDates = this.getPatientVisitsDates();
-
-    const modalParams: IExtraInformationModalParams = createExtraInfoModalParams(
-      visit.startDate,
-      currentVisitWeekDay,
-      this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(patientVisitsDates, currentVisitDate),
-      this.findNumberOfDaysBetweenCurrentAndNearestFutureVisit(patientVisitsDates, currentVisitDate),
+    const modalParams = {
+      currentVisitDate: visit.startDate,
+      currentVisitWeekday,
+      precedingVisitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(patientVisitsDates, currentVisitDate),
+      nextVistitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestFutureVisit(patientVisitsDates, currentVisitDate),
       isDayHolidayWeekday
-    );
-    
+    }
+
     return (
       <ExtraInformationModal
         show={this.state.showExtraInfoModal}

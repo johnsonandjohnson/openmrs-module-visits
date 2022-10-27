@@ -22,60 +22,37 @@ interface IProps {
 	cancel: () => void
 }
 
-interface IState {
-}
+const WARNING_CLASS = 'warning';
 
-const WARNING_CSS_CLASS = 'warning-color';
+const ExtraInformationModal = ({ show, modalParams, confirm, cancel }: IProps) => {
+	const formattedDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, modalParams?.currentVisitDate);
+	const infoMsgPartOne = `The visit will be saved on ${modalParams?.currentVisitWeekday}, ${formattedDate}.`;
+	const infoMsgPartTwo = `The preceding visit is planned ${modalParams?.precedingVisitDaysNumber} day(s) before, 
+		while the next visit is planned ${modalParams?.nextVistitDaysNumber} day(s) after the visit.`;
+	const isPreviousAndNextVisit = !!modalParams?.precedingVisitDaysNumber && !!modalParams?.nextVistitDaysNumber;
 
-class ExtraInformationModal extends React.PureComponent<IProps, IState> {
-	
-	buildModal = () => {
-		const { show, modalParams, confirm, cancel } = this.props;
-
-		const formattedDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, modalParams?.currentVisitDate);
-
-		const infoMsgPartOne = 'The visit will be saved on ' + modalParams?.currentVisitWeekday + ", " + formattedDate + '.';
-		const infoMsgPartTwo = 'The preceding visit is planned ' + modalParams?.precedingVisitDaysNumber + 
-			' day(s) before, while the next visit is planned ' + modalParams?.nextVistitDaysNumber + ' day(s) after the visit.';
-		const isPreviousAndNextVisit = !!modalParams?.precedingVisitDaysNumber && !!modalParams?.nextVistitDaysNumber;
-
-		const title = <LocalizedMessage
-			id="extraInfo.modal.title"
-			defaultMessage="Information" />;
-		const confirmLabel = <LocalizedMessage
-			id="extraInfo.modal.confirmLabel"
-			defaultMessage="OK" />;
-		const cancelLabel = <LocalizedMessage
-			id="extraInfo.modal.cancelLabel"
-			defaultMessage="Cancel" />;
-
-			return (
-				<Modal id="extra-info-modal" show={show} onHide={cancel}>
-					<Modal.Body>
-						<div className="modal-title">{title}</div>
-						<p className={modalParams?.isDayHolidayWeekday ? WARNING_CSS_CLASS : ''}>{infoMsgPartOne}</p>
-						{isPreviousAndNextVisit && <p>{infoMsgPartTwo}</p>}
-						<Button
-							bsClass="button confirm right"
-							onClick={() => {
-								confirm();
-							}}
-						>
-							{confirmLabel}
-						</Button>
-						<Button bsClass="button cancel" onClick={this.props.cancel}>
-							{cancelLabel}
-						</Button>
-					</Modal.Body>
-				</Modal>
-			);
+	if (!show) {
+		return null;
 	}
 
-	render() {
-    return (
-      this.props.show ? this.buildModal(): null
-    );
-  };
-}
+	return (
+		<Modal id="extra-info-modal" show={show} onHide={cancel}>
+			<Modal.Body>
+				<div className="modal-title"><LocalizedMessage id="extraInfo.modal.title" defaultMessage="Information"/></div>
+				<p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ''}>{infoMsgPartOne}</p>
+				{isPreviousAndNextVisit && <p>{infoMsgPartTwo}</p>}
+				<Button
+					bsClass="button confirm right"
+					onClick={confirm}
+				>
+					<LocalizedMessage id="extraInfo.modal.confirmLabel" defaultMessage="OK" />
+				</Button>
+				<Button bsClass="button cancel" onClick={cancel}>
+					<LocalizedMessage id="extraInfo.modal.cancelLabel" defaultMessage="Cancel" />
+				</Button>
+			</Modal.Body>
+		</Modal>
+	);
+};
 
 export default ExtraInformationModal;

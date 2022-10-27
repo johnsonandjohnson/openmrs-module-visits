@@ -8,8 +8,6 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import _ from 'lodash';
-
 import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axios from 'axios';
 
@@ -43,10 +41,9 @@ export default (state = initialState, action) => {
       };
     case SUCCESS(ACTION_TYPES.GET_EXTRA_INFO_MODAL_ENABLED_GP):
       const extraInfoModalEnabledGPResults = action.payload.data.results;
-      const isExtraInfoModalGPExist = !!extraInfoModalEnabledGPResults && extraInfoModalEnabledGPResults.length > 0;
       return {
         ...state,
-        isExtraInfoModalEnabled: isExtraInfoModalGPExist ? extraInfoModalEnabledGPResults[0] : state.isExtraInfoModalEnabled,
+        isExtraInfoModalEnabled: extraInfoModalEnabledGPResults?.length ? extraInfoModalEnabledGPResults[0] : state.isExtraInfoModalEnabled,
         loading: false,
         success: true
       };
@@ -64,10 +61,9 @@ export default (state = initialState, action) => {
         };
       case SUCCESS(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
         const holidayWeekdaysResults = action.payload.data.results;
-        const isHolidayWeekdaysGPExist = !!holidayWeekdaysResults && holidayWeekdaysResults.length > 0;
         return {
           ...state,
-          holidayWeekdays: isHolidayWeekdaysGPExist ? holidayWeekdaysResults[0] : state.holidayWeekdays,
+          holidayWeekdays: holidayWeekdaysResults?.length ? holidayWeekdaysResults[0] : state.holidayWeekdays,
           loading: false,
           success: true
         };

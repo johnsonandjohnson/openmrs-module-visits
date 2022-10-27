@@ -8,18 +8,10 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-export default class IExtraInformationModalParams {
+export default interface IExtraInformationModalParams {
 	currentVisitDate: Date
 	currentVisitWeekday: string
 	precedingVisitDaysNumber: number | null
 	nextVistitDaysNumber: number | null
 	isDayHolidayWeekday: boolean
 }
-
-export const createExtraInfoModalParams = (
-	currentVisitDate: Date,
-	currentVisitWeekday: string,
-	precedingVisitDaysNumber: number | null, 
-	nextVistitDaysNumber: number | null,
-	isDayHolidayWeekday: boolean
-): IExtraInformationModalParams => ({ currentVisitDate, currentVisitWeekday, precedingVisitDaysNumber, nextVistitDaysNumber, isDayHolidayWeekday })
