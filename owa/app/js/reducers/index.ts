@@ -20,6 +20,7 @@ import person, { PersonState }
   from '../components/person-header/person.reducer';
 import personStatus, { PersonStatusState } 
   from '../components/person-status/person-status.reducer';
+import globalPropertyReducer, { GlobalPropertyState } from './global-property.reducer';
 
 export interface IRootState {
   readonly openmrs: any;
@@ -30,6 +31,7 @@ export interface IRootState {
   readonly notification: NotificationState;
   readonly customizeReducer: CustomizeState;
   readonly personStatus: PersonStatusState;
+  readonly globalPropertyReducer: GlobalPropertyState;
 }
 
 export default combineReducers<IRootState>({
@@ -40,5 +42,6 @@ export default combineReducers<IRootState>({
   overview,
   notification,
   customizeReducer,
-  personStatus
+  personStatus,
+  globalPropertyReducer
 });
