@@ -242,7 +242,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
       <Button
         id="schedule-visit-save"
         className="btn btn-success btn-md pull-right confirm"
-        onClick={isExtraInformationEnabled ? this.openExtraInfoModal : this.handleSave}
+        onClick={isExtraInformationEnabled === 'true' ? this.openExtraInfoModal : this.handleSave}
         disabled={this.state.isSaveButtonDisabled}
       >
         {getIntl().formatMessage({
