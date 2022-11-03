@@ -25,12 +25,16 @@ interface IProps {
 const WARNING_CLASS = 'warning';
 
 const ExtraInformationModal = ({ show, modalParams, confirm, cancel }: IProps) => {
+	const isPreviousVisit = !!modalParams?.precedingVisitDaysNumber;
+	const isNextVisit = !!modalParams?.nextVistitDaysNumber;
+	const isPreviousAndNextVisit = isPreviousVisit && isNextVisit;
 	const formattedDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, modalParams?.currentVisitDate);
-	const infoMsgPartOne = `The visit will be saved on ${modalParams?.currentVisitWeekday}, ${formattedDate}.`;
-	const infoMsgPartTwo = `The preceding visit is planned ${modalParams?.precedingVisitDaysNumber} day(s) before, 
-		while the next visit is planned ${modalParams?.nextVistitDaysNumber} day(s) after the visit.`;
-	const isPreviousAndNextVisit = !!modalParams?.precedingVisitDaysNumber && !!modalParams?.nextVistitDaysNumber;
-
+	
+	const infoMsgPartOne = `The visit will be saved on ${modalParams?.currentVisitWeekday}, ${formattedDate}`;
+	const infoMsgPartTwo = `The preceding visit is planned ${modalParams?.precedingVisitDaysNumber} day(s) before`
+	const infoMsgPartThree = `, while`;
+	const infoMsgPartFour = ` ${isPreviousAndNextVisit ? 't' : 'T'}he next visit is planned ${modalParams?.nextVistitDaysNumber} day(s) after the visit`
+	
 	if (!show) {
 		return null;
 	}
@@ -40,7 +44,11 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel }: IProps) =
 			<Modal.Body>
 				<div className="modal-title"><LocalizedMessage id="extraInfo.modal.title" defaultMessage="Information"/></div>
 				<p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ''}>{infoMsgPartOne}</p>
-				{isPreviousAndNextVisit && <p>{infoMsgPartTwo}</p>}
+				<p>
+					{isPreviousVisit && <span>{infoMsgPartTwo}</span>}
+					{isPreviousAndNextVisit && <span>{infoMsgPartThree}</span>}
+					{isNextVisit && <span>{infoMsgPartFour}</span>}
+				</p>
 				<Button
 					bsClass="button confirm right"
 					onClick={confirm}
