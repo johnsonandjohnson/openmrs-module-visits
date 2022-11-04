@@ -30,10 +30,10 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel }: IProps) =
 	const isPreviousAndNextVisit = isPreviousVisit && isNextVisit;
 	const formattedDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, modalParams?.currentVisitDate);
 	
-	const infoMsgPartOne = `The visit will be saved on ${modalParams?.currentVisitWeekday}, ${formattedDate}`;
-	const infoMsgPartTwo = `The preceding visit is planned ${modalParams?.precedingVisitDaysNumber} day(s) before`
+	const infoMsgPartOne = `The visit will be saved on ${modalParams?.currentVisitWeekday}, ${formattedDate}.`;
+	const infoMsgPartTwo = `The preceding visit is planned ${modalParams?.precedingVisitDaysNumber} day(s) before${!isNextVisit ? '.' : ''}`
 	const infoMsgPartThree = `, while`;
-	const infoMsgPartFour = ` ${isPreviousAndNextVisit ? 't' : 'T'}he next visit is planned ${modalParams?.nextVistitDaysNumber} day(s) after the visit`
+	const infoMsgPartFour = ` ${isPreviousAndNextVisit ? 't' : 'T'}he next visit is planned ${modalParams?.nextVistitDaysNumber} day(s) after the visit.`
 	
 	if (!show) {
 		return null;
