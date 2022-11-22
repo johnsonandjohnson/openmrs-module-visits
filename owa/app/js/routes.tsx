@@ -9,25 +9,35 @@
  */
 
 import React from 'react'
+import { addLocaleData } from "react-intl";
 import { Route, Switch } from 'react-router-dom';
-import { Header } from '@openmrs/react-components';
+import {Header, initializeLocalization, withLocalization} from '@openmrs/react-components';
 import BreadCrumb from './components/bread-crumb';
 import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
 import { withNotifications } from './components/hoc/with-notifications';
 import OverviewVisits from './components/overview-visits';
-import Customize from './components/customize/customize'
-import { initializeLocalizationWrapper } from './components/localization-wrapper/localization-wrapper';
+import Customize from './components/customize/customize';
+import pt from 'react-intl/locale-data/pt';
 import messagesEN from "./translations/en.json";
+import messagesFR from "./translations/fr.json";
+import messagesPTBR from "./translations/pt_BR.json";
 
-initializeLocalizationWrapper({
+initializeLocalization({
   en: messagesEN,
+  fr: messagesFR,
+  pt: messagesPTBR
 });
+// Add locale data which is not included in @openmrs/react-components
+addLocaleData([...pt]);
+
+const LocalizedHeader = withLocalization(Header);
+const LocalizedBreadCrumb = withLocalization(BreadCrumb);
 
 export default (store) => (
     <div>
         <Customize />
-        <Header />
-        <BreadCrumb />
+        <LocalizedHeader />
+        <LocalizedBreadCrumb />
         <Switch>
             <Route path="/visits/manage/:patientUuid" component={withNotifications(ManageVisits)} />
             <Route exact path="/visits/overview" component={OverviewVisits} />
