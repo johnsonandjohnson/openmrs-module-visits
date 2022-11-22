@@ -9,6 +9,7 @@
  */
 
 import React from 'react'
+import { addLocaleData } from "react-intl";
 import { Route, Switch } from 'react-router-dom';
 import {Header, initializeLocalization, withLocalization} from '@openmrs/react-components';
 import BreadCrumb from './components/bread-crumb';
@@ -16,8 +17,6 @@ import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-pa
 import { withNotifications } from './components/hoc/with-notifications';
 import OverviewVisits from './components/overview-visits';
 import Customize from './components/customize/customize';
-
-import { addLocaleData } from "react-intl";
 import pt from 'react-intl/locale-data/pt';
 import messagesEN from "./translations/en.json";
 import messagesFR from "./translations/fr.json";
