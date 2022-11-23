@@ -1,4 +1,3 @@
-
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -89,7 +88,7 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     }
 
     const patientLabel = !!patient.person
-      ? `${patient.person.display} (${patient.person.age}/${patient.person.gender})`
+      ? `${patient.person.display}`
       : '';
     return this.renderCrumb(PATIENT_DASHBOARD_ROUTE(patientUuid), patientLabel, true)
   }
