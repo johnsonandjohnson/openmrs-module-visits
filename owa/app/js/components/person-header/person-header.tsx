@@ -96,12 +96,12 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
     const familyName = intl.formatMessage({ id: "person.header.name.family", defaultMessage: "Family Name" });
     const telephoneNumber = intl.formatMessage({ id: "person.header.phonenumber", defaultMessage: "Telephone number:" });
     let gender = otherMsg;
-    if (this.props.isShowGenderPersonHeader!['value'].toUpperCase() === 'TRUE') {
-        gender = ( personDetails.gender === 'M' ? maleMsg : ( personDetails.gender === 'F' ? femaleMsg : otherMsg ) );
+    if (this.props.isShowGenderPersonHeader != null && this.props.isShowGenderPersonHeader!['value'].toUpperCase() === 'TRUE') {
+        gender = (personDetails.gender === 'M' ? maleMsg : (personDetails.gender === 'F' ? femaleMsg : otherMsg));
     }
-    let age = ["NA"];
-    if(this.props.isShowAgePersonHeader!['value'].toUpperCase() === 'TRUE') {
-        age = formatAge(personDetails.birthdate, intl);
+    let age = "NA";
+    if (this.props.isShowAgePersonHeader != null && this.props.isShowAgePersonHeader!['value'].toUpperCase() === 'TRUE') {
+        age = formatAge(personDetails.birthdate, intl)!['age'];
     }
     return (
       <div className="demographics" onClick={this.handlePatientLink}>
@@ -200,7 +200,7 @@ const mapStateToProps = ({ patient, person, globalPropertyReducer }: any) => ({
   patient: patient.patient,
   person: person.person,
   isShowGenderPersonHeader: globalPropertyReducer.isShowGenderPersonHeader,
-  isShowAgePersonHeader:globalPropertyReducer.isShowAgePersonHeader
+  isShowAgePersonHeader: globalPropertyReducer.isShowAgePersonHeader
 });
 
 const mapDispatchToProps = ({

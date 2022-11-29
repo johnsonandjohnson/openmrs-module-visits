@@ -8,8 +8,8 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axios from 'axios';
+import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 
 export const ACTION_TYPES = {
   GET_EXTRA_INFO_MODAL_ENABLED_GP: 'globalProperty/GET_EXTRA_INFO_MODAL_ENABLED_GP',
@@ -150,4 +150,3 @@ export const getHolidayWeekdaysGP = () => {
     payload: axios.get(requestUrl)
   };
 };
-
