@@ -8,16 +8,20 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axios from 'axios';
+import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 
 export const ACTION_TYPES = {
   GET_EXTRA_INFO_MODAL_ENABLED_GP: 'globalProperty/GET_EXTRA_INFO_MODAL_ENABLED_GP',
-  GET_HOLIDAY_WEEKDAYS_GP: 'globalProperty/GET_HOLIDAY_WEEKDAYS_GP'
+  GET_HOLIDAY_WEEKDAYS_GP: 'globalProperty/GET_HOLIDAY_WEEKDAYS_GP',
+  GET_SHOW_GENDER_PERSON_HEADER: 'globalProperty/GET_SHOW_GENDER_PERSON_HEADER',
+  GET_SHOW_AGE_PERSON_HEADER: 'globalProperty/GET_SHOW_AGE_PERSON_HEADER'
 }
 
 const initialState = {
   isExtraInfoModalEnabled: null,
+  isShowGenderPersonHeader: null,
+  isShowAgePersonHeader: null,
   holidayWeekdays: null,
   loading: false,
   success: false
@@ -44,6 +48,46 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isExtraInfoModalEnabled: extraInfoModalEnabledGPResults?.length ? extraInfoModalEnabledGPResults[0] : state.isExtraInfoModalEnabled,
+        loading: false,
+        success: true
+      };
+    case REQUEST(ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER):
+      return {
+        ...state,
+        loading: true,
+        success: false
+      };
+    case FAILURE(ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER):
+      return {
+        ...state,
+        loading: false,
+        success: false
+      };
+    case SUCCESS(ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER):
+      const showGenderPersonHeaderResult = action.payload.data.results;
+      return {
+        ...state,
+        isShowGenderPersonHeader: showGenderPersonHeaderResult?.length ? showGenderPersonHeaderResult[0] : state.isShowGenderPersonHeader,
+        loading: false,
+        success: true
+      };
+    case REQUEST(ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER):
+      return {
+        ...state,
+        loading: true,
+        success: false
+      };
+    case FAILURE(ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER):
+      return {
+        ...state,
+        loading: false,
+        success: false
+      };
+    case SUCCESS(ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER):
+      const showAgePersonHeaderResult = action.payload.data.results;
+      return {
+        ...state,
+        isShowAgePersonHeader: showAgePersonHeaderResult?.length ? showAgePersonHeaderResult[0] : state.isShowAgePersonHeader,
         loading: false,
         success: true
       };
@@ -83,6 +127,22 @@ export const getExtraInfoModalEnabledGP = () => {
   };
 };
 
+export const getShowGenderPersonHeader = () => {
+  const requestUrl = `${baseUrl}?q=cfl.showGenderPersonHeader&v=default`;
+  return {
+    type: ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER,
+    payload: axios.get(requestUrl)
+  };
+};
+
+export const getShowAgePersonHeader = () => {
+  const requestUrl = `${baseUrl}?q=cfl.showAgePersonHeader&v=default`;
+  return {
+    type: ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER,
+    payload: axios.get(requestUrl)
+  };
+};
+
 export const getHolidayWeekdaysGP = () => {
   const requestUrl = `${baseUrl}?q=visits.holidayWeekdays&v=default`;
   return {
@@ -90,4 +150,3 @@ export const getHolidayWeekdaysGP = () => {
     payload: axios.get(requestUrl)
   };
 };
-
