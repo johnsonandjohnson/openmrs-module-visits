@@ -10,30 +10,35 @@
 
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { LocalizedMessage } from '@openmrs/react-components';
 import './extra-information-modal.scss';
 import IExtraInformationModalParams from './extra-information-modal-param';
 import { formatDateIfDefined, MEDIUM_DATE_FORMAT } from '../../shared/utils/date-util';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 
 interface IProps {
 	show: boolean,
 	modalParams: IExtraInformationModalParams | null,
+	locale?: string
 	confirm: () => void,
 	cancel: () => void
 }
 
 const WARNING_CLASS = 'warning';
 
-const ExtraInformationModal = ({ show, modalParams, confirm, cancel }: IProps) => {
+const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale }: IProps) => {
 	const isPreviousVisit = !!modalParams?.precedingVisitDaysNumber;
 	const isNextVisit = !!modalParams?.nextVistitDaysNumber;
 	const isPreviousAndNextVisit = isPreviousVisit && isNextVisit;
 	const formattedDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, modalParams?.currentVisitDate);
 	
-	const infoMsgPartOne = `The visit will be saved on ${modalParams?.currentVisitWeekday}, ${formattedDate}.`;
-	const infoMsgPartTwo = `The preceding visit is planned ${modalParams?.precedingVisitDaysNumber} day(s) before${!isNextVisit ? '.' : ''}`
-	const infoMsgPartThree = `, while`;
-	const infoMsgPartFour = ` ${isPreviousAndNextVisit ? 't' : 'T'}he next visit is planned ${modalParams?.nextVistitDaysNumber} day(s) after the visit.`
+  const currentVisitWeekday = getIntl(locale).formatMessage({id: `${modalParams?.currentVisitWeekday.toUpperCase()}` })
+	const infoMsgPartOne = `${getIntl(locale).formatMessage({id: "VISIT_SAVED_ON_TEXT", defaultMessage: "The visit will be saved on"})} ${currentVisitWeekday}, ${formattedDate}.`;
+	const infoMsgPartTwo = `${getIntl(locale).formatMessage({id: "PRECEDING_VISIT_PLANNED_ON_TEXT", defaultMessage: "The preceding visit is planned"})} 
+		${modalParams?.precedingVisitDaysNumber} ${getIntl(locale).formatMessage({id: "DAYS_BEFORE_TEXT", defaultMessage: "day(s) before"})}${!isNextVisit ? '.' : ''}`;
+	const infoMsgPartThree = `, ${getIntl(locale).formatMessage({id: "WHILE_TEXT", defaultMessage: ", while"})}`;
+	const nextVisitPlannedText = `${getIntl(locale).formatMessage({id: "NEXT_VISIT_PLANNED_ON_TEXT", defaultMessage: "the next visit is planned"})}`;
+	const nextVisitPlannedConvertedText = !isPreviousAndNextVisit ? nextVisitPlannedText.charAt(0).toUpperCase() + nextVisitPlannedText.slice(1) : nextVisitPlannedText;
+	const infoMsgPartFour = ` ${nextVisitPlannedConvertedText} ${modalParams?.nextVistitDaysNumber} ${getIntl(locale).formatMessage({id: "DAYS_AFTER_VISIT_TEXT", defaultMessage: "day(s) after the visit"})}.`;
 	
 	if (!show) {
 		return null;
@@ -42,7 +47,7 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel }: IProps) =
 	return (
 		<Modal id="extra-info-modal" show={show} onHide={cancel}>
 			<Modal.Body>
-				<div className="modal-title"><LocalizedMessage id="extraInfo.modal.title" defaultMessage="Information"/></div>
+				<div className="modal-title">{getIntl(locale).formatMessage({id: "INFORMATION_LABEL", defaultMessage: "Information"})}</div>
 				<p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ''}>{infoMsgPartOne}</p>
 				<p>
 					{isPreviousVisit && <span>{infoMsgPartTwo}</span>}
@@ -53,10 +58,10 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel }: IProps) =
 					bsClass="button confirm right"
 					onClick={confirm}
 				>
-					<LocalizedMessage id="extraInfo.modal.confirmLabel" defaultMessage="OK" />
+					{getIntl(locale).formatMessage({id: "OK", defaultMessage: "OK"})}
 				</Button>
 				<Button bsClass="button cancel" onClick={cancel}>
-					<LocalizedMessage id="extraInfo.modal.cancelLabel" defaultMessage="Cancel" />
+					{getIntl(locale).formatMessage({id: "VISITS_CANCEL_BUTTON_LABEL", defaultMessage: "Cancel"})}
 				</Button>
 			</Modal.Body>
 		</Modal>

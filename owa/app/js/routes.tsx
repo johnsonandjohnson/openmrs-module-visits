@@ -39,8 +39,8 @@ export default (store) => (
         <LocalizedHeader />
         <LocalizedBreadCrumb />
         <Switch>
-            <Route path="/visits/manage/:patientUuid" component={withNotifications(ManageVisits)} />
-            <Route exact path="/visits/overview" component={OverviewVisits} />
+            <Route path="/visits/manage/:patientUuid" component={withLocalization(withNotifications(ManageVisits))} />
+            <Route exact path="/visits/overview" component={withLocalization(OverviewVisits)} />
         </Switch>
     </div>
 );
