@@ -161,8 +161,6 @@ class ManageVisits extends React.Component<IProps, IState> {
   }
 
   render() {
-    console.log('this.props-->', this.props);
-    console.log('this.props.locale-->', this.props.locale);
     return (
       <div className="manage-visits">
         {this.renderDeleteVisitModal()}
