@@ -51,6 +51,7 @@ interface IProps extends DispatchProps, StateProps, RouteComponentProps {
   modalParams: IModalParams | null;
   patientUuid: string;
   visitUuid?: string;
+  locale?: string
   confirm: (modalParams: IModalParams | null) => void;
   cancel: () => void;
   refetchVisits: () => void;
@@ -136,7 +137,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
     required?: boolean
   ) => (
     <FormGroup controlId={fieldName}>
-      <FormLabel label={label} mandatory={required} />
+      <FormLabel label={label} mandatory={required} locale={this.props.locale} />
       <FormControl
         componentClass="select"
         name={fieldName}
@@ -165,7 +166,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitDate = (errors) =>
     this.renderDatePicker(
       errors,
-      getIntl().formatMessage({
+      getIntl(this.props.locale).formatMessage({
         id: "VISITS_VISIT_PLANNED_DATE_LABEL",
         defaultMessage: Default.VISIT_PLANNED_DATE_LABEL,
       }),
@@ -185,7 +186,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderLocation = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl().formatMessage({ id: "VISITS_LOCATION_LABEL", defaultMessage: Default.LOCATION_LABEL }),
+      getIntl(this.props.locale).formatMessage({ id: "VISITS_LOCATION_LABEL", defaultMessage: Default.LOCATION_LABEL }),
       "location",
       this.props.locations.map((type) => (
         <option value={type.uuid} key={type.uuid}>
@@ -197,7 +198,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitType = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl().formatMessage({ id: "VISITS_VISIT_TYPE_LABEL", defaultMessage: Default.VISIT_TYPE_LABEL }),
+      getIntl(this.props.locale).formatMessage({ id: "VISITS_VISIT_TYPE_LABEL", defaultMessage: Default.VISIT_TYPE_LABEL }),
       "type",
       this.props.visitTypes.map((type) => (
         <option value={type.uuid} key={type.uuid}>
@@ -210,7 +211,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitStatus = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl().formatMessage({ id: "VISITS_VISIT_STATUS_LABEL", defaultMessage: Default.VISIT_STATUS_LABEL }),
+      getIntl(this.props.locale).formatMessage({ id: "VISITS_VISIT_STATUS_LABEL", defaultMessage: Default.VISIT_STATUS_LABEL }),
       "status",
       this.props.visitStatuses.map((status) => (
         <option value={status} key={status}>
@@ -223,7 +224,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitTime = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl().formatMessage({ id: "VISITS_VISIT_TIME_LABEL", defaultMessage: Default.VISIT_TIME_LABEL }),
+      getIntl(this.props.locale).formatMessage({ id: "VISITS_VISIT_TIME_LABEL", defaultMessage: Default.VISIT_TIME_LABEL }),
       "time",
       this.props.visitTimes.map((time) => (
         <option value={time} key={time}>
@@ -245,7 +246,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
         onClick={isExtraInformationEnabled === 'true' ? this.openExtraInfoModal : this.handleSave}
         disabled={this.state.isSaveButtonDisabled}
       >
-        {getIntl().formatMessage({
+        {getIntl(this.props.locale).formatMessage({
           id: this.isEdit() ? "VISITS_SAVE_BUTTON_LABEL" : "VISITS_SCHEDULE_VISIT_BUTTON_LABEL",
           defaultMessage: Default.SAVE_BUTTON_LABEL,
         })}
@@ -270,8 +271,8 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
         <Modal.Body>
           <div className="modal-title">
             {this.isEdit()
-              ? getIntl().formatMessage({ id: "VISITS_EDIT_VISIT", defaultMessage: Default.EDIT_VISIT })
-              : getIntl().formatMessage({ id: "VISITS_SCHEDULE_VISIT", defaultMessage: Default.SCHEDULE_VISIT })}
+              ? getIntl(this.props.locale).formatMessage({ id: "VISITS_EDIT_VISIT", defaultMessage: Default.EDIT_VISIT })
+              : getIntl(this.props.locale).formatMessage({ id: "VISITS_SCHEDULE_VISIT", defaultMessage: Default.SCHEDULE_VISIT })}
           </div>
           <Form className="fields-form">
             <Row>
@@ -358,6 +359,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
         modalParams={modalParams}
         confirm={this.confirmSavingVisitOnExtraInfoModal}
         cancel={this.closeExtraInfoModal}
+        locale={this.props.locale}
       />
     );
   }

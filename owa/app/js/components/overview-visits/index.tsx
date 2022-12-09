@@ -55,7 +55,9 @@ const TIME_PERIOD_ALL = "ALL";
 
 const searchIcon = require("../../../img/search.png");
 
-interface IProps extends DispatchProps, StateProps {}
+interface IProps extends DispatchProps, StateProps {
+  locale?: string
+}
 
 interface IFilters {
   dateFrom: moment.Moment | null;
@@ -93,7 +95,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
         value: SCHEDULED_STATUS,
       },
       timePeriod: {
-        label: getIntl().formatMessage({
+        label: getIntl(this.props.locale).formatMessage({
           id: `VISITS_OVERVIEW_PREDEFINED_FILTERS_${DEFAULT_TIME_PERIOD}_LABEL`,
         }),
         value: DEFAULT_TIME_PERIOD,
@@ -191,7 +193,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 
   private getNameCell = () => {
     return {
-      Header: getIntl().formatMessage({
+      Header: getIntl(this.props.locale).formatMessage({
         id: "VISITS_OVERVIEW_NAME_HEADER",
         defaultMessage: Default.OVERVIEW_NAME_HEADER,
       }),
@@ -205,10 +207,10 @@ class OverviewVisits extends React.Component<IProps, IState> {
       },
     };
   };
-
+  
   private getIdCell = () => {
     return {
-      Header: getIntl().formatMessage({
+      Header: getIntl(this.props.locale).formatMessage({
         id: "VISITS_OVERVIEW_PATIENT_ID_HEADER",
         defaultMessage: Default.OVERVIEW_PATIENT_ID_HEADER,
       }),
@@ -242,17 +244,17 @@ class OverviewVisits extends React.Component<IProps, IState> {
     if (totalCount > 0) {
       return (
         <span>
-          {totalCount} {getIntl().formatMessage({ id: "VISITS_OVERVIEW_TABLE_RECORDS_FOUND" })}
+          {totalCount} {getIntl(this.props.locale).formatMessage({ id: "VISITS_OVERVIEW_TABLE_RECORDS_FOUND" })}
         </span>
       );
     } else if (!loading && totalCount === 0) {
-      return getIntl().formatMessage({ id: "VISITS_OVERVIEW_TABLE_NO_RECORDS" });
+      return getIntl(this.props.locale).formatMessage({ id: "VISITS_OVERVIEW_TABLE_NO_RECORDS" });
     }
   };
 
   private timePeriodOptions = () =>
     TIME_PERIOD_OPTIONS.map((timePeriod) => ({
-      label: getIntl().formatMessage({
+      label: getIntl(this.props.locale).formatMessage({
         id: `VISITS_OVERVIEW_PREDEFINED_FILTERS_${timePeriod.toUpperCase()}_LABEL`,
       }),
       value: timePeriod,
@@ -268,7 +270,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
       }}
       className="visits-select"
       classNamePrefix="visits-select"
-      placeholder={getIntl().formatMessage({
+      placeholder={getIntl(this.props.locale).formatMessage({
         id: "VISITS_OVERVIEW_PREDEFINED_FILTERS_PLACEHOLDER",
         defaultMessage: Default.OVERVIEW_PREDEFINED_FILTERS_PLACEHOLDER,
       })}
@@ -298,7 +300,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
       onChange={(visitStatus) => this.setState((state) => ({ filters: { ...state.filters, visitStatus } }))}
       className="visits-select"
       classNamePrefix="visits-select"
-      placeholder={getIntl().formatMessage({
+      placeholder={getIntl(this.props.locale).formatMessage({
         id: "VISITS_OVERVIEW_VISIT_STATUS_PLACEHOLDER",
         defaultMessage: Default.OVERVIEW_VISIT_STATUS_PLACEHOLDER,
       })}
@@ -393,7 +395,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
               <img src={searchIcon} alt="search" className="search-icon" />
               <Input
                 id="visits-overview-filter-name"
-                placeholder={getIntl().formatMessage({
+                placeholder={getIntl(this.props.locale).formatMessage({
                   id: "VISITS_OVERVIEW_SEARCH_PLACEHOLDER",
                 })}
                 value={this.state.query}
@@ -438,7 +440,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
       onClick={this.handleSaveButton}
       disabled={this.state.saveButtonDisabled}
     >
-      {getIntl().formatMessage({ id: 'VISITS_OVERVIEW_SAVE_BUTTON_LABEL', defaultMessage: Default.SAVE_BUTTON_LABEL })}
+      {getIntl(this.props.locale).formatMessage({ id: 'VISITS_OVERVIEW_SAVE_BUTTON_LABEL', defaultMessage: Default.SAVE_BUTTON_LABEL })}
     </Button>
   );
 
@@ -482,12 +484,12 @@ class OverviewVisits extends React.Component<IProps, IState> {
         <FormGroup className="change-visits-statuses-form-group">
           <div className="select-all-section">
             <input type="checkbox" id="selectAllCheckbox" onClick={this.handleSelectAll} checked={this.state.isAllVisitsChecked}/>
-            <span id="selectAllSpan">{getIntl().formatMessage({ id: "VISITS_OVERVIEW_SELECT_ALL_HEADER", defaultMessage: Default.OVERVIEW_SELECT_ALL_HEADER })}</span>
+            <span id="selectAllSpan">{getIntl(this.props.locale).formatMessage({ id: "VISITS_OVERVIEW_SELECT_ALL_HEADER", defaultMessage: Default.OVERVIEW_SELECT_ALL_HEADER })}</span>
           </div>
           <div className="change-visits-statuses-select-section-parent">
             <div className="change-visits-statuses-right-section">
               <div className="set-selected-visits-div">
-                <span>{getIntl().formatMessage({ id: "VISITS_OVERVIEW_SET_SELECTED_VISITS_HEADER", defaultMessage: Default.OVERVIEW_SET_SELECTED_VISITS_HEADER })}</span>
+                <span>{getIntl(this.props.locale).formatMessage({ id: "VISITS_OVERVIEW_SET_SELECTED_VISITS_HEADER", defaultMessage: Default.OVERVIEW_SET_SELECTED_VISITS_HEADER })}</span>
               </div>
               <div className="change-visits-statuses-dropdown-div">
                 {this.renderVisitStatusesSelectToChange()}
@@ -526,35 +528,35 @@ class OverviewVisits extends React.Component<IProps, IState> {
             this.getIdCell(),
             this.getNameCell(),
             this.getCell(
-              getIntl().formatMessage({
+              getIntl(this.props.locale).formatMessage({
                 id: "VISITS_OVERVIEW_TYPE_HEADER",
                 defaultMessage: Default.OVERVIEW_TYPE_HEADER,
               }),
               TYPE_ACCESSOR
             ),
             this.getCell(
-              getIntl().formatMessage({
+              getIntl(this.props.locale).formatMessage({
                 id: "VISITS_OVERVIEW_TIME_HEADER",
                 defaultMessage: Default.OVERVIEW_TIME_HEADER,
               }),
               TIME_ACCESSOR
             ),
             this.getCell(
-              getIntl().formatMessage({
+              getIntl(this.props.locale).formatMessage({
                 id: "VISITS_OVERVIEW_DATE_HEADER",
                 defaultMessage: Default.OVERVIEW_DATE_HEADER,
               }),
               START_DATE_ACCESSOR
             ),
             this.getCell(
-              getIntl().formatMessage({
+              getIntl(this.props.locale).formatMessage({
                 id: "VISITS_OVERVIEW_ACTUAL_DATE_HEADER",
                 defaultMessage: Default.OVERVIEW_ACTUAL_DATE_HEADER,
               }),
               ACTUAL_DATE_ACCESSOR
             ),
             this.getCell(
-              getIntl().formatMessage({
+              getIntl(this.props.locale).formatMessage({
                 id: "VISITS_OVERVIEW_STATUS_HEADER",
                 defaultMessage: Default.OVERVIEW_STATUS_HEADER,
               }),
@@ -571,6 +573,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
           showPagination={this.props.pages > SINGLE_PAGE_NUMBER}
           resizable={false}
           onRowClick={this.onRowClick}
+          locale={this.props.locale}
         />
       </div>
     );
@@ -581,9 +584,9 @@ class OverviewVisits extends React.Component<IProps, IState> {
       <div className="body-wrapper">
         <div className="content">
           <div className="overview-visits">
-            <h2>{getIntl().formatMessage({ id: "VISITS_OVERVIEW_TITLE", defaultMessage: Default.OVERVIEW_TITLE })}</h2>
+            <h2>{getIntl(this.props.locale).formatMessage({ id: "VISITS_OVERVIEW_TITLE", defaultMessage: Default.OVERVIEW_TITLE })}</h2>
             <div className="helper-text">
-              {getIntl().formatMessage({
+              {getIntl(this.props.locale).formatMessage({
                 id: "VISITS_OVERVIEW_DESCRIPTION",
                 defaultMessage: Default.OVERVIEW_DESCRIPTION,
               })}

@@ -35,7 +35,9 @@ const MANAGE_DATE_FORMAT = 'DD MMM YYYY';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{
   patientUuid: string
-}> { }
+}> {
+  locale?: string
+ }
 
 interface IState {
   showDeleteVisitModal: boolean,
@@ -87,7 +89,7 @@ class ManageVisits extends React.Component<IProps, IState> {
         className="btn btn-success btn-md add-btn"
         onClick={this.handleScheduleVisitButton}
       >
-        {getIntl().formatMessage({ id: 'VISITS_SCHEDULE_VISIT', defaultMessage: Default.SCHEDULE_VISIT })}
+        {getIntl(this.props.locale).formatMessage({ id: 'VISITS_SCHEDULE_VISIT', defaultMessage: Default.SCHEDULE_VISIT })}
       </Button>
     );
   }
@@ -110,6 +112,7 @@ class ManageVisits extends React.Component<IProps, IState> {
       sortable={false}
       multiSort={false}
       showPagination={this.props.visitsPagesCount > SINGLE_PAGE_NUMBER}
+      locale={this.props.locale}
     />
 
   confirmDeleteVisit = (modalParams: IModalParams | null) => {
@@ -152,6 +155,7 @@ class ManageVisits extends React.Component<IProps, IState> {
         cancel={this.closeScheduleVisitModal}
         saveVisitCallback={this.saveVisitCallback}
         refetchVisits={this.refetchVisits}
+        locale={this.props.locale}
       />
     );
   }
@@ -165,9 +169,9 @@ class ManageVisits extends React.Component<IProps, IState> {
           <div className="visit-header-section">
             <div className="header-left-section">
               <ControlLabel className="fields-form-title">
-                <h2>{getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS', defaultMessage: Default.MANAGE_VISITS })}</h2>
+                <h2>{getIntl(this.props.locale).formatMessage({ id: 'VISITS_MANAGE_VISITS', defaultMessage: Default.MANAGE_VISITS })}</h2>
                 <div className="helper-text">
-                  {getIntl().formatMessage({ id: 'VISITS_MANAGE_VISITS_DESCRIPTION', defaultMessage: Default.OVERVIEW_DESCRIPTION })}
+                  {getIntl(this.props.locale).formatMessage({ id: 'VISITS_MANAGE_VISITS_DESCRIPTION', defaultMessage: Default.MANAGE_VISITS_DESCRIPTION })}
                 </div>
               </ControlLabel>
             </div>
