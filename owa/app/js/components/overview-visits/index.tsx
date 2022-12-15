@@ -512,7 +512,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
           {this.props.loading ? (
             <div className="spinner-border spinner-border-sm" />
           ) : (
-            this.helperText(this.props.loading, this.props.visits.length)
+            this.helperText(this.props.loading, this.props.totalCount)
           )}
         </div>
         <OverviewVisitTable
@@ -606,6 +606,7 @@ class OverviewVisits extends React.Component<IProps, IState> {
 const mapStateToProps = ({ overview, scheduleVisit, openmrs }: IRootState) => ({
   visits: overview.visits,
   pages: overview.pages,
+  totalCount: overview.totalCount,
   loading: overview.loading,
   location: openmrs.session.sessionLocation,
   visitStatuses: scheduleVisit.visitStatuses,
