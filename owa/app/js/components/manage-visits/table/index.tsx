@@ -104,7 +104,7 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
 
   private getActionsColumn = () => {
     return {
-      Header: getIntl().formatMessage({ id: 'VISITS_ACTIONS_COLUMN_LABEL', defaultMessage: Default.ACTIONS_COLUMN_LABEL }),
+      Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_ACTIONS_COLUMN_LABEL', defaultMessage: Default.ACTIONS_COLUMN_LABEL }),
       getProps: () => {
         return {
           className: 'action-column'
