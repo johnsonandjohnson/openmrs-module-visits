@@ -120,6 +120,11 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
     this.closeModal();
     this.closeExtraInfoModal();
     this.props.refetchVisits();
+    this.refreshPage();
+  };
+
+  refreshPage = () => {
+    window.location.reload();
   };
 
   closeModal = () => {
