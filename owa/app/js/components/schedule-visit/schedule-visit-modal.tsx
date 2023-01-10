@@ -124,8 +124,8 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   };
 
   refreshPage = () => {
-      window.location.reload();
-    };
+    window.location.reload();
+  };
 
   closeModal = () => {
     if (!this.isEdit()) {
