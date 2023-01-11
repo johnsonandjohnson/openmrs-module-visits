@@ -65,6 +65,8 @@
     "VISITS_OVERVIEW_PAGE_LABEL": "Page",
     "VISITS_OVERVIEW_OF_LABEL": "of",
     "VISITS_OVERVIEW_RESULTS_LABEL": "results",
+    "VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_TITLE": "Change statuses",
+    "VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_MESSAGE": "Please confirm you want to change the status of the selected visit(s).",
     "REQUIRED_LABEL": "required",
     "VISIT_SAVED_ON_TEXT": "The visit will be saved on",
     "PRECEDING_VISIT_PLANNED_ON_TEXT": "The preceding visit is planned",
@@ -80,5 +82,9 @@
     "THURSDAY": "Thursday",
     "FRIDAY": "Friday",
     "SATURDAY": "Saturday",
-    "SUNDAY": "Sunday"
+    "SUNDAY": "Sunday",
+    "DELETE_VISIT_MODAL_TITLE": "Delete Visit",
+    "DELETE_VISIT_MODAL_QUESTION": "Are you sure you want to delete this Visit?",
+    "YES_LABEL": "YES",
+    "NO_LABEL": "NO"
 }

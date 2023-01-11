@@ -59,6 +59,8 @@
   "VISITS_OVERVIEW_PAGE_LABEL": "Página",
   "VISITS_OVERVIEW_OF_LABEL": "de",
   "VISITS_OVERVIEW_RESULTS_LABEL": "resultados",
+  "VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_TITLE": "Alterar status",
+  "VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_MESSAGE": "Confirme que deseja alterar o status da(s) visita(s) selecionada(s).",
   "REQUIRED_LABEL": "obrigatório",
   "VISIT_SAVED_ON_TEXT": "A visita será salva em",
   "PRECEDING_VISIT_PLANNED_ON_TEXT": "A visita anterior está planejada",
@@ -74,5 +76,9 @@
   "THURSDAY": "Quinta-feira",
   "FRIDAY": "Sexta-feira",
   "SATURDAY": "Sábado",
-  "SUNDAY": "Domingo"
+  "SUNDAY": "Domingo",
+  "DELETE_VISIT_MODAL_TITLE": "Excluir Visita",
+  "DELETE_VISIT_MODAL_QUESTION": "Tem certeza de que deseja excluir esta visita?",
+  "YES_LABEL": "SIM",
+  "NO_LABEL": "NÃO"
 }

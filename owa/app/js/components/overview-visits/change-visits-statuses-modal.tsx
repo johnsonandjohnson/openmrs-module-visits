@@ -31,13 +31,13 @@ const ChangeVisitsStatusesModal = ({ show, modalParams, confirm, cancel }: IProp
          <Modal.Body>
            <div className="modal-title">
              <LocalizedMessage
-                id="changeVisitsStatuses.modal.title"
+                id="VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_TITLE"
                 defaultMessage="Change statuses"
               />
            </div>
            <p>
              <LocalizedMessage
-                id="changeVisitsStatuses.modal.txt"
+                id="VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_MESSAGE"
                 defaultMessage="Please confirm you want to change the status of the selected visit(s)."
               />
            </p>
@@ -46,13 +46,13 @@ const ChangeVisitsStatusesModal = ({ show, modalParams, confirm, cancel }: IProp
               onClick={() => confirm(modalParams)}
             >
              <LocalizedMessage
-                id="changeVisitsStatuses.modal.confirmLabel"
+                id="YES_LABEL"
                 defaultMessage="YES"
               />
               </Button>
               <Button bsClass="button cancel" onClick={cancel}>
                   <LocalizedMessage
-                     id="changeVisitsStatuses.modal.cancelLabel"
+                     id="NO_LABEL"
                      defaultMessage="NO"
                    />
               </Button>

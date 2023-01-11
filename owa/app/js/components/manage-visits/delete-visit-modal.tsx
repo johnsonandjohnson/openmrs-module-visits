@@ -31,16 +31,16 @@ class DeleteVisitModal extends React.PureComponent<IProps, IState> {
   buildModal = (modalParams: IModalParams) => {
     const { show, confirm, cancel } = this.props;
     const title = <LocalizedMessage
-      id="managevisits.modal.title"
+      id="DELETE_VISIT_MODAL_TITLE"
       defaultMessage="Delete Visit" />;
     const txt = <LocalizedMessage
-      id="managevisits.modal.txt"
+      id="DELETE_VISIT_MODAL_QUESTION"
       defaultMessage="Are you sure you want to delete this Visit?" />;
     const confirmLabel = <LocalizedMessage
-      id="managevisits.modal.confirmLabel"
+      id="YES_LABEL"
       defaultMessage="YES" />;
     const cancelLabel = <LocalizedMessage
-      id="managevisits.modal.cancelLabel"
+      id="NO_LABEL"
       defaultMessage="NO" />;
 
     return (
