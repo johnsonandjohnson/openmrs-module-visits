@@ -13,10 +13,12 @@ import { ControlLabel } from 'react-bootstrap';
 
 import './form-label.scss';
 import { REQUIRED_FORM_FIELD } from './constants';
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 
 interface FormLabel {
   label: string,
-  mandatory?: boolean
+  mandatory?: boolean,
+  locale?: string
 }
 
 const FormLabel: React.SFC<FormLabel> = (props: FormLabel) => {
@@ -25,7 +27,7 @@ const FormLabel: React.SFC<FormLabel> = (props: FormLabel) => {
       <ControlLabel>
         {props.label}
         {!!props.mandatory
-          ? <p className="label-required">{` (${REQUIRED_FORM_FIELD})`}</p>
+          ? <p className="label-required">{`(${getIntl(props.locale).formatMessage({id: "REQUIRED_LABEL", defaultMessage: REQUIRED_FORM_FIELD})})`}</p>
           : null}
       </ControlLabel>
     </span>

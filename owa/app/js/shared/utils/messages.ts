@@ -44,6 +44,7 @@ export const TIME_COLUMN_LABEL = 'Time';
 export const LOCATION_COLUMN_LABEL = 'Location';
 export const TYPE_COLUMN_LABEL = 'Type';
 export const STATUS_COLUMN_LABEL = 'Status';
+export const MANAGE_VISITS_DESCRIPTION = 'Create, edit and delete visits.';
 
 // Validation
 export const FIELD_REQUIRED = 'Required';

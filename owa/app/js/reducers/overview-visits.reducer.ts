@@ -27,6 +27,7 @@ const initialState = {
   visits: [] as Array<IVisitOverview>,
   loading: false,
   pages: 0,
+  totalCount: 0,
   isVisitStatusesUpdateSuccess: false
 };
 
@@ -49,6 +50,7 @@ export default (state = initialState, action) => {
         ...state,
         visits: action.payload.data.content,
         pages: action.payload.data.pageCount,
+        totalCount: action.payload.data.totalRecords,
         loading: false
       };
     case REQUEST(ACTION_TYPES.UPDATE_VISITS_STATUSES):

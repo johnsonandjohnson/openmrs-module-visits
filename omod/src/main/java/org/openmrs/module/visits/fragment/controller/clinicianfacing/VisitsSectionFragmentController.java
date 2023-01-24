@@ -13,7 +13,8 @@
  * you may not use this file except in compliance with the License. You may obtain a copy of the
  * License at http://license.openmrs.org
  *
- * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY
+ * OF
  * ANY KIND, either express or implied. See the License for the specific language governing rights
  * and limitations under the License.
  *
@@ -21,6 +22,7 @@
  */
 package org.openmrs.module.visits.fragment.controller.clinicianfacing;
 
+import java.util.Collections;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -183,9 +185,11 @@ public class VisitsSectionFragmentController {
       }
     }
     result.sort(ComparatorsHelper.getVisitsComparatorByStartDateDesc());
-    return getLimitedResult(
+    List<VisitDomainWrapper> limitedVisits = getLimitedResult(
         result,
         GlobalPropertyUtils.getInteger(GlobalPropertiesConstants.PAST_VISITS_LIMIT.getKey()));
+    Collections.reverse(limitedVisits);
+    return limitedVisits;
   }
 
   private List<VisitDomainWrapper> getLimitedResult(List<VisitDomainWrapper> visits, int limit) {

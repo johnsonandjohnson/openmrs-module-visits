@@ -15,6 +15,9 @@ const TODAY = moment();
 const WEEK = moment().add(6, 'days');
 const MONTH = moment().add(1, 'months');
 const CLEAR_DATE = null;
+const ONE_DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
+
+export const MEDIUM_DATE_FORMAT = 'DD MMM YYYY';
 
 export function getCommaSeparatedDateString(date?: Date, defaultValue?: string) {
   if (!!date) {
@@ -57,4 +60,9 @@ export const getDatesByPeriod = {
     dateFrom: CLEAR_DATE,
     dateTo: CLEAR_DATE
   }),
+};
+
+export const getNumberOfDaysBetweenDates = (date1: Date, date2: Date) => {
+  return Math.abs((Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) - 
+    Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()))) / ONE_DAY_IN_MILISECONDS;
 };

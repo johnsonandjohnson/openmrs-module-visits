@@ -13,6 +13,7 @@ import ReactTable from "react-table";
 import { LocalizedMessage } from "@openmrs/react-components";
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, MIN_ROWS, PAGE_SIZE_OPTIONS } from "./constants";
 import _ from "lodash";
+import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 
 interface IPaginationBaseState {
   itemsPerPage: number;
@@ -33,6 +34,7 @@ export interface ITableProps {
   multiSort?: boolean;
   resizable?: boolean;
   noDataText?: string;
+  locale?: string;
   fetchDataCallback(
     activePage: number,
     itemsPerPage: number,
@@ -85,13 +87,13 @@ export default class OverviewVisitTable extends React.PureComponent<ITableProps,
 
   render = () => {
     const NullComponent = () => null;
-    const noDataText = <LocalizedMessage id="reactcomponents.table.noDataText" defaultMessage="No results found" />;
-    const previousText = <LocalizedMessage id="reactcomponents.table.previous" defaultMessage="Previous" />;
-    const nextText = <LocalizedMessage id="reactcomponents.table.next" defaultMessage="Next" />;
-    const loadingText = <LocalizedMessage id="reactcomponents.table.loading" defaultMessage="Loading..." />;
-    const pageText = <LocalizedMessage id="reactcomponents.table.page" defaultMessage="Page" />;
-    const ofText = <LocalizedMessage id="reactcomponents.table.of" defaultMessage="of" />;
-    const rowsText = "results";
+    const noDataText = <LocalizedMessage id="VISITS_OVERVIEW_NO_RESULTS_FOUND_LABEL" defaultMessage="No results found" />;
+    const previousText = <LocalizedMessage id="VISITS_OVERVIEW_PREVIOUS_LABEL" defaultMessage="Previous" />;
+    const nextText = <LocalizedMessage id="VISITS_OVERVIEW_NEXT_LABEL" defaultMessage="Next" />;
+    const loadingText = <LocalizedMessage id="VISITS_OVERVIEW_LOADING_LABEL" defaultMessage="Loading..." />;
+    const pageText = <LocalizedMessage id="VISITS_OVERVIEW_PAGE_LABEL" defaultMessage="Page" />;
+    const ofText = <LocalizedMessage id="VISITS_OVERVIEW_OF_LABEL" defaultMessage="of" />;
+    const rowsText = getIntl(this.props.locale).formatMessage({ id: 'VISITS_OVERVIEW_RESULTS_LABEL', defaultMessage: "results" });
 
     return (
       <ReactTable

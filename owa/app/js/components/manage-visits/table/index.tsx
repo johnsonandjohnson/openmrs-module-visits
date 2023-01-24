@@ -53,6 +53,7 @@ export interface ITableProps {
   multiSort?: boolean;
   resizable?: boolean;
   noDataText? : string;
+  locale?: string,
   fetchDataCallback(params: ITableParams): void;
   deleteCallback(params: IModalParams): void;
   updateCallback(params: IModalParams): void;
@@ -103,7 +104,7 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
 
   private getActionsColumn = () => {
     return {
-      Header: getIntl().formatMessage({ id: 'VISITS_ACTIONS_COLUMN_LABEL', defaultMessage: Default.ACTIONS_COLUMN_LABEL }),
+      Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_ACTIONS_COLUMN_LABEL', defaultMessage: Default.ACTIONS_COLUMN_LABEL }),
       getProps: () => {
         return {
           className: 'action-column'
@@ -159,12 +160,12 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
 
   getColumns = () => {
     return [
-      { Header: getIntl().formatMessage({ id: 'VISITS_VISIT_PLANNED_DATE_LABEL', defaultMessage: Default.VISIT_PLANNED_DATE_LABEL }), accessor: 'startDate'},
-      { Header: getIntl().formatMessage({ id: 'VISITS_VISIT_ACTUAL_DATE_LABEL', defaultMessage: Default.VISIT_ACTUAL_DATE_LABEL }), accessor: 'actualDate'},
-      { Header: getIntl().formatMessage({ id: 'VISITS_TIME_COLUMN_LABEL', defaultMessage: Default.TIME_COLUMN_LABEL }), accessor: 'time'},
-      { Header: getIntl().formatMessage({ id: 'VISITS_LOCATION_COLUMN_LABEL', defaultMessage: Default.LOCATION_COLUMN_LABEL }), accessor: 'locationName'},
-      { Header: getIntl().formatMessage({ id: 'VISITS_TYPE_COLUMN_LABEL', defaultMessage: Default.TYPE_COLUMN_LABEL }), accessor: 'typeName'},
-      { Header: getIntl().formatMessage({ id: 'VISITS_STATUS_COLUMN_LABEL', defaultMessage: Default.STATUS_COLUMN_LABEL }), accessor: 'status' },
+      { Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_VISIT_PLANNED_DATE_LABEL', defaultMessage: Default.VISIT_PLANNED_DATE_LABEL }), accessor: 'startDate'},
+      { Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_VISIT_ACTUAL_DATE_LABEL', defaultMessage: Default.VISIT_ACTUAL_DATE_LABEL }), accessor: 'actualDate'},
+      { Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_TIME_COLUMN_LABEL', defaultMessage: Default.TIME_COLUMN_LABEL }), accessor: 'time'},
+      { Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_LOCATION_COLUMN_LABEL', defaultMessage: Default.LOCATION_COLUMN_LABEL }), accessor: 'locationName'},
+      { Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_TYPE_COLUMN_LABEL', defaultMessage: Default.TYPE_COLUMN_LABEL }), accessor: 'typeName'},
+      { Header: getIntl(this.props.locale).formatMessage({ id: 'VISITS_STATUS_COLUMN_LABEL', defaultMessage: Default.STATUS_COLUMN_LABEL }), accessor: 'status' },
       this.getActionsColumn()
     ];
   }
@@ -186,13 +187,13 @@ export default class ManageVisitTable extends React.PureComponent<ITableProps, I
 
   render = () => {
     const NullComponent = () => null;
-    const noDataText = <LocalizedMessage id="reactcomponents.table.noDataText" defaultMessage="No results found" />;
-    const previousText = <LocalizedMessage id="reactcomponents.table.previous" defaultMessage="Previous" />;
-    const nextText = <LocalizedMessage id="reactcomponents.table.next" defaultMessage="Next" />;
-    const loadingText = <LocalizedMessage id="reactcomponents.table.loading" defaultMessage="Loading..." />;
-    const pageText = <LocalizedMessage id="reactcomponents.table.page" defaultMessage="Page" />;
-    const ofText = <LocalizedMessage id="reactcomponents.table.of" defaultMessage="of" />;
-    const rowsText = "results";
+    const noDataText = <LocalizedMessage id="VISITS_OVERVIEW_NO_RESULTS_FOUND_LABEL" defaultMessage="No results found" />;
+    const previousText = <LocalizedMessage id="VISITS_OVERVIEW_PREVIOUS_LABEL" defaultMessage="Previous" />;
+    const nextText = <LocalizedMessage id="VISITS_OVERVIEW_NEXT_LABEL" defaultMessage="Next" />;
+    const loadingText = <LocalizedMessage id="VISITS_OVERVIEW_LOADING_LABEL" defaultMessage="Loading..." />;
+    const pageText = <LocalizedMessage id="VISITS_OVERVIEW_PAGE_LABEL" defaultMessage="Page" />;
+    const ofText = <LocalizedMessage id="VISITS_OVERVIEW_OF_LABEL" defaultMessage="of" />;
+    const rowsText = getIntl(this.props.locale).formatMessage({ id: 'VISITS_OVERVIEW_RESULTS_LABEL', defaultMessage: "results" });
 
     return (
       <div>
