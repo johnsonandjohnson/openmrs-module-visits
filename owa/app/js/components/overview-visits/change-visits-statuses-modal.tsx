@@ -10,9 +10,9 @@
 
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { LocalizedMessage } from '@openmrs/react-components';
-import IChangeStatusesModalParams from './change-visits-statuses-modal-param'
-import "./change-visits-statuses-modal.scss"
+import IChangeStatusesModalParams from './change-visits-statuses-modal-param';
+import "./change-visits-statuses-modal.scss";
+import { FormattedMessage } from 'react-intl';
 
 interface IProps {
     show: boolean,
@@ -28,36 +28,24 @@ const ChangeVisitsStatusesModal = ({ show, modalParams, confirm, cancel }: IProp
     
     return (
       <Modal id="change-visits-statuses-modal" show={show} onHide={cancel}>
-         <Modal.Body>
+          <Modal.Body>
            <div className="modal-title">
-             <LocalizedMessage
-                id="VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_TITLE"
-                defaultMessage="Change statuses"
-              />
+             <FormattedMessage id="visits.overviewChangeStatusesModalTitle" />
            </div>
            <p>
-             <LocalizedMessage
-                id="VISITS_OVERVIEW_CHANGE_STATUSES_MODAL_MESSAGE"
-                defaultMessage="Please confirm you want to change the status of the selected visit(s)."
-              />
+             <FormattedMessage id="visits.overviewChangeStatusesModalMessage" />
            </p>
             <Button
               bsClass="button confirm right"
               onClick={() => confirm(modalParams)}
             >
-             <LocalizedMessage
-                id="YES_LABEL"
-                defaultMessage="YES"
-              />
-              </Button>
-              <Button bsClass="button cancel" onClick={cancel}>
-                  <LocalizedMessage
-                     id="NO_LABEL"
-                     defaultMessage="NO"
-                   />
-              </Button>
-              </Modal.Body>
-          </Modal>  
+             <FormattedMessage  id="yesLabel" />
+            </Button>
+            <Button bsClass="button cancel" onClick={cancel}>
+              <FormattedMessage id="noLabel" />
+            </Button>
+          </Modal.Body>
+        </Modal>  
     );
   }
 

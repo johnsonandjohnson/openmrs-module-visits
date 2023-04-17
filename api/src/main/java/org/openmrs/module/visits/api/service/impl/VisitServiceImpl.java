@@ -10,16 +10,11 @@
 
 package org.openmrs.module.visits.api.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttributeType;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
@@ -30,11 +25,16 @@ import org.openmrs.module.visits.api.mapper.VisitMapper;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.MissedVisitService;
 import org.openmrs.module.visits.api.service.VisitService;
+import org.openmrs.module.visits.api.service.VisitSimpleQuery;
 import org.openmrs.module.visits.api.util.ConfigConstants;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.OverviewCriteria;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implements methods for creating, reading, updating and deleting Visit entities
@@ -47,8 +47,6 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
 
   private PatientService patientService;
 
-  private LocationService locationService;
-
   private VisitMapper visitMapper;
 
   private ConfigService configService;
@@ -57,8 +55,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   public List<Visit> getVisitsForPatient(String patientUuid, PagingInfo pagingInfo) {
     Patient patient = patientService.getPatientByUuid(patientUuid);
     if (patient == null) {
-      throw new ValidationException(
-          String.format("Patient with uuid %s does not exist", patientUuid));
+      throw new ValidationException(String.format("Patient with uuid %s does not exist", patientUuid));
     }
     return findAllByCriteria(new VisitCriteria(patient), pagingInfo);
   }
@@ -85,30 +82,15 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   public void changeStatusForMissedVisits() {
     List<String> statusesEndingVisit = configService.getStatusesEndingVisit();
 
-    List<String> eligibleStatusesToMarkVisitAsMissed =
-        getEligibleStatusesToMarkVisitAsMissed(statusesEndingVisit);
+    List<String> eligibleStatusesToMarkVisitAsMissed = getEligibleStatusesToMarkVisitAsMissed(statusesEndingVisit);
     List<Integer> missedVisitsIds = getMissedVisitsIds(statusesEndingVisit);
 
     processVisitsInBatches(missedVisitsIds, eligibleStatusesToMarkVisitAsMissed);
   }
 
   @Override
-  public List<Visit> getVisitsForLocation(
-      String locationUuid,
-      PagingInfo pagingInfo,
-      String query,
-      String visitStatus,
-      Long dateFrom,
-      Long dateTo,
-      String timePeriod) {
-    Location location = locationService.getLocationByUuid(locationUuid);
-    if (location == null) {
-      throw new ValidationException(
-          String.format("Location with uuid %s does not exist", locationUuid));
-    }
-    return findAllByCriteria(
-        new OverviewCriteria(location, query, visitStatus, dateFrom, dateTo, timePeriod),
-        pagingInfo);
+  public List<Visit> getVisits(VisitSimpleQuery visitSimpleQuery) {
+    return findAllByCriteria(new OverviewCriteria(visitSimpleQuery), visitSimpleQuery.getPagingInfo());
   }
 
   @Override
@@ -148,26 +130,20 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
     return this;
   }
 
-  public void setLocationService(LocationService locationService) {
-    this.locationService = locationService;
-  }
-
   public void setConfigService(ConfigService configService) {
     this.configService = configService;
   }
 
   private void processVisitsInBatches(List<Integer> visitsIds, List<String> visitStatuses) {
-    String missedVisitStatus = configService.getStatusOfMissedVisit();
+    String missedVisitStatus = configService.getMissedVisitStatuses().get(0);
     VisitAttributeType visitStatusAttrType =
-        Context.getVisitService()
-            .getVisitAttributeTypeByUuid(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
+        Context.getVisitService().getVisitAttributeTypeByUuid(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
     int numOfIterations = (int) Math.ceil((float) visitsIds.size() / BATCH_SIZE);
     MissedVisitService missedVisitService = Context.getService(MissedVisitService.class);
     for (int i = 0; i < numOfIterations; i++) {
       clearSessionCache();
       List<Integer> subList = getVisitIdsSubList(i, visitsIds);
-      missedVisitService.changeVisitStatusesToMissed(subList, visitStatuses, missedVisitStatus,
-          visitStatusAttrType);
+      missedVisitService.changeVisitStatusesToMissed(subList, visitStatuses, missedVisitStatus, visitStatusAttrType);
     }
   }
 
@@ -177,17 +153,19 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   }
 
   private List<String> getEligibleStatusesToMarkVisitAsMissed(List<String> statusesEndingVisit) {
-    return configService.getVisitStatuses().stream()
+    return configService
+        .getVisitStatuses()
+        .stream()
         .filter(status -> !statusesEndingVisit.contains(status))
         .collect(Collectors.toList());
   }
 
   private List<Integer> getMissedVisitsIds(List<String> statusesEndingVisit) {
     return findAllByCriteria(
-        VisitCriteria.forMissedVisits(
-            configService.getMinimumVisitDelayToMarkItAsMissed(),
-            configService.getStatusOfMissedVisit(),
-            statusesEndingVisit))
+            VisitCriteria.forMissedVisits(
+                configService.getMinimumVisitDelayToMarkItAsMissed(),
+                configService.getMissedVisitStatuses().get(0),
+                statusesEndingVisit))
         .stream()
         .map(Visit::getVisitId)
         .collect(Collectors.toList());

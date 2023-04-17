@@ -14,4 +14,5 @@ export default interface IExtraInformationModalParams {
 	precedingVisitDaysNumber: number | null
 	nextVistitDaysNumber: number | null
 	isDayHolidayWeekday: boolean
+	isVisitDateDuplicated: boolean
 }

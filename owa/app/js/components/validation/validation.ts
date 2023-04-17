@@ -11,7 +11,7 @@
 // Form validation method based on Yup schema validation
 import * as Yup from "yup";
 
-export const validateFormSafely = (form: Object, schema: Yup.ObjectSchema): Promise<{[key: string]: string}> => {
+export const validateFormSafely = (form: Object, schema: Yup.ObjectSchema<any>): Promise<{[key: string]: string}> => {
   return validateForm(form, schema)
     .then(() => ({}))
     .catch((errors) => errors);

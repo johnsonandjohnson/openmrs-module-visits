@@ -9,6 +9,10 @@
  */
 
 .form-label {
+  label {
+    margin-bottom: 10px;
+  }
+
   .label-required {
     display: inline;
     color: #737373;

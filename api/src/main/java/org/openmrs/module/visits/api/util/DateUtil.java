@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public final class DateUtil {
@@ -82,7 +83,7 @@ public final class DateUtil {
   }
 
   public static String convertToServerSideDateTime(Date date) {
-    return convertDate(date, VisitsConstants.DEFAULT_SERVER_SIDE_DATETIME_FORMAT);
+    return convertDateWithLocale(date, VisitsConstants.DEFAULT_SERVER_SIDE_DATETIME_FORMAT, null);
   }
 
   public static Date toSimpleDate(Date date) {
@@ -124,8 +125,16 @@ public final class DateUtil {
     return formatter.parse(date);
   }
 
-  public static String convertDate(Date date, String toFormat) {
-    return new SimpleDateFormat(toFormat).format(date);
+  /**
+   * Converts Date object to String, supports translations
+   *
+   * @param date date to convert
+   * @param toFormat format to which the date is converted
+   * @param locale locale, nullable, if null then default locale is used
+   * @return string representation of date
+   */
+  public static String convertDateWithLocale(Date date, String toFormat, Locale locale) {
+    return new SimpleDateFormat(toFormat, locale == null ? Locale.getDefault() : locale).format(date);
   }
 
   private static String convertDate(String date, String fromFormat, String toFormat)

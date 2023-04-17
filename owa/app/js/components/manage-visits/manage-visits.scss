@@ -52,7 +52,6 @@
     border: 1px solid rgba(0, 0, 0, 0.15);
 
     .ReactTable .action-column {
-      max-width: 30;
       text-align: center;
       margin: auto;
       display: flex;
@@ -60,6 +59,7 @@
   
       .action-button {
         padding: 5px;
+        width: 30px;
   
         a, i {
           cursor: pointer;

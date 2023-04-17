@@ -12,10 +12,9 @@ import {ObjectUI} from "../../components/base-model/object-ui";
 import {IForm} from "../../components/validation/model/form";
 import * as Yup from "yup";
 import _ from 'lodash';
-import * as Default from '../../shared/utils/messages';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import {validateFormSafely} from '../../components/validation/validation';
 import IVisitDetails from "./visit-details";
+import { Props } from "@fortawesome/react-fontawesome";
 
 export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDetails, IForm {
   uuid: string;
@@ -35,9 +34,9 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     this.touchedFields = {};
   }
 
-  async validate(validateNotTouched: boolean, isEdit: boolean): Promise<VisitUI> {
-    const schema = this.getValidationSchema(validateNotTouched, isEdit);
-
+  async validate(validateNotTouched: boolean, intl: any, isEdit: boolean): Promise<VisitUI> {
+    const schema = this.getValidationSchema(validateNotTouched, intl, isEdit);
+    
     const validationResult = await validateFormSafely(this, schema);
 
     const visit = _.clone(this);
@@ -45,22 +44,26 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     return visit;
   }
 
-  getValidationSchema(validateNotTouched: boolean, isEdit: boolean): Yup.ObjectSchema {
+  getValidationSchema(validateNotTouched: boolean, intl: any, isEdit: boolean): Yup.ObjectSchema<any> {
     const createValidators = {
-      type: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
-        v => this.validateRequiredField('type', v, validateNotTouched))
+      type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
+        v => this.validateRequiredField('type', v, validateNotTouched)),
+      location: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
+        v => this.validateRequiredField('location', v, validateNotTouched)),
     };
     const editValidators = {
-      type: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
+      type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
         v => this.validateRequiredField('type', v, validateNotTouched)),
-      status: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
-        v => this.validateRequiredField('status', v, validateNotTouched))
+      status: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
+        v => this.validateRequiredField('status', v, validateNotTouched)),
+      location: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
+        v => this.validateRequiredField('location', v, validateNotTouched)),
     };
 
     return Yup.object().shape(isEdit? editValidators : createValidators);
   }
 
-  validateRequiredField(key: string, value: string, validateNotTouched: boolean): boolean {
+  validateRequiredField(key: string, value: string | undefined, validateNotTouched: boolean): boolean {
     if (this.touchedFields[key] || validateNotTouched) {
       return !!(value && value.trim());
     }

@@ -10,10 +10,10 @@
 
 import React from "react";
 import ReactTable from "react-table";
-import { LocalizedMessage } from "@openmrs/react-components";
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, MIN_ROWS, PAGE_SIZE_OPTIONS } from "./constants";
 import _ from "lodash";
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
+import { FormattedMessage } from 'react-intl';
+import { PropsWithIntl } from '../../../components/translation/PropsWithIntl';
 
 interface IPaginationBaseState {
   itemsPerPage: number;
@@ -46,7 +46,7 @@ export interface ITableProps {
   onRowClick(rowEntity: {}): void;
 }
 
-export default class OverviewVisitTable extends React.PureComponent<ITableProps, IPaginationBaseState> {
+export default class OverviewVisitTable extends React.PureComponent<PropsWithIntl<ITableProps>, IPaginationBaseState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -87,13 +87,13 @@ export default class OverviewVisitTable extends React.PureComponent<ITableProps,
 
   render = () => {
     const NullComponent = () => null;
-    const noDataText = <LocalizedMessage id="VISITS_OVERVIEW_NO_RESULTS_FOUND_LABEL" defaultMessage="No results found" />;
-    const previousText = <LocalizedMessage id="VISITS_OVERVIEW_PREVIOUS_LABEL" defaultMessage="Previous" />;
-    const nextText = <LocalizedMessage id="VISITS_OVERVIEW_NEXT_LABEL" defaultMessage="Next" />;
-    const loadingText = <LocalizedMessage id="VISITS_OVERVIEW_LOADING_LABEL" defaultMessage="Loading..." />;
-    const pageText = <LocalizedMessage id="VISITS_OVERVIEW_PAGE_LABEL" defaultMessage="Page" />;
-    const ofText = <LocalizedMessage id="VISITS_OVERVIEW_OF_LABEL" defaultMessage="of" />;
-    const rowsText = getIntl(this.props.locale).formatMessage({ id: 'VISITS_OVERVIEW_RESULTS_LABEL', defaultMessage: "results" });
+    const noDataText = <FormattedMessage id="visits.overviewNoResultsFoundLabel" />;
+    const previousText = <FormattedMessage id="visits.overviewPreviousLabel" />;
+    const nextText = <FormattedMessage id="visits.overviewNextLabel" />;
+    const loadingText = <FormattedMessage id="visits.overviewLoadingLabel" />;
+    const pageText = <FormattedMessage id="visits.overviewPageLabel" />;
+    const ofText = <FormattedMessage id="visits.overviewOfLabel" />;
+    const rowsText = <FormattedMessage id="visits.overviewResultsLabel" />;
 
     return (
       <ReactTable

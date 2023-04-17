@@ -8,10 +8,10 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, DispatchProp } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
-class App extends React.Component<RouteComponentProps<{ patientId: string }>> {
+class App extends React.Component<DispatchProp<any> | RouteComponentProps<{ patientId: string }>> {
     render() {
         return (
             <div>

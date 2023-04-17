@@ -14,11 +14,9 @@ import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axiosInstance from '../components/shared/axios'
 import IVisitType from '../shared/model/visit-type';
 import VisitUI from '../shared/model/visit-ui';
-import * as Default from '../shared/utils/messages';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
 import ILocation from '../shared/model/location';
-import IVisitDetails from '../shared/model/visit-details';
+import IVisitDetails from '../shared/model/visit-details'; 
 import IModalParams from '../components/manage-visits/modal-params';
 
 export const ACTION_TYPES = {
@@ -178,16 +176,16 @@ export const getLocations = () => async (dispatch) => {
   });
 };
 
-export const updateVisit = (visit: VisitUI) => async (dispatch) => {
+export const updateVisit = (visit: VisitUI, intl: any) => async (dispatch) => {
   dispatch({
     type: ACTION_TYPES.UPDATE_VISIT,
-    payload: await visit.validate(false, true)
+    payload: await visit.validate(false, intl, true)
   })
 };
 
-export const saveVisit = (visit: VisitUI, successCallback?) => async (dispatch) => {
+export const saveVisit = (visit: VisitUI, intl: any, successCallback?) => async (dispatch) => {
   const isEdit = !!visit.uuid;
-  const validated = await visit.validate(true, isEdit);
+  const validated = await visit.validate(true, intl, isEdit);
   if (_.isEmpty(validated.errors)) {
     const payload = isEdit ?
       axiosInstance.put(`${moduleUrl}/${visit.uuid}`, visit)
@@ -201,11 +199,10 @@ export const saveVisit = (visit: VisitUI, successCallback?) => async (dispatch) 
     await handleRequest(
       dispatch,
       body,
-      getIntl().formatMessage({
-        id: isEdit ? 'VISITS_GENERIC_SUCCESS' : 'VISITS_SCHEDULE_VISIT_SUCCESS',
-        defaultMessage: Default.GENERIC_SUCCESS
+      intl.formatMessage({
+        id: isEdit ? "visits.genericSuccess" : "visits.scheduleVisitSuccess"
       }),
-      getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE })
+      intl.formatMessage({ id: "visits.genericFailure" })
     );
     if (successCallback) {
       successCallback();
@@ -247,16 +244,28 @@ export const getVisitsPagesCount = (size: number, patientUuid: string) => async 
   });
 };
 
-export const deleteVisit = (uuid: string, activePage: number, itemsPerPage: number, patientUuid: string) => async (dispatch) => {
+export const deleteVisit = (uuid: string, activePage: number, itemsPerPage: number, patientUuid: string, intl: any) => async (dispatch) => {
   const url = `/ws/rest/v1/visit/${uuid}`;
   const body = {
     type: ACTION_TYPES.DELETE_VISIT,
     payload: axiosInstance.delete(url)
   };
   await handleRequest(dispatch, body,
-    getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
-    getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE }));
+    intl.formatMessage({ id: "visits.genericSuccess" }),
+    intl.formatMessage({ id: "visits.genericFailure" }));
   dispatch(getVisitsPage(activePage, itemsPerPage, patientUuid));
+};
+
+export const deleteVisitWithCallback = (uuid: string, intl: any, callback: () => void) => async (dispatch) => {
+  const url = `/ws/rest/v1/visit/${uuid}`;
+  const body = {
+    type: ACTION_TYPES.DELETE_VISIT,
+    payload: axiosInstance.delete(url)
+  };
+  await handleRequest(dispatch, body,
+    intl.formatMessage({ id: "visits.genericSuccess" }),
+    intl.formatMessage({ id: "visits.genericFailure" }));
+  callback();
 };
 
 export const reset = (successCallback?) => async (dispatch) => {

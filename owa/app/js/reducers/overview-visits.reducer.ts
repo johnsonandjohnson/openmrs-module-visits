@@ -10,12 +10,11 @@
 
 import _ from 'lodash';
 
-import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
+import { FAILURE, REQUEST, SUCCESS } from './action-type.util';
+import axios from 'axios';
 import axiosInstance from '../components/shared/axios'
 import IVisitOverview from '../shared/model/visit-overview.model';
 import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
-import * as Default from '../shared/utils/messages';
 
 export const ACTION_TYPES = {
   GET_VISITS: 'overviewVisitReducer/GET_VISITS',
@@ -54,10 +53,10 @@ export default (state = initialState, action) => {
         loading: false
       };
     case REQUEST(ACTION_TYPES.UPDATE_VISITS_STATUSES):
-        return {
-          ...state,
-          isVisitStatusesUpdateSuccess: false
-        };
+      return {
+        ...state,
+        isVisitStatusesUpdateSuccess: false
+      };
     case FAILURE(ACTION_TYPES.UPDATE_VISITS_STATUSES):
       return {
         ...state,
@@ -84,10 +83,11 @@ const getPageParams = (page: number, size: number, filters?: {}, query?: string)
     page: page + 1,
     rows: size
   };
+  // TODO: Move query out or don't add it if empty/undefined to let filters have it
   return {
-    ...pageParams,
-    ...filters,
     query: query,
+    ...pageParams,
+    ...filters
   };
 }
 
@@ -100,13 +100,41 @@ export const getOverviewPage = (page: number, size: number, locationUuid: string
   });
 };
 
+const CancelToken = axios.CancelToken;
+let getVisitOverviewPageCancel;
+
+export const getVisitOverviewPage = (page: number, size: number, filters: {}, sorted: { field: string, order: 'DESC' | 'ASC' }[]) => async (dispatch) => {
+  if (!!getVisitOverviewPageCancel) {
+    getVisitOverviewPageCancel();
+  }
+
+  const sortedFilter = sorted.reduce((result, current) => {
+    const newResult = { ...result };
+    newResult[current.field + 'Sort'] = current.order;
+    return newResult;
+  }, {});
+
+  const params = getPageParams(page, size, { ...filters, ...sortedFilter });
+
+  const url = `${moduleUrl}/overview`;
+  await dispatch({
+    type: ACTION_TYPES.GET_VISITS,
+    payload: axiosInstance.get(url, {
+      params,
+      cancelToken: new CancelToken(cancel => {
+        getVisitOverviewPageCancel = cancel
+      })
+    })
+  });
+};
+
 export const reset = () => {
   return {
     type: ACTION_TYPES.RESET
   };
 }
 
-export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any) => async (dispatch) => {
+export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any, intl: any) => async (dispatch) => {
   const url = `${moduleUrl}/overview/updateVisitStatuses`;
 
   const body = {
@@ -121,7 +149,7 @@ export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any) =
   await handleRequest(
     dispatch,
     body,
-    getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
-    getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE })
+    intl.formatMessage({ id: 'visits.overviewUpdateVisitStatusSuccessMessage' }),
+    intl.formatMessage({ id: 'visits.overviewUpdateVisitStatusSuccessMessage' })
   );
 };

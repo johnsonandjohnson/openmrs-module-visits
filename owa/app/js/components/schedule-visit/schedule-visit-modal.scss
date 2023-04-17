@@ -131,32 +131,15 @@
             border-color: #00455C;
             margin: 0;
           }
-
-          button#schedule-visit-cancel {
-            position: absolute;
-            top: -2em;
-            right: -2.5em;
-            color: white;
-            padding: 0;
-            display: flex;
-            background: none;
-            border: none;
-
-            .icon-button-background {
-              color: black;
-            }
-
-            &:focus,
-            > span:focus {
-              outline: none;
-            }
-
-            &:active {
-              box-shadow: none;
-            }
-          }
         }
-  
+
+        button#schedule-visit-cancel {
+          background: transparent;
+          border: #000000 1px solid !important;
+          color: #00455C;
+          font-size: 14px;
+        }
+
         p {
           margin-bottom: 20px;
         }

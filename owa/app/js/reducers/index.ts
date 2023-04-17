@@ -21,6 +21,9 @@ import person, { PersonState }
 import personStatus, { PersonStatusState } 
   from '../components/person-status/person-status.reducer';
 import globalPropertyReducer, { GlobalPropertyState } from './global-property.reducer';
+import session from './session';
+import messages from './messages';
+import app from './app';
 
 export interface IRootState {
   readonly openmrs: any;
@@ -32,6 +35,9 @@ export interface IRootState {
   readonly customizeReducer: CustomizeState;
   readonly personStatus: PersonStatusState;
   readonly globalPropertyReducer: GlobalPropertyState;
+  readonly session: any;
+  readonly messages: any;
+  readonly app: any;
 }
 
 export default combineReducers<IRootState>({
@@ -43,5 +49,8 @@ export default combineReducers<IRootState>({
   notification,
   customizeReducer,
   personStatus,
-  globalPropertyReducer
+  globalPropertyReducer,
+  session,
+  messages,
+  app
 });

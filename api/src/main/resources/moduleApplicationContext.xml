@@ -39,12 +39,7 @@
                 <property name="visitMapper">
                     <ref bean="visits.visitMapper"/>
                 </property>
-                <property name="locationService">
-                    <ref bean="locationService"/>
-                </property>
-                <property name="configService">
-                    <ref local="visits.configService"/>
-                </property>
+                <property name="configService" ref="visits.configService"/>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -65,9 +60,7 @@
         <property name="patientService">
             <ref bean="patientService"/>
         </property>
-        <property name="configService">
-            <ref local="visits.configService"/>
-        </property>
+        <property name="configService" ref="visits.configService"/>
     </bean>
     <bean id="visits.overviewMapper" class="org.openmrs.module.visits.api.mapper.OverviewMapper"/>
 
@@ -89,6 +82,14 @@
     </bean>
 
     <bean id="visits.configService" class="org.openmrs.module.visits.api.service.impl.ConfigServiceImpl"/>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.visits.api.service.ConfigService</value>
+                <ref bean="visits.configService"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="customEncounterValidator" class="org.openmrs.module.visits.api.validator.EncounterValidator" />
 
@@ -101,7 +102,53 @@
         <property name="moduleService">
             <list merge="true">
                 <value>org.openmrs.module.visits.api.service.MissedVisitService</value>
-                <ref local="visits.missedVisitService"/>
+                <ref bean="visits.missedVisitService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="visits.visitTimeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="target">
+            <bean class="org.openmrs.module.visits.api.service.impl.VisitTimeServiceImpl">
+                <property name="visitTimeDAO">
+                    <bean class="org.openmrs.module.visits.api.dao.VisitTimeDAO">
+                        <property name="dbSessionFactory" ref="dbSessionFactory"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="preInterceptors" ref="serviceInterceptors"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.visits.api.service.VisitTimeService</value>
+                <ref bean="visits.visitTimeService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="visits.visitStatusService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="target">
+            <bean class="org.openmrs.module.visits.api.service.impl.VisitStatusServiceImpl">
+                <property name="visitStatusDAO">
+                    <bean class="org.openmrs.module.visits.api.dao.VisitStatusDAO">
+                        <property name="dbSessionFactory" ref="dbSessionFactory"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="preInterceptors" ref="serviceInterceptors"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.visits.api.service.VisitStatusService</value>
+                <ref bean="visits.visitStatusService"/>
             </list>
         </property>
     </bean>

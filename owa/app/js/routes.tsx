@@ -9,38 +9,21 @@
  */
 
 import React from 'react'
-import { addLocaleData } from "react-intl";
 import { Route, Switch } from 'react-router-dom';
-import {Header, initializeLocalization, withLocalization} from '@openmrs/react-components';
+import { Header } from '@openmrs/react-components';
 import BreadCrumb from './components/bread-crumb';
-import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
-import { withNotifications } from './components/hoc/with-notifications';
-import OverviewVisits from './components/overview-visits';
-import Customize from './components/customize/customize';
-import pt from 'react-intl/locale-data/pt';
-import messagesEN from "./translations/en.json";
-import messagesFR from "./translations/fr.json";
-import messagesPTBR from "./translations/pt_BR.json";
-
-initializeLocalization({
-  en: messagesEN,
-  fr: messagesFR,
-  pt: messagesPTBR
-});
-// Add locale data which is not included in @openmrs/react-components
-addLocaleData([...pt]);
-
-const LocalizedHeader = withLocalization(Header);
-const LocalizedBreadCrumb = withLocalization(BreadCrumb);
+import PatientVisitsOverview from './components/manage-visits/patient-visits-ovierview';
+import GeneralVisitsOverview from './components/overview-visits/general-visits-overview';
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
 
 export default (store) => (
     <div>
-        <Customize />
-        <LocalizedHeader />
-        <LocalizedBreadCrumb />
+        <Header />
+        <BreadCrumb />
         <Switch>
-            <Route path="/visits/manage/:patientUuid" component={withLocalization(withNotifications(ManageVisits))} />
-            <Route exact path="/visits/overview" component={withLocalization(OverviewVisits)} />
+            <Route exact path="/visits/overview" component={(GeneralVisitsOverview)} />
+            <Route path="/visits/manage/:patientUuid" component={(PatientVisitsOverview)} />
         </Switch>
     </div>
 );

@@ -14,4 +14,101 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+  <changeSet id="visits-visit-times-1" author="Connect for Life">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="visits_visit_time"/>
+      </not>
+    </preConditions>
+    <comment>Creating visits_visit_time table</comment>
+    <createTable tableName="visits_visit_time">
+      <column name="visit_time_id" autoIncrement="true" type="int">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="time_group" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="description" type="varchar(255)"/>
+      <column name="creator" defaultValueNumeric="0" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_created" type="DATETIME">
+        <constraints nullable="false"/>
+      </column>
+      <column name="changed_by" type="int"/>
+      <column name="date_changed" type="DATETIME"/>
+      <column name="retired" defaultValueBoolean="false" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_retired" type="DATETIME"/>
+      <column name="retired_by" type="int"/>
+      <column name="retire_reason" type="varchar(255)"/>
+      <column name="uuid" type="char(38)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+    </createTable>
+    <addForeignKeyConstraint constraintName="visitTime_creator_fk"
+                             baseTableName="visits_visit_time" baseColumnNames="creator"
+                             referencedTableName="users" referencedColumnNames="user_id"/>
+    <addForeignKeyConstraint constraintName="visitTime_changed_by_fk"
+                             baseTableName="visits_visit_time" baseColumnNames="changed_by"
+                             referencedTableName="users" referencedColumnNames="user_id"/>
+    <addForeignKeyConstraint constraintName="visitTime_retired_by_fk"
+                             baseTableName="visits_visit_time" baseColumnNames="retired_by"
+                             referencedTableName="users" referencedColumnNames="user_id"/>
+  </changeSet>
+
+  <changeSet id="visits-visit-status-1" author="Connect for Life">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="visits_visit_status"/>
+      </not>
+    </preConditions>
+    <comment>Creating visits_visit_status table</comment>
+    <createTable tableName="visits_visit_status">
+      <column name="visit_status_id" autoIncrement="true" type="int">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status_group" type="varchar(255)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="is_default" defaultValueBoolean="false" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="varchar(255)"/>
+      <column name="creator" defaultValueNumeric="0" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_created" type="DATETIME">
+        <constraints nullable="false"/>
+      </column>
+      <column name="changed_by" type="int"/>
+      <column name="date_changed" type="DATETIME"/>
+      <column name="retired" defaultValueBoolean="false" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_retired" type="DATETIME"/>
+      <column name="retired_by" type="int"/>
+      <column name="retire_reason" type="varchar(255)"/>
+      <column name="uuid" type="char(38)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+    </createTable>
+    <addForeignKeyConstraint constraintName="visitStatus_creator_fk"
+                             baseTableName="visits_visit_status" baseColumnNames="creator"
+                             referencedTableName="users" referencedColumnNames="user_id"/>
+    <addForeignKeyConstraint constraintName="visitStatus_changed_by_fk"
+                             baseTableName="visits_visit_status" baseColumnNames="changed_by"
+                             referencedTableName="users" referencedColumnNames="user_id"/>
+    <addForeignKeyConstraint constraintName="visitStatus_retired_by_fk"
+                             baseTableName="visits_visit_status" baseColumnNames="retired_by"
+                             referencedTableName="users" referencedColumnNames="user_id"/>
+  </changeSet>
 </databaseChangeLog>

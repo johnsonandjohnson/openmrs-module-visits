@@ -90,7 +90,7 @@ public class DateUtilTest {
     @Test
     public void shouldReturnDateWithIgnoredTime() {
         Date actualDate = DateUtil.getDateIgnoringTime(exampleDate);
-        String stringActualDate = DateUtil.convertDate(actualDate, DATE_PATTERN);
+        String stringActualDate = DateUtil.convertDateWithLocale(actualDate, DATE_PATTERN, null);
 
         assertEquals("2021-05-11 00:00:00", stringActualDate);
     }
@@ -98,7 +98,7 @@ public class DateUtilTest {
     @Test
     public void shouldReturnLastDayOfWeekDateFromGivenDate() {
         Date actualDate = DateUtil.getLastDayOfCurrentWeekDateFromGivenDate(exampleDate);
-        String stringActualDate = DateUtil.convertDate(actualDate, DATE_PATTERN);
+        String stringActualDate = DateUtil.convertDateWithLocale(actualDate, DATE_PATTERN, null);
 
         assertEquals("2021-05-15 16:35:00", stringActualDate);
     }
@@ -106,7 +106,7 @@ public class DateUtilTest {
     @Test
     public void shouldReturnLastDayOfMonthDateFromGivenDate() {
         Date actualDate = DateUtil.getLastDayOfCurrentMonthDateFromGivenDate(exampleDate);
-        String stringActualDate = DateUtil.convertDate(actualDate, DATE_PATTERN);
+        String stringActualDate = DateUtil.convertDateWithLocale(actualDate, DATE_PATTERN, null);
 
         assertEquals("2021-05-31 16:35:00", stringActualDate);
     }
@@ -114,7 +114,7 @@ public class DateUtilTest {
     @Test
     public void shouldReturnDateThreeDaysLaterFromGivenDate() {
         Date actualDate = DateUtil.getDatePlusDays(exampleDate, 3);
-        String stringActualDate = DateUtil.convertDate(actualDate, DATE_PATTERN);
+        String stringActualDate = DateUtil.convertDateWithLocale(actualDate, DATE_PATTERN, null);
 
         assertEquals("2021-05-14 16:35:00", stringActualDate);
     }
@@ -122,7 +122,7 @@ public class DateUtilTest {
     @Test
     public void shouldReturnDateTwoMonthsLaterFromGivenDate() {
         Date actualDate = DateUtil.getDatePlusMonths(exampleDate, 2);
-        String stringActualDate = DateUtil.convertDate(actualDate, DATE_PATTERN);
+        String stringActualDate = DateUtil.convertDateWithLocale(actualDate, DATE_PATTERN, null);
 
         assertEquals("2021-07-11 16:35:00", stringActualDate);
     }

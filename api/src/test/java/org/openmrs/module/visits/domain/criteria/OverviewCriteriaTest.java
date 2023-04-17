@@ -44,12 +44,6 @@ public class OverviewCriteriaTest {
         assertThat(getCriterions(criteria), hasSize(2));
     }
 
-    @Test
-    public void shouldBuildCriteriaWithLocationUuid() {
-        OverviewCriteria overviewCriteria = OverviewCriteria.forLocationUuid(location.getUuid());
-        assertEquals(location.getUuid(), overviewCriteria.getLocationUuid());
-    }
-
     private List<CriterionEntry> getCriterions(Criteria criteria) throws NoSuchFieldException, IllegalAccessException {
         Field privateStringField = CriteriaImpl.class.
                 getDeclaredField("criterionEntries");

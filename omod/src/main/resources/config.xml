@@ -65,5 +65,15 @@
         <file>messages.properties</file>
     </messages>
 
+    <advice>
+        <point>org.openmrs.api.VisitService</point>
+        <class>org.openmrs.module.visits.rest.web.service.impl.aop.VisitAttributeOnUpdateAdvice</class>
+    </advice>
+
+    <advice>
+        <point>org.openmrs.api.PatientService</point>
+        <class>org.openmrs.module.visits.rest.web.service.impl.aop.PatientIdentifierTypeOnUpdateAdvice</class>
+    </advice>
+
 </module>
 
