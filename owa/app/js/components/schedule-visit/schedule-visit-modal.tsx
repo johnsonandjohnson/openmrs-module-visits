@@ -10,7 +10,8 @@
 
 import React from "react";
 import { connect } from 'react-redux';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
+import { injectIntl } from 'react-intl';
+import { PropsWithIntl } from '../../components/translation/PropsWithIntl';
 import _ from "lodash";
 import { RouteComponentProps } from 'react-router-dom';
 import IModalParams from "../manage-visits/modal-params";
@@ -65,7 +66,7 @@ interface IState {
 const FORM_CLASS = 'form-control';
 const ERROR_FORM_CLASS = FORM_CLASS + ' error-field';
 
-class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
+class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, IState> {
   state = {
     isSaveButtonDisabled: true,
     showExtraInfoModal: false
@@ -103,7 +104,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   isEdit = () => !!this.props.visitUuid;
 
   validate = () =>
-    this.props.visit.validate(true, this.isEdit()).then((visit) => {
+    this.props.visit.validate(true, this.isEdit(), this.props.intl).then((visit) => {
       this.setState({ isSaveButtonDisabled: !!Object.keys(visit.errors).length });
     });
 
@@ -111,10 +112,10 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
     const cloned = _.cloneDeep(this.props.visit);
     cloned[prop] = newValue;
     cloned.touchedFields[prop] = true;
-    this.props.updateVisit(cloned);
+    this.props.updateVisit(cloned, this.props.intl);
   };
 
-  handleSave = () => this.props.saveVisit(this.props.visit, this.saveVisitCallback);
+  handleSave = () => this.props.saveVisit(this.props.visit, this.saveVisitCallback, this.props.intl);
 
   saveVisitCallback = () => {
     this.closeModal();
@@ -171,9 +172,8 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitDate = (errors) =>
     this.renderDatePicker(
       errors,
-      getIntl(this.props.locale).formatMessage({
-        id: "VISITS_VISIT_PLANNED_DATE_LABEL",
-        defaultMessage: Default.VISIT_PLANNED_DATE_LABEL,
+      this.props.intl.formatMessage({
+        id: "visits.visitPlannedDateLabel"
       }),
       "startDate"
     );
@@ -181,9 +181,8 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderActualDate = (errors) =>
     this.renderDatePicker(
       errors,
-      getIntl().formatMessage({
-        id: "VISITS_VISIT_ACTUAL_DATE_LABEL",
-        defaultMessage: Default.VISIT_ACTUAL_DATE_LABEL,
+      this.props.intl.formatMessage({
+        id: "visits.visitActualDateLabel"
       }),
       "actualDate"
     );
@@ -191,7 +190,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderLocation = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl(this.props.locale).formatMessage({ id: "VISITS_LOCATION_LABEL", defaultMessage: Default.LOCATION_LABEL }),
+      this.props.intl.formatMessage({ id: "visits.locationLabel" }),
       "location",
       this.props.locations.map((type) => (
         <option value={type.uuid} key={type.uuid}>
@@ -203,7 +202,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitType = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl(this.props.locale).formatMessage({ id: "VISITS_VISIT_TYPE_LABEL", defaultMessage: Default.VISIT_TYPE_LABEL }),
+      this.props.intl.formatMessage({ id: "visits.visitTypeLabel" }),
       "type",
       this.props.visitTypes.map((type) => (
         <option value={type.uuid} key={type.uuid}>
@@ -216,7 +215,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitStatus = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl(this.props.locale).formatMessage({ id: "VISITS_VISIT_STATUS_LABEL", defaultMessage: Default.VISIT_STATUS_LABEL }),
+      this.props.intl.formatMessage({ id: "visits.visitStatusLabel" }),
       "status",
       this.props.visitStatuses.map((status) => (
         <option value={status} key={status}>
@@ -229,7 +228,7 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
   renderVisitTime = (errors) =>
     this.renderDropdown(
       errors,
-      getIntl(this.props.locale).formatMessage({ id: "VISITS_VISIT_TIME_LABEL", defaultMessage: Default.VISIT_TIME_LABEL }),
+      this.props.intl.formatMessage({ id: "visits.visitTimeLabel" }),
       "time",
       this.props.visitTimes.map((time) => (
         <option value={time} key={time}>
@@ -251,8 +250,8 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
         onClick={isExtraInformationEnabled === 'true' ? this.openExtraInfoModal : this.handleSave}
         disabled={this.state.isSaveButtonDisabled}
       >
-        {getIntl(this.props.locale).formatMessage({
-          id: this.isEdit() ? "VISITS_SAVE_BUTTON_LABEL" : "VISITS_SCHEDULE_VISIT_BUTTON_LABEL",
+        {this.props.intl.formatMessage({
+          id: this.isEdit() ? "visits.saveButtonLabel" : "visits.scheduleVisitButtonLabel",
           defaultMessage: Default.SAVE_BUTTON_LABEL,
         })}
       </Button>
@@ -276,8 +275,8 @@ class ScheduleVisitModal extends React.PureComponent<IProps, IState> {
         <Modal.Body>
           <div className="modal-title">
             {this.isEdit()
-              ? getIntl(this.props.locale).formatMessage({ id: "VISITS_EDIT_VISIT", defaultMessage: Default.EDIT_VISIT })
-              : getIntl(this.props.locale).formatMessage({ id: "VISITS_SCHEDULE_VISIT", defaultMessage: Default.SCHEDULE_VISIT })}
+              ? this.props.intl.formatMessage({ id: "visits.editVisit" })
+              : this.props.intl.formatMessage({ id: "visits.scheduleVisit" })}
           </div>
           <Form className="fields-form">
             <Row>
@@ -415,7 +414,7 @@ const mapDispatchToProps = ({
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default connect(
+export default injectIntl(connect(
   mapStateToProps,
   mapDispatchToProps
-)(ScheduleVisitModal);
+)(ScheduleVisitModal));

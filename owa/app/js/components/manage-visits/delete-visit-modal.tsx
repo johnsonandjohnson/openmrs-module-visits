@@ -11,7 +11,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { Modal, Button } from 'react-bootstrap';
-import { LocalizedMessage } from '@openmrs/react-components';
+import { FormattedMessage } from 'react-intl';
 
 import IModalParams from './modal-params';
 import './delete-visit-modal.scss';
@@ -30,18 +30,10 @@ class DeleteVisitModal extends React.PureComponent<IProps, IState> {
 
   buildModal = (modalParams: IModalParams) => {
     const { show, confirm, cancel } = this.props;
-    const title = <LocalizedMessage
-      id="DELETE_VISIT_MODAL_TITLE"
-      defaultMessage="Delete Visit" />;
-    const txt = <LocalizedMessage
-      id="DELETE_VISIT_MODAL_QUESTION"
-      defaultMessage="Are you sure you want to delete this Visit?" />;
-    const confirmLabel = <LocalizedMessage
-      id="YES_LABEL"
-      defaultMessage="YES" />;
-    const cancelLabel = <LocalizedMessage
-      id="NO_LABEL"
-      defaultMessage="NO" />;
+    const title = <FormattedMessage id="deleteVisitModalTittle" />;
+    const txt = <FormattedMessage id= "deleteVisitModalQuestion" />;
+    const confirmLabel = <FormattedMessage id="yesLabel" />;
+    const cancelLabel = <FormattedMessage  id="noLabel" />;
 
     return (
       <Modal id="delete-visit-modal" show={show} onHide={cancel}>

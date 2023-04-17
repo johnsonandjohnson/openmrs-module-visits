@@ -29,6 +29,8 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/sql/sql';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/addon/display/fullscreen.css';
+import TranslationProvider from "./components/translation/translation-provider";
+import Customize from './components/customize/customize';
 
 loadIcons();
 toast.configure();
@@ -37,9 +39,14 @@ const store = initStore();
 render((
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <HashRouter>
-        {routes(store)}
-      </HashRouter>
+      <>
+        <Customize />
+        <TranslationProvider>
+          <HashRouter>
+            {routes(store)}
+          </HashRouter>
+        </TranslationProvider>
+      </>
     </ConnectedRouter>
   </Provider>
 ), document.getElementById('app'));

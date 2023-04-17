@@ -13,9 +13,9 @@ import {IForm} from "../../components/validation/model/form";
 import * as Yup from "yup";
 import _ from 'lodash';
 import * as Default from '../../shared/utils/messages';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import {validateFormSafely} from '../../components/validation/validation';
 import IVisitDetails from "./visit-details";
+import { Props } from "@fortawesome/react-fontawesome";
 
 export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDetails, IForm {
   uuid: string;
@@ -35,9 +35,9 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     this.touchedFields = {};
   }
 
-  async validate(validateNotTouched: boolean, isEdit: boolean): Promise<VisitUI> {
-    const schema = this.getValidationSchema(validateNotTouched, isEdit);
-
+  async validate(validateNotTouched: boolean, isEdit: boolean, intl: any): Promise<VisitUI> {
+    const schema = this.getValidationSchema(validateNotTouched, isEdit, intl);
+    
     const validationResult = await validateFormSafely(this, schema);
 
     const visit = _.clone(this);
@@ -45,15 +45,15 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     return visit;
   }
 
-  getValidationSchema(validateNotTouched: boolean, isEdit: boolean): Yup.ObjectSchema {
+  getValidationSchema(validateNotTouched: boolean, isEdit: boolean, intl: any): Yup.ObjectSchema {
     const createValidators = {
-      type: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
+      type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
         v => this.validateRequiredField('type', v, validateNotTouched))
     };
     const editValidators = {
-      type: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
+      type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
         v => this.validateRequiredField('type', v, validateNotTouched)),
-      status: Yup.string().test('mandatory check', getIntl().formatMessage({ id: 'VISITS_FIELD_REQUIRED', defaultMessage: Default.FIELD_REQUIRED }),
+      status: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
         v => this.validateRequiredField('status', v, validateNotTouched))
     };
 

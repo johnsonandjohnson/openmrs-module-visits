@@ -21,7 +21,6 @@ import {
 } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
 import * as Default from '../../shared/utils/messages';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import DeleteVisitModal from './delete-visit-modal';
 import ScheduleVisitModal from '../schedule-visit/schedule-visit-modal';
 import ManageVisitTable from './table';
@@ -30,6 +29,8 @@ import ITableParams from './table-params';
 import './manage-visits.scss';
 import { formatDateIfDefined } from '../../shared/utils/date-util';
 import { SINGLE_PAGE_NUMBER } from './table/constants';
+import { injectIntl } from 'react-intl';
+import { PropsWithIntl } from '../../components/translation/PropsWithIntl';
 
 const MANAGE_DATE_FORMAT = 'DD MMM YYYY';
 
@@ -46,7 +47,7 @@ interface IState {
   tableParams: ITableParams | null
 }
 
-class ManageVisits extends React.Component<IProps, IState> {
+class ManageVisits extends React.Component<PropsWithIntl<IProps>, IState> {
   state = {
     showDeleteVisitModal: false,
     showScheduleVisitModal: false,
@@ -89,7 +90,7 @@ class ManageVisits extends React.Component<IProps, IState> {
         className="btn btn-success btn-md add-btn"
         onClick={this.handleScheduleVisitButton}
       >
-        {getIntl(this.props.locale).formatMessage({ id: 'VISITS_SCHEDULE_VISIT', defaultMessage: Default.SCHEDULE_VISIT })}
+        {this.props.intl.formatMessage({ id: "visits.scheduleVisit" })}
       </Button>
     );
   }
@@ -113,12 +114,13 @@ class ManageVisits extends React.Component<IProps, IState> {
       multiSort={false}
       showPagination={this.props.visitsPagesCount > SINGLE_PAGE_NUMBER}
       locale={this.props.locale}
+      intl={this.props.intl}
     />
 
   confirmDeleteVisit = (modalParams: IModalParams | null) => {
     if (!!modalParams) {
       const { uuid, params } = modalParams;
-      this.props.deleteVisit(uuid, params.activePage, params.itemsPerPage, this.props.match.params.patientUuid);
+      this.props.deleteVisit(uuid, params.activePage, params.itemsPerPage, this.props.match.params.patientUuid, this.props.intl);
       this.closeDeleteVisitModal();
     }
   }
@@ -169,9 +171,9 @@ class ManageVisits extends React.Component<IProps, IState> {
           <div className="visit-header-section">
             <div className="header-left-section">
               <ControlLabel className="fields-form-title">
-                <h2>{getIntl(this.props.locale).formatMessage({ id: 'VISITS_MANAGE_VISITS', defaultMessage: Default.MANAGE_VISITS })}</h2>
+                <h2>{this.props.intl.formatMessage({ id: "visits.manageVisits" })}</h2>
                 <div className="helper-text">
-                  {getIntl(this.props.locale).formatMessage({ id: 'VISITS_MANAGE_VISITS_DESCRIPTION', defaultMessage: Default.MANAGE_VISITS_DESCRIPTION })}
+                  {this.props.intl.formatMessage({ id: "visits.manageVisitsDescription" })}
                 </div>
               </ControlLabel>
             </div>
@@ -205,7 +207,7 @@ const mapDispatchToProps = ({
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default connect(
+export default injectIntl(connect(
   mapStateToProps,
   mapDispatchToProps
-)(ManageVisits);
+)(ManageVisits));

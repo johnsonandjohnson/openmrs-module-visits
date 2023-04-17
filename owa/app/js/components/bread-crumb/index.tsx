@@ -16,9 +16,10 @@ import UrlPattern from 'url-pattern';
 import './bread-crumb.scss';
 import { UnregisterCallback } from 'history';
 import * as Default from '../../shared/utils/messages';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import { getPatient } from '../../reducers/patient.reducer';
 import { IRootState } from '../../reducers';
+import { injectIntl } from 'react-intl';
+import { PropsWithIntl } from '../../components/translation/PropsWithIntl';
 
 const EDIT_VISIT_PATTERN = new UrlPattern(`/visits/manage/:patientUuid/schedule/:visitUuid`);
 const OVERVIEW_VISIT_PATTERN = new UrlPattern(`/visits/overview`);
@@ -36,10 +37,10 @@ interface IBreadCrumbState {
   current: string
 };
 
-class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>{
+class BreadCrumb extends React.PureComponent<PropsWithIntl<IBreadCrumbProps>, IBreadCrumbState>{
   unlisten: UnregisterCallback;
 
-  constructor(props: IBreadCrumbProps) {
+  constructor(props: PropsWithIntl<IBreadCrumbProps>) {
     super(props);
 
     const { history } = this.props;
@@ -75,7 +76,7 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     } else if (!!MANAGE_VISIT_PATTERN.match(path.toLowerCase())) {
       return this.getManageVisitCrumbs(path);
     } else {
-      return [this.renderLastCrumb(getIntl(this.props.locale).formatMessage({ id: 'VISITS_GENERAL_MODULE_BREADCRUMB', defaultMessage: Default.GENERAL_MODULE_BREADCRUMB }))];
+      return [this.renderLastCrumb(this.props.intl.formatMessage({ id: "visits.generalModuleBreadcrumb" }))];
     }
   }
 
@@ -98,29 +99,29 @@ class BreadCrumb extends React.PureComponent<IBreadCrumbProps, IBreadCrumbState>
     const match = pattern.match(path.toLowerCase());
     return this.renderCrumb(
       MANAGE_VISITS_ROUTE(match.patientUuid),
-      getIntl(this.props.locale).formatMessage({ id: 'VISITS_MANAGE_VISITS_BREADCRUMB', defaultMessage: Default.MANAGE_VISITS_BREADCRUMB })
+      this.props.intl.formatMessage({ id: "visits.manageVisitsBreadcrumb" })
     );
   }
 
   getOverviewVisitCrumbs = (): Array<ReactFragment> => [
-    this.renderLastCrumb(getIntl(this.props.locale).formatMessage({ id: 'VISITS_OVERVIEW_VISIT_BREADCRUMB', defaultMessage: Default.OVERVIEW_VISIT_BREADCRUMB }))
+    this.renderLastCrumb(this.props.intl.formatMessage({ id: "visits.overviewVisitsBreadcrumb" }))
   ];
 
   getScheduleVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientLabelCrumb(path, SCHEDULE_VISIT_PATTERN),
     this.getManageVisitsCrumb(path, SCHEDULE_VISIT_PATTERN),
-    this.renderLastCrumb(getIntl(this.props.locale).formatMessage({ id: 'VISITS_SCHEDULE_VISIT_BREADCRUMB', defaultMessage: Default.SCHEDULE_VISIT_BREADCRUMB }))
+    this.renderLastCrumb(this.props.intl.formatMessage({ id: "visits.scheduleVisitBreadCrumb" }))
   ];
 
   getEditVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientLabelCrumb(path, EDIT_VISIT_PATTERN),
     this.getManageVisitsCrumb(path, EDIT_VISIT_PATTERN),
-    this.renderLastCrumb(getIntl(this.props.locale).formatMessage({ id: 'VISITS_EDIT_VISIT_BREADCRUMB', defaultMessage: Default.EDIT_VISIT_BREADCRUMB }))
+    this.renderLastCrumb(this.props.intl.formatMessage({ id: "visits.editVisitBreadcrumbs" }))
   ];
 
   getManageVisitCrumbs = (path: string): Array<ReactFragment> => [
     this.getPatientLabelCrumb(path, MANAGE_VISIT_PATTERN),
-    this.renderLastCrumb(getIntl(this.props.locale).formatMessage({ id: 'VISITS_MANAGE_VISITS_BREADCRUMB', defaultMessage: Default.MANAGE_VISITS_BREADCRUMB }))
+    this.renderLastCrumb(this.props.intl.formatMessage({ id: "visits.manageVisitsBreadcrumb" }))
   ];
 
   renderCrumbs = (elements: Array<any>) => {
@@ -176,7 +177,7 @@ const mapDispatchToProps = ({
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default withRouter(connect(
+export default injectIntl(withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(BreadCrumb));
+)(BreadCrumb)));
