@@ -14,7 +14,7 @@ export const WEEK_DAYS_KEYS = [
     'cfl.weekDay.Sunday.shortName',
     'cfl.weekDay.Monday.shortName',
     'cfl.weekDay.Tuesday.shortName',
-    'cfl.weekDay.Wednsday.shortName',
+    'cfl.weekDay.Wednesday.shortName',
     'cfl.weekDay.Thursday.shortName',
     'cfl.weekDay.Friday.shortName',
     'cfl.weekDay.Saturday.shortName'
