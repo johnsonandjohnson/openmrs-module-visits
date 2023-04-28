@@ -36,7 +36,7 @@ loadIcons();
 toast.configure();
 const store = initStore();
 
-render((
+render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <>
@@ -49,4 +49,4 @@ render((
       </>
     </ConnectedRouter>
   </Provider>
-), document.getElementById('app'));
+, document.getElementById('app'));

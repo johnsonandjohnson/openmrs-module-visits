@@ -35,8 +35,8 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     this.touchedFields = {};
   }
 
-  async validate(validateNotTouched: boolean, isEdit: boolean, intl: any): Promise<VisitUI> {
-    const schema = this.getValidationSchema(validateNotTouched, isEdit, intl);
+  async validate(validateNotTouched: boolean, intl: any, isEdit: boolean): Promise<VisitUI> {
+    const schema = this.getValidationSchema(validateNotTouched, intl, isEdit);
     
     const validationResult = await validateFormSafely(this, schema);
 
@@ -45,7 +45,7 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     return visit;
   }
 
-  getValidationSchema(validateNotTouched: boolean, isEdit: boolean, intl: any): Yup.ObjectSchema {
+  getValidationSchema(validateNotTouched: boolean, intl: any, isEdit: boolean): Yup.ObjectSchema {
     const createValidators = {
       type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
         v => this.validateRequiredField('type', v, validateNotTouched))

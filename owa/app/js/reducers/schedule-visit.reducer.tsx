@@ -180,13 +180,13 @@ export const getLocations = () => async (dispatch) => {
 export const updateVisit = (visit: VisitUI, intl: any) => async (dispatch) => {
   dispatch({
     type: ACTION_TYPES.UPDATE_VISIT,
-    payload: await visit.validate(false, true, intl)
+    payload: await visit.validate(false, intl, true)
   })
 };
 
 export const saveVisit = (visit: VisitUI, intl: any, successCallback?) => async (dispatch) => {
   const isEdit = !!visit.uuid;
-  const validated = await visit.validate(true, isEdit, intl);
+  const validated = await visit.validate(true, intl, isEdit);
   if (_.isEmpty(validated.errors)) {
     const payload = isEdit ?
       axiosInstance.put(`${moduleUrl}/${visit.uuid}`, visit)

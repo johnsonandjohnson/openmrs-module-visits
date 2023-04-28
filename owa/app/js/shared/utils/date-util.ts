@@ -11,9 +11,6 @@
 import { parse } from 'date-fns';
 import moment from 'moment';
 
-const TODAY = moment();
-const WEEK = moment().add(6, 'days');
-const MONTH = moment().add(1, 'months');
 const CLEAR_DATE = null;
 const ONE_DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
 
@@ -44,17 +41,28 @@ export const parseOrNow = (date?: string): Date => {
 }
 
 export const getDatesByPeriod = {
-  TODAY: () => ({
-    dateFrom: TODAY,
-    dateTo: TODAY
+  TODAY: (() => {
+    const TODAY = moment(); 
+    return {
+      dateFrom: TODAY,
+      dateTo: TODAY,
+    }
   }),
-  WEEK: () => ({
-    dateFrom: TODAY,
-    dateTo: WEEK
+  WEEK: (() => {
+    const TODAY = moment();
+    const WEEK = moment().add(6, 'days');
+    return {
+      dateFrom: TODAY,
+      dateTo: WEEK,
+    }
   }),
-  MONTH: () => ({
-    dateFrom: TODAY,
-    dateTo: MONTH
+  MONTH: (() => {
+    const TODAY = moment();
+    const MONTH = moment().add(1, 'months');
+    return {
+      dateFrom: TODAY,
+      dateTo: MONTH,
+    }
   }),
   ALL: () => ({
     dateFrom: CLEAR_DATE,

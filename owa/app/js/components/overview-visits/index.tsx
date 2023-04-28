@@ -57,7 +57,7 @@ const TIME_PERIOD_ALL = "ALL";
 const searchIcon = require("../../../img/search.png");
 
 interface IProps extends DispatchProps, StateProps {
-  locale?: string
+
 }
 
 interface IFilters {
@@ -89,8 +89,8 @@ class OverviewVisits extends React.Component<PropsWithIntl<IProps>, IState> {
   state = {
     query: "",
     filters: {
-      dateFrom: moment(),
-      dateTo: moment(),
+      dateFrom: null,
+      dateTo: null,
       visitStatus: {
         label: SCHEDULED_STATUS,
         value: SCHEDULED_STATUS,
@@ -119,16 +119,36 @@ class OverviewVisits extends React.Component<PropsWithIntl<IProps>, IState> {
   componentDidMount() {
     this.props.getVisitStatuses();
   }
-
-  componentDidUpdate(prevProps) {
+  
+  componentDidUpdate(prevProps, prevState) {
     const locationUuid = this.props.location?.uuid;
     const prevLocationUuid = prevProps.location?.uuid;
     const { filters, query } = this.state
     const { isVisitStatusesUpdateSuccess } = this.props;
 
+    if (filters.timePeriod.value === DEFAULT_TIME_PERIOD && filters.dateFrom == null && filters.dateTo == null) {
+      this.updateFilters();
+    }
+
+    if (filters.timePeriod.value !== prevState.filters.timePeriod.value) {
+      this.updateFilters();
+    }
+
     if ((locationUuid !== prevLocationUuid) || (isVisitStatusesUpdateSuccess && !prevProps.isVisitStatusesUpdateSuccess)) {
       this.getVisits(DEFAULT_ACTIVE_PAGE, DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, filters, query);
     }
+  }
+
+  updateFilters() {
+    const { filters } = this.state
+    const { dateFrom, dateTo } = getDatesByPeriod[filters.timePeriod.value]();
+    this.setState({
+      filters: {
+        ...filters,
+        dateFrom: dateFrom ? dateFrom : filters.dateFrom,
+        dateTo: dateTo ? dateTo : filters.dateTo
+      }
+    });
   }
 
   private getVisits = (
@@ -369,8 +389,10 @@ class OverviewVisits extends React.Component<PropsWithIntl<IProps>, IState> {
       <DateRangePicker
         startDate={dateFrom}
         startDateId="date_from"
+        startDatePlaceholderText={this.props.intl.formatMessage({ id: 'visits.overviewStartDate' })}
         endDate={dateTo}
         endDateId="date_to"
+        endDatePlaceholderText={this.props.intl.formatMessage({ id: 'visits.overviewEndDate' })}
         onDatesChange={({ startDate, endDate }) =>
           this.setState((state) => ({ filters: { ...state.filters, dateFrom: startDate, dateTo: endDate } }))
         }
@@ -426,7 +448,7 @@ class OverviewVisits extends React.Component<PropsWithIntl<IProps>, IState> {
   confirmChangeStatuses = (modalParams: IChangeStatusesModalParams | null) => {
     if (modalParams) {
       const { visitsUuids, newVisitStatus } = modalParams;
-      this.props.updateVisitStatuses(visitsUuids, newVisitStatus);
+      this.props.updateVisitStatuses(visitsUuids, newVisitStatus, this.props.intl);
       this.closeChangeVisitsStatusesModal();
       this.clearCheckboxes();
     }
@@ -570,7 +592,6 @@ class OverviewVisits extends React.Component<PropsWithIntl<IProps>, IState> {
           showPagination={this.props.pages > SINGLE_PAGE_NUMBER}
           resizable={false}
           onRowClick={this.onRowClick}
-          locale={this.props.locale} 
           intl={this.props.intl}        />
       </div>
     );

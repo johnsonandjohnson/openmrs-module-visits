@@ -104,7 +104,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   isEdit = () => !!this.props.visitUuid;
 
   validate = () =>
-    this.props.visit.validate(true, this.isEdit(), this.props.intl).then((visit) => {
+    this.props.visit.validate(true, this.props.intl, this.isEdit()).then((visit) => {
       this.setState({ isSaveButtonDisabled: !!Object.keys(visit.errors).length });
     });
 
@@ -115,7 +115,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     this.props.updateVisit(cloned, this.props.intl);
   };
 
-  handleSave = () => this.props.saveVisit(this.props.visit, this.saveVisitCallback, this.props.intl);
+  handleSave = () => this.props.saveVisit(this.props.visit, this.props.intl, this.saveVisitCallback);
 
   saveVisitCallback = () => {
     this.closeModal();

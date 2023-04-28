@@ -14,7 +14,6 @@ import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axiosInstance from '../components/shared/axios'
 import IVisitOverview from '../shared/model/visit-overview.model';
 import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
-import { getIntl } from "@openmrs/react-components/lib/components/localization/withLocalization";
 import * as Default from '../shared/utils/messages';
 
 export const ACTION_TYPES = {
@@ -106,7 +105,7 @@ export const reset = () => {
   };
 }
 
-export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any) => async (dispatch) => {
+export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any, intl: any) => async (dispatch) => {
   const url = `${moduleUrl}/overview/updateVisitStatuses`;
 
   const body = {
@@ -121,7 +120,7 @@ export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any) =
   await handleRequest(
     dispatch,
     body,
-    getIntl().formatMessage({ id: 'VISITS_GENERIC_SUCCESS', defaultMessage: Default.GENERIC_SUCCESS }),
-    getIntl().formatMessage({ id: 'VISITS_GENERIC_FAILURE', defaultMessage: Default.GENERIC_FAILURE })
+    intl.formatMessage({ id: 'visits.genericSuccess' }),
+    intl.formatMessage({ id: 'visits.genericFailure' })
   );
 };
