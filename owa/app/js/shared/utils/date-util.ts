@@ -74,3 +74,8 @@ export const getNumberOfDaysBetweenDates = (date1: Date, date2: Date) => {
   return Math.abs((Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) - 
     Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()))) / ONE_DAY_IN_MILISECONDS;
 };
+
+export const visitDatesTheSame = (date1: Date, date2: Date) => {
+  return (Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) === 
+    Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()))
+};

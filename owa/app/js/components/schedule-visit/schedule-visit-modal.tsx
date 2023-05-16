@@ -45,7 +45,7 @@ import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import "../schedule-visit/schedule-visit-modal.scss"
 import ExtraInformationModal from "./extra-information-modal";
-import { getNumberOfDaysBetweenDates } from "../../shared/utils/date-util";
+import { getNumberOfDaysBetweenDates, visitDatesTheSame } from "../../shared/utils/date-util";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps {
   show: boolean;
@@ -324,6 +324,11 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     return getNumberOfDaysBetweenDates(currentVisitDate, searchedDate);
   }
 
+  isVisitForThisDayDuplicated = (allVisitDates: Date[], currentVisitDate: Date) => {
+    
+    return allVisitDates.some(date => visitDatesTheSame(date, currentVisitDate));
+  }
+
   getPatientVisitsDates = () => {
     let { patientVisits } = this.props;
 
@@ -354,7 +359,8 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       currentVisitWeekday,
       precedingVisitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(patientVisitsDates, currentVisitDate),
       nextVistitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestFutureVisit(patientVisitsDates, currentVisitDate),
-      isDayHolidayWeekday
+      isDayHolidayWeekday,
+      isVisitDateDuplicated: this.isVisitForThisDayDuplicated(patientVisitsDates, currentVisitDate)
     }
 
     return (

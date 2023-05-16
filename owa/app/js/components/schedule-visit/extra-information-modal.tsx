@@ -31,6 +31,7 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, int
 	const isNextVisit = !!modalParams?.nextVistitDaysNumber;
 	const isPreviousAndNextVisit = isPreviousVisit && isNextVisit;
 	const formattedDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, modalParams?.currentVisitDate);
+	const isVisitDateDuplicated = modalParams?.isVisitDateDuplicated;
 	
   const currentVisitWeekday = intl.formatMessage({id: `${modalParams?.currentVisitWeekday.toUpperCase()}` })
 	const infoMsgPartOne = `${intl.formatMessage({id: "visitSavedOnText" })} ${currentVisitWeekday}, ${formattedDate}.`;
@@ -40,6 +41,7 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, int
 	const nextVisitPlannedText = `${intl.formatMessage({id: "nextVisitPlannedOnText" })}`;
 	const nextVisitPlannedConvertedText = !isPreviousAndNextVisit ? nextVisitPlannedText.charAt(0).toUpperCase() + nextVisitPlannedText.slice(1) : nextVisitPlannedText;
 	const infoMsgPartFour = ` ${nextVisitPlannedConvertedText} ${modalParams?.nextVistitDaysNumber} ${intl.formatMessage({id: "daysAfterVisitText" })}.`;
+	const visitForThisDateIsDuplicatedText = `${intl.formatMessage({id: "duplicatedVisitDateText" })}`;
 	
 	if (!show) {
 		return null;
@@ -49,7 +51,11 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, int
 		<Modal id="extra-info-modal" show={show} onHide={cancel}>
 			<Modal.Body>
 				<div className="modal-title">{intl.formatMessage({id: "informationLabel" })}</div>
-				<p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ''}>{infoMsgPartOne}</p>
+				<p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ''}>
+					{infoMsgPartOne}
+					<br />
+					{isVisitDateDuplicated && <span>{visitForThisDateIsDuplicatedText}</span>}
+				</p>
 				<p>
 					{isPreviousVisit && <span>{infoMsgPartTwo}</span>}
 					{isPreviousAndNextVisit && <span>{infoMsgPartThree}</span>}
