@@ -1,0 +1,114 @@
+#edit-visit-dialog {
+  display: none;
+  width: 380px !important;
+  position: fixed;
+  z-index: 1000;
+  top: 100px;
+  left: 500px;
+}
+
+#edit-visit-dialog select {
+  color: #2B3640 !important;
+  outline: none !important;
+  border: 1px solid #ced4da !important;
+  box-shadow: none;
+  padding: 10px 12px;
+  margin: 5px 0px;
+}
+
+#edit-visit-dialog select:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+}
+
+#edit-visit-dialog select option {
+  font-size: 16px !important;
+}
+
+#edit-visit-dialog li label {
+  width: 300px !important;
+  text-align: left !important;
+}
+
+.visit-date {
+  width: 90px;
+}
+
+.icon-stethoscope {
+  color: #363463;
+}
+
+.icon-pencil:hover {
+  cursor: pointer;
+}
+
+.visit-section-label {
+  margin-top: 5px;
+  margin-bottom: auto;
+}
+
+#visit-date-select {
+  width: 100%;
+  color: #333333;
+  border: 1px solid #ced4da;
+  outline: none !important;
+  border: 1px solid #ced4da !important;
+  box-shadow: none;
+  padding: 10px 12px;
+}
+
+#visit-date-select:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+}
+
+#edit-visit-dialog button.confirm {
+  background: #00455C;
+  border: #00455C 1px solid;
+  font-size: 14px;
+}
+
+#extra-info-dialog button.confirm {
+  background: #00455C;
+  border: #00455C 1px solid;
+  font-size: 14px !important;
+}
+
+#edit-visit-dialog button.cancel {
+  background: transparent;
+  border: #000000 1px solid;
+  color: #00455C;
+  font-size: 14px;
+}
+
+#extra-info-dialog button.cancel {
+  background: transparent;
+  border: #000000 1px solid;
+  color: #00455C;
+  font-size: 14px !important;
+  text-transform: capitalize;
+  padding: 8px 20px;
+}
+
+#edit-visit-dialog .dialog-title {
+  font-size: 18px !important;
+}
+
+#extra-info-dialog {
+  display: none;
+  width: 600px !important;
+  position: fixed;
+  z-index: 1100;
+  top: 250px;
+  left: 400px;
+}
+
+#extra-info-dialog .extra-info-dialog-info-label {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333333;
+}
+
+#extra-info-dialog .extra-info-dialog-paragraph {
+  font-size: 14px;
+  color: #333333;
+  max-width: 500px !important;
+}

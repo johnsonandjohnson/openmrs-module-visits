@@ -204,7 +204,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       errors,
       this.props.intl.formatMessage({ id: "visits.visitTypeLabel" }),
       "type",
-      this.props.visitTypes.map((type) => (
+      this.props.visitTypes.filter(type => !type.retired).map((type) => (
         <option value={type.uuid} key={type.uuid}>
           {type.display}
         </option>

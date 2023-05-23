@@ -10,36 +10,6 @@
 
 package org.openmrs.module.visits.fragment.controller.clinicianfacing;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.openmrs.Location;
-import org.openmrs.Patient;
-import org.openmrs.Visit;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.appframework.context.AppContextModel;
-import org.openmrs.module.appframework.template.TemplateFactory;
-import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.coreapps.CoreAppsProperties;
-import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
-import org.openmrs.module.coreapps.utils.VisitTypeHelper;
-import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.module.emrapi.adt.AdtService;
-import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
-import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.module.visits.api.util.DateUtil;
-import org.openmrs.module.visits.api.util.GlobalPropertyUtils;
-import org.openmrs.ui.framework.UiUtils;
-import org.openmrs.ui.framework.fragment.FragmentConfiguration;
-import org.openmrs.ui.framework.fragment.FragmentModel;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyString;
@@ -50,6 +20,34 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+import java.util.Locale;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.VisitService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.context.AppContextModel;
+import org.openmrs.module.appframework.template.TemplateFactory;
+import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
+import org.openmrs.module.coreapps.utils.VisitTypeHelper;
+import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.visits.api.service.ConfigService;
+import org.openmrs.module.visits.api.util.GlobalPropertyUtils;
+import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.fragment.FragmentConfiguration;
+import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Context.class, GlobalPropertyUtils.class})
 public class VisitsSectionFragmentControllerTest {
@@ -57,7 +55,7 @@ public class VisitsSectionFragmentControllerTest {
   private final VisitsSectionFragmentController controller = new VisitsSectionFragmentController();
 
   private static final String PATIENT_ATTR_NAME = "patient";
-
+  
   @Mock private TemplateFactory templateFactory;
 
   @Mock private AdtService adtService;
@@ -80,7 +78,11 @@ public class VisitsSectionFragmentControllerTest {
 
   @Mock private AppContextModel appContextModel;
 
-  @Mock private EmrApiProperties emrApiProperties;
+  @Mock private ConfigService configService;
+
+  @Mock private VisitService visitService;
+
+  @Mock private LocationService locationService;
 
   @Before
   public void setUp() {
@@ -97,6 +99,10 @@ public class VisitsSectionFragmentControllerTest {
     when(patientDomainWrapper.getPatient()).thenReturn(new Patient(1));
     doReturn(appContextModel).when(uiSessionContext).generateAppContextModel();
     when(GlobalPropertyUtils.getInteger(anyString())).thenReturn(1);
+    when(Context.getService(ConfigService.class)).thenReturn(configService);
+    when(Context.getVisitService()).thenReturn(visitService);
+    when(Context.getLocationService()).thenReturn(locationService);
+    when(Context.getLocale()).thenReturn(Locale.ENGLISH);
   }
 
   @Test
@@ -150,22 +156,11 @@ public class VisitsSectionFragmentControllerTest {
         .get("editPageUrl");
     when(adtService.getActiveVisit(any(Patient.class), any(Location.class)))
         .thenReturn(new VisitDomainWrapper());
-    when(patientDomainWrapper.getAllVisitsUsingWrappers())
-        .thenReturn(createTestVisitDomainWrapper());
 
     controller.controller(configuration, model, uiUtils, uiSessionContext, patientDomainWrapper);
 
     verifyBasicProperties();
-    verify(appContextModel, times(2)).put(eq("visit"), any(Visit.class));
-  }
-
-  private List<VisitDomainWrapper> createTestVisitDomainWrapper() {
-    VisitDomainWrapper visitDomainWrapper = new VisitDomainWrapper();
-    Visit visit = new Visit(1);
-    visit.setStartDatetime(DateUtil.getDatePlusDays(new Date(), 5));
-    visitDomainWrapper.setVisit(visit);
-    visitDomainWrapper.setEmrApiProperties(emrApiProperties);
-    return Collections.singletonList(visitDomainWrapper);
+    verify(appContextModel, times(1)).put(eq("visit"), any(Visit.class));
   }
 
   private void verifyBasicProperties() {

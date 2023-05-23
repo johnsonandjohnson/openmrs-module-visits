@@ -117,16 +117,6 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
 
         return (
           <>
-            {!!visit.formUri && (
-              <span className="action-button">
-                <a
-                  id={`visit-note-button-${viewIndex}`}
-                  href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}
-                >
-                  <FontAwesomeIcon icon={faStethoscope} size="1x" />
-                </a>
-              </span>
-            )}
             <span className="action-button">
               <i
                 id={`visit-update-button-${viewIndex}`}
@@ -135,6 +125,19 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
                 <FontAwesomeIcon icon={faPencilAlt} size="1x" />
               </i>
             </span>
+            {!!visit.formUri ? (
+              <span className="action-button">
+                <a
+                  id={`visit-note-button-${viewIndex}`}
+                  href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}
+                >
+                  <FontAwesomeIcon icon={faStethoscope} size="1x" />
+                </a>
+              </span>
+              ) : (
+              <span className="action-button"></span>
+              )
+            }
             <span className="action-button">
               <i
                 id={`visit-delete-button-${viewIndex}`}
