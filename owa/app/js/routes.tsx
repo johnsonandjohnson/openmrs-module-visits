@@ -9,9 +9,8 @@
  */
 
 import React from 'react'
-import { FormattedMessage } from "react-intl";
 import { Route, Switch } from 'react-router-dom';
-import {Header, LocalizedMessage } from '@openmrs/react-components';
+import { Header } from '@openmrs/react-components';
 import BreadCrumb from './components/bread-crumb';
 import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
 import { withNotifications } from './components/hoc/with-notifications';

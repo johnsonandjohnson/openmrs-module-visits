@@ -12,7 +12,6 @@ import {ObjectUI} from "../../components/base-model/object-ui";
 import {IForm} from "../../components/validation/model/form";
 import * as Yup from "yup";
 import _ from 'lodash';
-import * as Default from '../../shared/utils/messages';
 import {validateFormSafely} from '../../components/validation/validation';
 import IVisitDetails from "./visit-details";
 import { Props } from "@fortawesome/react-fontawesome";

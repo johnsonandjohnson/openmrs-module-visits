@@ -20,7 +20,6 @@ import {
   deleteVisit
 } from '../../reducers/schedule-visit.reducer';
 import { IRootState } from '../../reducers';
-import * as Default from '../../shared/utils/messages';
 import DeleteVisitModal from './delete-visit-modal';
 import ScheduleVisitModal from '../schedule-visit/schedule-visit-modal';
 import ManageVisitTable from './table';

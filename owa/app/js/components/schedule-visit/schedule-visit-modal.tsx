@@ -39,7 +39,6 @@ import {
 import ErrorDesc from '../error-description/error-desc';
 import FormLabel from '../form-label/form-label';
 import OpenMrsDatePicker from '../openmrs-date-picker/openmrs-date-picker';
-import * as Default from '../../shared/utils/messages';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 
@@ -252,7 +251,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       >
         {this.props.intl.formatMessage({
           id: this.isEdit() ? "visits.saveButtonLabel" : "visits.scheduleVisitButtonLabel",
-          defaultMessage: Default.SAVE_BUTTON_LABEL,
+          defaultMessage: this.props.intl.formatMessage({ id: "visits.saveButtonLabel"}),
         })}
       </Button>
     );

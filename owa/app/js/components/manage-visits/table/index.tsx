@@ -21,7 +21,6 @@ import {
   MIN_ROWS,
   PAGE_SIZE_OPTIONS
 } from './constants';
-import * as Default from '../../../shared/utils/messages';
 import { withFiltersChangedCallback } from './with-filters-changed-callback';
 import IVisit from '../../../shared/model/visit';
 import ITableParams from '../table-params';

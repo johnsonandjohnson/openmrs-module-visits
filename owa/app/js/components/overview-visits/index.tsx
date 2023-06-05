@@ -16,8 +16,6 @@ import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button } from "react-bootstrap";
-
-import * as Default from "../../shared/utils/messages";
 import { PropsWithIntl } from '../../components/translation/PropsWithIntl';
 import { getOverviewPage } from "../../reducers/overview-visits.reducer";
 import { getVisitStatuses } from "../../reducers/schedule-visit.reducer";

@@ -14,7 +14,6 @@ import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
 import axiosInstance from '../components/shared/axios'
 import IVisitType from '../shared/model/visit-type';
 import VisitUI from '../shared/model/visit-ui';
-import * as Default from '../shared/utils/messages';
 import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
 import ILocation from '../shared/model/location';
 import IVisitDetails from '../shared/model/visit-details'; 

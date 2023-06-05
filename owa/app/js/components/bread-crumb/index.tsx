@@ -15,7 +15,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import UrlPattern from 'url-pattern';
 import './bread-crumb.scss';
 import { UnregisterCallback } from 'history';
-import * as Default from '../../shared/utils/messages';
 import { getPatient } from '../../reducers/patient.reducer';
 import { IRootState } from '../../reducers';
 import { injectIntl } from 'react-intl';
