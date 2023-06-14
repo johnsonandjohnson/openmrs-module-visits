@@ -11,6 +11,7 @@
 import _ from 'lodash';
 
 import { FAILURE, REQUEST, SUCCESS } from './action-type.util';
+import axios from 'axios';
 import axiosInstance from '../components/shared/axios'
 import IVisitOverview from '../shared/model/visit-overview.model';
 import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
@@ -99,7 +100,14 @@ export const getOverviewPage = (page: number, size: number, locationUuid: string
   });
 };
 
+const CancelToken = axios.CancelToken;
+let getVisitOverviewPageCancel;
+
 export const getVisitOverviewPage = (page: number, size: number, filters: {}, sorted: { field: string, order: 'DESC' | 'ASC' }[]) => async (dispatch) => {
+  if (!!getVisitOverviewPageCancel) {
+    getVisitOverviewPageCancel();
+  }
+
   const sortedFilter = sorted.reduce((result, current) => {
     const newResult = { ...result };
     newResult[current.field + 'Sort'] = current.order;
@@ -111,7 +119,12 @@ export const getVisitOverviewPage = (page: number, size: number, filters: {}, so
   const url = `${moduleUrl}/overview`;
   await dispatch({
     type: ACTION_TYPES.GET_VISITS,
-    payload: axiosInstance.get(url, { params })
+    payload: axiosInstance.get(url, {
+      params,
+      cancelToken: new CancelToken(cancel => {
+        getVisitOverviewPageCancel = cancel
+      })
+    })
   });
 };
 
