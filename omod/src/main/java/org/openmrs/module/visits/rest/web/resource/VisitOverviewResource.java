@@ -2,10 +2,10 @@ package org.openmrs.module.visits.rest.web.resource;
 
 import org.openmrs.Encounter;
 import org.openmrs.Visit;
-import org.openmrs.VisitAttribute;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.attribute.BaseAttribute;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.rest.web.VisitsRestConstants;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -33,8 +33,8 @@ public class VisitOverviewResource extends VisitResource1_9 {
     if (rep.getRepresentation().equals(VisitsRestConstants.OVERVIEW_VISIT_REPRESENTATION)) {
       final DelegatingResourceDescription overviewResourceDescription = new DelegatingResourceDescription();
       addVisitProperties(overviewResourceDescription);
-      addAttributeProperties(overviewResourceDescription);
       addGeneratedProperties(overviewResourceDescription);
+      addAttributeProperties(overviewResourceDescription);
       return overviewResourceDescription;
     }
 
@@ -57,6 +57,15 @@ public class VisitOverviewResource extends VisitResource1_9 {
     getVisitAttributeTypeMap().values().forEach(type -> addAttributeProperty(description, type));
   }
 
+  private Map<String, VisitAttributeType> getVisitAttributeTypeMap() {
+    return Context
+        .getVisitService()
+        .getAllVisitAttributeTypes()
+        .stream()
+        .filter(type -> !type.getRetired())
+        .collect(Collectors.toMap(VisitAttributeType::getName, Function.identity(), this::mergeWithException));
+  }
+
   private void addAttributeProperty(DelegatingResourceDescription description, VisitAttributeType visitAttributeType) {
     try {
       description.addProperty(visitAttributeType.getName(), Representation.FULL,
@@ -75,11 +84,13 @@ public class VisitOverviewResource extends VisitResource1_9 {
 
   @Override
   public Object getProperty(Visit instance, String propertyName) throws ConversionException {
-    final VisitAttributeType propertyType = getVisitAttributeTypeMap().get(propertyName);
-
-    if (propertyType != null) {
-      final List<Object> attributeProperties =
-          instance.getActiveAttributes(propertyType).stream().map(VisitAttribute::getValue).collect(Collectors.toList());
+    if (isDynamicProperty(propertyName)) {
+      final List<Object> attributeProperties = instance
+          .getActiveAttributes()
+          .stream()
+          .filter(visitAttribute -> propertyName.equals(visitAttribute.getAttributeType().getName()))
+          .map(BaseAttribute::getValue)
+          .collect(Collectors.toList());
 
       if (attributeProperties.isEmpty()) {
         return null;
@@ -93,13 +104,18 @@ public class VisitOverviewResource extends VisitResource1_9 {
     return super.getProperty(instance, propertyName);
   }
 
-  private Map<String, VisitAttributeType> getVisitAttributeTypeMap() {
-    return Context
-        .getVisitService()
-        .getAllVisitAttributeTypes()
-        .stream()
-        .filter(type -> !type.getRetired())
-        .collect(Collectors.toMap(VisitAttributeType::getName, Function.identity(), this::mergeWithException));
+  /**
+   * Checks if Visit's property with name {@code propertyName} is a dynamic property of a Visit. Dynamic property is a
+   * property which is not Visit Java Beans property and not a property for which a @PropertyGetter annotated method exists.
+   *
+   * @param propertyName, the name of property to check
+   * @return true if propertyName is a dynamic property
+   */
+  private boolean isDynamicProperty(String propertyName) {
+    final DelegatingResourceDescription overviewResourceDescription = new DelegatingResourceDescription();
+    addVisitProperties(overviewResourceDescription);
+    addGeneratedProperties(overviewResourceDescription);
+    return !overviewResourceDescription.getProperties().containsKey(propertyName);
   }
 
   private VisitAttributeType mergeWithException(VisitAttributeType visitAttributeType1,
@@ -109,7 +125,7 @@ public class VisitOverviewResource extends VisitResource1_9 {
   }
 
   @Override
-  @PropertyGetter("displayString")
+  @PropertyGetter("display")
   public String getDisplayString(Visit visit) {
     return super.getDisplayString(visit);
   }

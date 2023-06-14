@@ -48,6 +48,14 @@ public class PatientResolvedResource extends PatientResource1_8 {
     getPatientIdentifierTypeMap().values().forEach(type -> addIdentifierTypeProperty(description, type));
   }
 
+  private Map<String, PatientIdentifierType> getPatientIdentifierTypeMap() {
+    return Context
+        .getPatientService()
+        .getAllPatientIdentifierTypes()
+        .stream()
+        .collect(Collectors.toMap(PatientIdentifierType::getName, Function.identity(), this::mergeWithException));
+  }
+
   private void addIdentifierTypeProperty(DelegatingResourceDescription description,
                                          PatientIdentifierType patientIdentifierType) {
     description.addProperty(patientIdentifierType.getName());
@@ -55,12 +63,11 @@ public class PatientResolvedResource extends PatientResource1_8 {
 
   @Override
   public Object getProperty(Patient instance, String propertyName) throws ConversionException {
-    final PatientIdentifierType patientIdentifierType = getPatientIdentifierTypeMap().get(propertyName);
-
-    if (patientIdentifierType != null) {
+    if (isDynamicProperty(propertyName)) {
       final List<String> identifierProperties = instance
-          .getPatientIdentifiers(patientIdentifierType)
+          .getActiveIdentifiers()
           .stream()
+          .filter(patientIdentifier -> propertyName.equals(patientIdentifier.getIdentifierType().getName()))
           .map(PatientIdentifier::getIdentifier)
           .collect(Collectors.toList());
 
@@ -76,12 +83,17 @@ public class PatientResolvedResource extends PatientResource1_8 {
     return super.getProperty(instance, propertyName);
   }
 
-  private Map<String, PatientIdentifierType> getPatientIdentifierTypeMap() {
-    return Context
-        .getPatientService()
-        .getAllPatientIdentifierTypes()
-        .stream()
-        .collect(Collectors.toMap(PatientIdentifierType::getName, Function.identity(), this::mergeWithException));
+  /**
+   * Checks if Visit's property with name {@code propertyName} is a dynamic property of a Visit. Dynamic property is a
+   * property which is not Visit Java Beans property and not a property for which a @PropertyGetter annotated method exists.
+   *
+   * @param propertyName, the name of property to check
+   * @return true if propertyName is a dynamic property
+   */
+  private boolean isDynamicProperty(String propertyName) {
+    final DelegatingResourceDescription description = new DelegatingResourceDescription();
+    addPatientProperties(description);
+    return !description.getProperties().containsKey(propertyName);
   }
 
   private PatientIdentifierType mergeWithException(PatientIdentifierType patientIdentifierType1,
