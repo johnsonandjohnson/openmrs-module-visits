@@ -12,6 +12,7 @@ package org.openmrs.module.visits.domain.criteria;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -57,6 +58,7 @@ public class OverviewCriteria extends BaseCriteria {
   private static final String VOIDED_PROPERTY = "voided";
   private static final String VISIT_ID_PROPERTY = "visitId";
   private static final String ATTRIBUTES = "attributes";
+  private static final String ENCOUNTERS = "encounters";
   private static final String ATTRIBUTE_TYPE = "attributeType";
   private static final String NAME = "name";
   private static final String VISIT_STATUS_ATTRIBUTE_TYPE_NAME = "Visit Status";
@@ -107,6 +109,7 @@ public class OverviewCriteria extends BaseCriteria {
 
   @Override
   public void loadHibernateCriteria(Criteria hibernateCriteria) {
+    eagerlyFetchRelations(hibernateCriteria);
     addLocationCriteria(hibernateCriteria);
     addPatientCriteria(hibernateCriteria);
     addQueryCriteria(hibernateCriteria);
@@ -116,6 +119,12 @@ public class OverviewCriteria extends BaseCriteria {
     if (sortResults) {
       addResultSorting(hibernateCriteria);
     }
+  }
+
+  private void eagerlyFetchRelations(Criteria hibernateCriteria) {
+    hibernateCriteria.setFetchMode(ENCOUNTERS, FetchMode.JOIN);
+    hibernateCriteria.setFetchMode(ATTRIBUTES, FetchMode.JOIN);
+    hibernateCriteria.setFetchMode(PATIENT_PATH, FetchMode.JOIN);
   }
 
   private void addVisitDateRangeCriteria(Criteria criteria) {
