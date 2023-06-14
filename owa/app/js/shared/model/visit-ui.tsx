@@ -47,13 +47,17 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
   getValidationSchema(validateNotTouched: boolean, intl: any, isEdit: boolean): Yup.ObjectSchema {
     const createValidators = {
       type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
-        v => this.validateRequiredField('type', v, validateNotTouched))
+        v => this.validateRequiredField('type', v, validateNotTouched)),
+      location: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
+        v => this.validateRequiredField('location', v, validateNotTouched)),
     };
     const editValidators = {
       type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
         v => this.validateRequiredField('type', v, validateNotTouched)),
       status: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
-        v => this.validateRequiredField('status', v, validateNotTouched))
+        v => this.validateRequiredField('status', v, validateNotTouched)),
+      location: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
+        v => this.validateRequiredField('location', v, validateNotTouched)),
     };
 
     return Yup.object().shape(isEdit? editValidators : createValidators);

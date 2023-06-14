@@ -49,7 +49,7 @@ const OVERVIEW_DATE_FORMAT = "DD MMM YYYY";
 const DAY = "day";
 const MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH = 768;
 const DEFAULT_TIME_PERIOD = "TODAY";
-const SCHEDULED_STATUS = "SCHEDULED";
+const DEFAULT_VISIT_STATUS = "";
 const TIME_PERIOD_ALL = "ALL";
 
 const searchIcon = require("../../../img/search.png");
@@ -90,8 +90,8 @@ class OverviewVisits extends React.Component<PropsWithIntl<IProps>, IState> {
       dateFrom: null,
       dateTo: null,
       visitStatus: {
-        label: SCHEDULED_STATUS,
-        value: SCHEDULED_STATUS,
+        label: DEFAULT_VISIT_STATUS,
+        value: DEFAULT_VISIT_STATUS,
       },
       timePeriod: {
         label: DEFAULT_TIME_PERIOD,

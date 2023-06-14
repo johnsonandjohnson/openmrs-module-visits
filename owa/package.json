@@ -70,6 +70,7 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "5.11.2",
     "@types/lodash": "^4.14.149",
+    "@types/react-redux": "^5.0.1",
     "@types/react-bootstrap": "^0.32.20",
     "@types/react-router-dom": "^5.1.2",
     "@types/uuid": "^3.4.6",

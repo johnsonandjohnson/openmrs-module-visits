@@ -39,9 +39,6 @@
                 <property name="visitMapper">
                     <ref bean="visits.visitMapper"/>
                 </property>
-                <property name="locationService">
-                    <ref bean="locationService"/>
-                </property>
                 <property name="configService">
                     <ref local="visits.configService"/>
                 </property>

@@ -256,6 +256,18 @@ export const deleteVisit = (uuid: string, activePage: number, itemsPerPage: numb
   dispatch(getVisitsPage(activePage, itemsPerPage, patientUuid));
 };
 
+export const deleteVisitWithCallback = (uuid: string, intl: any, callback: () => void) => async (dispatch) => {
+  const url = `/ws/rest/v1/visit/${uuid}`;
+  const body = {
+    type: ACTION_TYPES.DELETE_VISIT,
+    payload: axiosInstance.delete(url)
+  };
+  await handleRequest(dispatch, body,
+    intl.formatMessage({ id: "visits.genericSuccess" }),
+    intl.formatMessage({ id: "visits.genericFailure" }));
+  callback();
+};
+
 export const reset = (successCallback?) => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.RESET

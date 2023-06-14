@@ -17,7 +17,6 @@ import { injectIntl } from 'react-intl';
 interface FormLabel {
   label: string,
   mandatory?: boolean,
-  locale?: string,
   intl: any
 }
 
@@ -37,6 +36,6 @@ const FormLabel: React.SFC<FormLabel> = (props: FormLabel) => {
 FormLabel.defaultProps = {
   label: '',
   mandatory: false
-}
+};
 
 export default injectIntl(FormLabel);

@@ -10,7 +10,7 @@
 
 import _ from 'lodash';
 
-import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
+import { FAILURE, REQUEST, SUCCESS } from './action-type.util';
 import axiosInstance from '../components/shared/axios'
 import IVisitOverview from '../shared/model/visit-overview.model';
 import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
@@ -52,10 +52,10 @@ export default (state = initialState, action) => {
         loading: false
       };
     case REQUEST(ACTION_TYPES.UPDATE_VISITS_STATUSES):
-        return {
-          ...state,
-          isVisitStatusesUpdateSuccess: false
-        };
+      return {
+        ...state,
+        isVisitStatusesUpdateSuccess: false
+      };
     case FAILURE(ACTION_TYPES.UPDATE_VISITS_STATUSES):
       return {
         ...state,
@@ -82,16 +82,33 @@ const getPageParams = (page: number, size: number, filters?: {}, query?: string)
     page: page + 1,
     rows: size
   };
+  // TODO: Move query out or don't add it if empty/undefined to let filters have it
   return {
-    ...pageParams,
-    ...filters,
     query: query,
+    ...pageParams,
+    ...filters
   };
 }
 
 export const getOverviewPage = (page: number, size: number, locationUuid: string, filters?: {}, query?: string) => async (dispatch) => {
   const url = `${moduleUrl}/overview/${locationUuid}`;
   const params = getPageParams(page, size, filters, query);
+  await dispatch({
+    type: ACTION_TYPES.GET_VISITS,
+    payload: axiosInstance.get(url, { params })
+  });
+};
+
+export const getVisitOverviewPage = (page: number, size: number, filters: {}, sorted: { field: string, order: 'DESC' | 'ASC' }[]) => async (dispatch) => {
+  const sortedFilter = sorted.reduce((result, current) => {
+    const newResult = { ...result };
+    newResult[current.field + 'Sort'] = current.order;
+    return newResult;
+  }, {});
+
+  const params = getPageParams(page, size, { ...filters, ...sortedFilter });
+
+  const url = `${moduleUrl}/overview`;
   await dispatch({
     type: ACTION_TYPES.GET_VISITS,
     payload: axiosInstance.get(url, { params })

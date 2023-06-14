@@ -15,14 +15,18 @@ import BreadCrumb from './components/bread-crumb';
 import { ManageVisitsWithHeader as ManageVisits } from './components/hoc/with-patient-header';
 import { withNotifications } from './components/hoc/with-notifications';
 import OverviewVisits from './components/overview-visits';
+import PatientVisitsOverview from './components/manage-visits/patient-visits-ovierview';
+import GeneralVisitsOverview from './components/overview-visits/general-visits-overview';
 
 export default (store) => (
     <div>
         <Header />
         <BreadCrumb />
         <Switch>
-            <Route path="/visits/manage/:patientUuid" component={(withNotifications(ManageVisits))} />
-            <Route exact path="/visits/overview" component={(OverviewVisits)} />
+            <Route path="/visits/manage-old/:patientUuid" component={(withNotifications(ManageVisits))} />
+            <Route exact path="/visits/overview-old" component={(OverviewVisits)} />
+            <Route exact path="/visits/overview" component={(GeneralVisitsOverview)} />
+            <Route path="/visits/manage/:patientUuid" component={(PatientVisitsOverview)} />
         </Switch>
     </div>
 );

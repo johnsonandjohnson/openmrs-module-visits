@@ -10,20 +10,6 @@
 
 package org.openmrs.module.visits.api.service;
 
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -44,11 +30,28 @@ import org.openmrs.module.visits.api.service.impl.VisitServiceImpl;
 import org.openmrs.module.visits.domain.PagingInfo;
 import org.openmrs.module.visits.domain.criteria.VisitCriteria;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class VisitServiceImplTest extends ContextMockedTest {
 
-  @Spy private BaseOpenmrsPageableDao<Visit> dao = new VisitDaoImpl();
+  @Spy
+  private BaseOpenmrsPageableDao<Visit> dao = new VisitDaoImpl();
 
-  @InjectMocks private VisitService visitService = new VisitServiceImpl();
+  @InjectMocks
+  private VisitService visitService = new VisitServiceImpl();
 
   private Patient patient;
 
@@ -147,9 +150,7 @@ public class VisitServiceImplTest extends ContextMockedTest {
   @Test
   public void getVisitsForPatient() {
     doReturn(patient).when(getPatientService()).getPatientByUuid(patient.getUuid());
-    doReturn(Collections.emptyList())
-        .when(dao)
-        .findAllByCriteria(any(VisitCriteria.class), any(PagingInfo.class));
+    doReturn(Collections.emptyList()).when(dao).findAllByCriteria(any(VisitCriteria.class), any(PagingInfo.class));
 
     visitService.getVisitsForPatient(patient.getUuid(), new PagingInfo());
     verify(dao, times(1)).findAllByCriteria(any(VisitCriteria.class), any(PagingInfo.class));
@@ -176,35 +177,26 @@ public class VisitServiceImplTest extends ContextMockedTest {
 
   @Test
   public void changeStatusForMissedVisits() {
-    doReturn(Collections.singletonList(visit))
-        .when(dao)
-        .findAllByCriteria(any(VisitCriteria.class), any());
+    doReturn(Collections.singletonList(visit)).when(dao).findAllByCriteria(any(VisitCriteria.class), any());
     doReturn("MISSED").when(getConfigService()).getStatusOfMissedVisit();
-    doReturn(new VisitAttributeType())
-        .when(getVisitService())
-        .getVisitAttributeTypeByUuid(anyString());
+    doReturn(new VisitAttributeType()).when(getVisitService()).getVisitAttributeTypeByUuid(anyString());
     doReturn(visit).when(dao).saveOrUpdate(any(Visit.class));
     when(Context.getAuthenticatedUser()).thenReturn(new User(1));
 
     visitService.changeStatusForMissedVisits();
-    verify(getMissedVisitService())
-        .changeVisitStatusesToMissed(
-            anyListOf(Integer.class),
-            anyListOf(String.class),
-            anyString(),
-            any(VisitAttributeType.class));
+    verify(getMissedVisitService()).changeVisitStatusesToMissed(anyListOf(Integer.class), anyListOf(String.class),
+        anyString(), any(VisitAttributeType.class));
   }
 
   @Test
   public void getVisitsForLocation() {
-    doReturn(Collections.singletonList(visit))
-        .when(dao)
-        .findAllByCriteria(any(VisitCriteria.class), any());
+    doReturn(Collections.singletonList(visit)).when(dao).findAllByCriteria(any(VisitCriteria.class), any());
     doReturn(location).when(getLocationService()).getLocationByUuid(location.getUuid());
 
-    List<Visit> visitsForLocation =
-        visitService.getVisitsForLocation(
-            location.getUuid(), new PagingInfo(), null, null, null, null, null);
+    VisitSimpleQuery visitForLocationQuery =
+        new VisitSimpleQuery.Builder().withLocationUuid(location.getUuid()).withPagingInfo(new PagingInfo()).build();
+
+    List<Visit> visitsForLocation = visitService.getVisits(visitForLocationQuery);
     assertThat(visitsForLocation, org.hamcrest.Matchers.contains(visit));
   }
 
@@ -215,9 +207,8 @@ public class VisitServiceImplTest extends ContextMockedTest {
     when(getVisitService().getVisitAttributeTypeByUuid(anyString())).thenReturn(buildVisitAttributeType());
     when(getDatatypeService().getDatatype(any(), any())).thenReturn(new FreeTextDatatype());
 
-    List<String> visitUuids = Arrays.asList("58631546-2907-11ed-8295-0242ac160002",
-        "58631546-2907-11ed-8295-0242ac160003", "58631546-2907-11ed-8295-0242ac160004",
-        "58631546-2907-11ed-8295-0242ac160005");
+    List<String> visitUuids = Arrays.asList("58631546-2907-11ed-8295-0242ac160002", "58631546-2907-11ed-8295-0242ac160003",
+        "58631546-2907-11ed-8295-0242ac160004", "58631546-2907-11ed-8295-0242ac160005");
 
     visitService.changeVisitStatuses(visitUuids, "MISSED");
 

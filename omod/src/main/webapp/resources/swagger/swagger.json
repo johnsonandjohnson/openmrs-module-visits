@@ -87,6 +87,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "patientUuid",
+          "in" : "query",
+          "description" : "patientUuid",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "query",
           "in" : "query",
           "description" : "query",
