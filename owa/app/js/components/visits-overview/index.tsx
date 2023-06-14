@@ -95,7 +95,8 @@ class VisitsOverview extends React.Component<PropsWithIntl<IVisitsOverviewProps>
   resetSelectedVisits = () => {
     this.setState({
       isAllVisitsChecked: false,
-      selectedVisitsUuids: []
+      selectedVisitsUuids: [],
+      isChangeVisitStatusButtonDisabled: true
     })
   }
 

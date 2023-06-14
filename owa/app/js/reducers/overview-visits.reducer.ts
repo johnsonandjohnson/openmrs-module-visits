@@ -136,7 +136,7 @@ export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any, i
   await handleRequest(
     dispatch,
     body,
-    intl.formatMessage({ id: 'visits.genericSuccess' }),
-    intl.formatMessage({ id: 'visits.genericFailure' })
+    intl.formatMessage({ id: 'visits.overviewUpdateVisitStatusSuccessMessage' }),
+    intl.formatMessage({ id: 'visits.overviewUpdateVisitStatusSuccessMessage' })
   );
 };
