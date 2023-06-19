@@ -49,4 +49,24 @@
     <bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
         <property name="moduleId" value="${project.parent.artifactId}"/>
     </bean>
+
+    <bean id="visits.VisitOverviewResourceService" class="org.openmrs.module.visits.rest.web.service.impl.VisitOverviewResourceServiceImpl"/>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.visits.rest.web.service.VisitOverviewResourceService</value>
+                <ref bean="visits.VisitOverviewResourceService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="visits.PatientResolvedResourceService" class="org.openmrs.module.visits.rest.web.service.impl.PatientResolvedResourceServiceImpl"/>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.visits.rest.web.service.PatientResolvedResourceService</value>
+                <ref bean="visits.PatientResolvedResourceService"/>
+            </list>
+        </property>
+    </bean>
 </beans>

@@ -21,6 +21,7 @@ const MIN_HORIZONTAL_DATE_RANGE_PICKER_WIDTH = 768;
 
 interface IDateRangePickerProps extends DispatchProps, StateProps {
   label: string
+  useTodayAsDefaultValue: boolean
   onFilterChange: (filterValue: any) => void
   registerClearStateCallback: (clearStateCallback: () => void) => void
 }
@@ -35,7 +36,7 @@ interface IDateRangePickerState {
   focusedDatePicker: any;
 }
 
-const DEFAULT_STATE = {
+const DEFAULT_TODAY_STATE = {
   filters: {
     dateFrom: moment(),
     dateTo: moment(),
@@ -52,7 +53,7 @@ const CLEAR_STATE = {
 };
 
 class StartEndDateRangePicker extends React.Component<PropsWithIntl<IDateRangePickerProps>, IDateRangePickerState> {
-  state = DEFAULT_STATE;
+  state = this.props.useTodayAsDefaultValue ? DEFAULT_TODAY_STATE : CLEAR_STATE;
 
   componentDidMount(): void {
     this.props.registerClearStateCallback(this.clearState);

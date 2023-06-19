@@ -14,5 +14,6 @@ export default interface IVisitsOverviewFilterData {
   label: string
   field: string
   sort: string
+  useTodayAsDefaultValue: boolean
   options: any[]
 }
