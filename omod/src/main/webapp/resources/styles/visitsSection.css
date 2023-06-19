@@ -112,3 +112,21 @@
   color: #333333;
   max-width: 500px !important;
 }
+
+.required-label {
+  color: #737373;
+}
+
+.error-label {
+  display: none;
+  color: red;
+  font-size: 14px;
+}
+
+#edit-visit-dialog button.disabled-button {
+  background-color: #00455C;
+  background: #EEE
+  border: #CCC 1px solid;
+  color: #CCC;
+  opacity: 0.65;
+}

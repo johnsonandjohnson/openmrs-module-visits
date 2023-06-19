@@ -50,6 +50,7 @@
             <li>
               <label class="visit-section-label">${ui.message("visits.visitTimeLabel")}</label>
               <select id="visit-time-select" class="required">
+                <option value=""></option>
                 <% for(visitTime in visitTimes) { %>
                   <option
                     class="selectOption"
@@ -61,8 +62,12 @@
               </select>
             </li>
             <li>
-              <label class="visit-section-label">${ui.message("visits.locationLabel")}</label>
-              <select id="visit-location-select" class="required">
+              <label class="visit-section-label">
+                <span>${ui.message("visits.locationLabel")}</span>
+                <span class="required-label">(${ui.message("common.required")})</span>
+              </label>
+              <select id="visit-location-select" onChange="onSelectChange(this)">
+                <option value=""></option>
                 <% for(visitLocation in visitLocations) { %>
                   <option
                     class="selectOption"
@@ -72,10 +77,15 @@
                   </option>
                 <% } %>
               </select>
+              <span id=visit-location-select-error-label class="error-label">${ui.message("common.error.required")}</span>
             </li>
             <li>
-              <label class="visit-section-label">${ui.message("visits.visitTypeLabel")} ${ui.message("common.required")}</label>
-              <select id="visit-type-select" class="required">
+              <label class="visit-section-label">
+                <span>${ui.message("visits.visitTypeLabel")}</span>
+                <span class="required-label">(${ui.message("common.required")})</span>
+              </label>
+              <select id="visit-type-select" onChange="onSelectChange(this)">
+                <option value=""></option>
                 <% for(visitType in visitTypes) { %>
                   <option
                     class="selectOption"
@@ -85,10 +95,15 @@
                   </option>
                 <% } %>
               </select>
+              <span id=visit-type-select-error-label class="error-label">${ui.message("common.error.required")}</span>
             </li>
             <li>
-              <label class="visit-section-label">${ui.message("visits.visitStatusLabel")} ${ui.message("common.required")}</label>
-              <select id="visit-status-select" class="required">
+              <label class="visit-section-label">
+                <span>${ui.message("visits.visitStatusLabel")}</span>
+                <span class="required-label">(${ui.message("common.required")})</span>
+              </label>
+              <select id="visit-status-select" onChange="onSelectChange(this)">
+                <option value=""></option>
                 <% for(visitStatus in visitStatuses) { %>
                   <option
                     class="selectOption"
@@ -98,9 +113,10 @@
                   </option>
                 <% } %>
               </select>
+              <span id=visit-status-select-error-label class="error-label">${ui.message("common.error.required")}</span>
             </li>
           </ul>
-          <button class="confirm right">
+          <button id="save-button" class="confirm right">
             ${ ui.message("visits.saveButtonLabel") }
             <i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i>
           </button>

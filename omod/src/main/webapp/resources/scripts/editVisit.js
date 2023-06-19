@@ -56,6 +56,9 @@ editVisit.showEditVisitDialog = function(isExtraInfoDialogEnabled, holidayWeekda
   jq('#visit-location-select').val(visitLocation);
   jq('#visit-type-select').val(visitType);
   jq('#visit-status-select').val(visitStatus);
+
+  jq('.error-label').hide();
+  enableSaveButton();
 }
 
 editVisit.createEditVisitDialog = function(isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid, patientUuid, visitDate) {
@@ -267,3 +270,41 @@ function findClosestFutureVisit(allVisitDates, currentVisitDate) {
   return new Date(Math.min.apply(null, futureVisitDates));
 }
 
+function onSelectChange(event) {
+  const selectedValue = event.value;
+  const elementId = event.id;
+  if (!selectedValue) {
+    jq('#' + elementId + '-error-label').show();
+    jq('#save-button').attr('disabled', true);
+    jq('#save-button').addClass('disabled-button');
+  } else {
+    if (isEditVisitFormValid()) {
+      enableSaveButton();
+    }
+  }
+}
+
+function isEditVisitFormValid() {
+  const requiredSelectFieldIDs = [
+    "visit-location-select",
+    "visit-type-select",
+    "visit-status-select"
+  ];
+
+  let isValidForm = true;
+  requiredSelectFieldIDs.forEach(fieldID => {
+    const value = jq('#' + fieldID).val();
+    if (!value) {
+      isValidForm = false;
+    } else {
+      jq('#' + fieldID + '-error-label').hide();
+    }
+  });
+
+  return isValidForm;
+}
+
+function enableSaveButton() {
+  jq('#save-button').removeClass('disabled-button');
+  jq('#save-button').attr('disabled', false);
+}

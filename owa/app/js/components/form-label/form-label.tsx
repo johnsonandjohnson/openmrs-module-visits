@@ -26,7 +26,7 @@ const FormLabel: React.SFC<FormLabel> = (props: FormLabel) => {
       <ControlLabel>
         {props.label}
         {!!props.mandatory
-          ? <p className="label-required">{`(${props.intl.formatMessage({id: "requiredLabel" })})`}</p>
+          ? <p className="label-required"> {`(${props.intl.formatMessage({ id: "common.required" })})`}</p>
           : null}
       </ControlLabel>
     </span>
