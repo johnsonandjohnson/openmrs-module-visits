@@ -326,7 +326,8 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     }
 
     const allPatientVisitsDates = [] as Date[];
-    patientVisits.forEach(({ startDate }) => allPatientVisitsDates.push(new Date(startDate)));
+
+    patientVisits.forEach(({ startDatetime }) => allPatientVisitsDates.push(new Date(startDatetime)));
 
     return allPatientVisitsDates;
   }
@@ -382,14 +383,14 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   }
 }
 
-const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session }: IRootState) => ({
+const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session, overview }: IRootState) => ({
   sessionLocation: session.session.sessionLocation,
   visit: scheduleVisit.visit,
   visitTypes: scheduleVisit.visitTypes,
   visitStatuses: scheduleVisit.visitStatuses,
   visitTimes: scheduleVisit.visitTimes,
   locations: scheduleVisit.locations,
-  patientVisits: scheduleVisit.visits,
+  patientVisits: overview.visits,
   isExtraInformationEnabled: globalPropertyReducer.isExtraInfoModalEnabled,
   holidayWeekdays: globalPropertyReducer.holidayWeekdays
 });

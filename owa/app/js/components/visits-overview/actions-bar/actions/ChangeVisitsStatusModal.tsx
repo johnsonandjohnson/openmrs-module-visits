@@ -16,8 +16,6 @@ import { IRootState } from '../../../../reducers';
 import { getVisitStatuses, reset, saveVisit } from "../../../../reducers/schedule-visit.reducer";
 import { Button, Col, Form, FormControl, FormGroup, Modal, Row, } from "react-bootstrap";
 import FormLabel from '../../../form-label/form-label';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { updateVisitStatuses } from "../../../../reducers/overview-visits.reducer";
 import "../../../schedule-visit/schedule-visit-modal.scss";
 import { VISIT_SAVE_DELAY_MS } from "../../../../shared/global-constants";
