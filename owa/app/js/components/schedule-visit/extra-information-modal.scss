@@ -22,13 +22,16 @@
           background-image: none;
           background-color: #00455C;
           border-color: #00455C;
+          font-size: 11px;
         }
   
         .button.cancel, .button.cancel:hover {
           background-image: none;
           background-color: white;
-          border-color: #00455C;
+          border: #000000 1px solid;
           color: #00455C;
+          text-transform: uppercase;
+          font-size: 11px;
         }
   
         .modal-title {

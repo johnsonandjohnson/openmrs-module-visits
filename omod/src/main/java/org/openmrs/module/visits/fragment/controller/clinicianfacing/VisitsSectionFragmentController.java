@@ -167,7 +167,7 @@ public class VisitsSectionFragmentController {
     model.addAttribute("locale", Context.getLocale().toLanguageTag().replace('_', '-'));
 
     List<String> stringVisitDates =
-        visitsToDisplay.stream()
+        allVisits.stream()
             .map(VisitDomainWrapper::getStartDatetime)
             .map(
                 v ->

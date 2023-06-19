@@ -32,9 +32,6 @@ import { Button, Col, Form, FormControl, FormGroup, Modal, Row, } from "react-bo
 import ErrorDesc from '../error-description/error-desc';
 import FormLabel from '../form-label/form-label';
 import OpenMrsDatePicker from '../openmrs-date-picker/openmrs-date-picker';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
-
 import "../schedule-visit/schedule-visit-modal.scss"
 import ExtraInformationModal from "./extra-information-modal";
 import { getNumberOfDaysBetweenDates, visitDatesTheSame } from "../../shared/utils/date-util";
@@ -251,11 +248,11 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   };
 
   renderCancelButton = () => (
-    <Button id="schedule-visit-cancel" onClick={this.closeModal}>
-      <span className="fa-stack fa-2x">
-        <FontAwesomeIcon icon={faCircle} className="fa-stack-2x icon-button-background"/>
-        <FontAwesomeIcon icon={faTimes} className="fa-stack-1x"/>
-      </span>
+    <Button 
+      id="schedule-visit-cancel" 
+      onClick={this.closeModal}
+    >
+      {this.props.intl.formatMessage({ id: "visits.cancelButtonLabel" })}
     </Button>
   );
 

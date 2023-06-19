@@ -10,7 +10,6 @@
 
 import React from 'react';
 import { ControlLabel } from 'react-bootstrap';
-
 import './form-label.scss';
 import { injectIntl } from 'react-intl';
 

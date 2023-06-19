@@ -129,11 +129,11 @@ class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>,
   };
 
   renderCancelButton = () => (
-    <Button id="schedule-visit-cancel" onClick={this.closeModal}>
-      <span className="fa-stack fa-2x">
-        <FontAwesomeIcon icon={faCircle} className="fa-stack-2x icon-button-background"/>
-        <FontAwesomeIcon icon={faTimes} className="fa-stack-1x"/>
-      </span>
+    <Button 
+      id="schedule-visit-cancel" 
+      onClick={this.closeModal}
+    >
+      {this.props.intl.formatMessage({ id: "visits.cancelButtonLabel" })}
     </Button>
   );
 

@@ -63,29 +63,32 @@
 #edit-visit-dialog button.confirm {
   background: #00455C;
   border: #00455C 1px solid;
-  font-size: 14px;
+  font-size: 11px;
+  text-transform: uppercase;
 }
 
 #extra-info-dialog button.confirm {
   background: #00455C;
   border: #00455C 1px solid;
-  font-size: 14px !important;
+  font-size: 11px !important;
+  text-transform: uppercase;
 }
 
 #edit-visit-dialog button.cancel {
   background: transparent;
   border: #000000 1px solid;
   color: #00455C;
-  font-size: 14px;
+  font-size: 11px;
+  text-transform: uppercase;
 }
 
 #extra-info-dialog button.cancel {
   background: transparent;
   border: #000000 1px solid;
   color: #00455C;
-  font-size: 14px !important;
-  text-transform: capitalize;
+  font-size: 11px !important;
   padding: 8px 20px;
+  text-transform: uppercase;
 }
 
 #edit-visit-dialog .dialog-title {
