@@ -88,10 +88,10 @@ class Header extends React.Component<PropsWithIntl<IHeaderProps>, IHeaderState> 
   }
 
   private renderDemographics(personDetails) {
-    const maleMsg = this.props.intl.formatMessage({ id: "reactcomponents.male" });
-    const femaleMsg = this.props.intl.formatMessage({ id: "reactcomponents.female" });
-    const otherMsg = this.props.intl.formatMessage({ id: "reactcomponents.other" });
-    const unknownGenderMsg = this.props.intl.formatMessage({ id: "reactcomponents.unknown" });
+    const maleMsg = this.props.intl.formatMessage({ id: "reactcomponents.male", defaultMessage: "Male" });
+    const femaleMsg = this.props.intl.formatMessage({ id: "reactcomponents.female", defaultMessage: "Female" });
+    const otherMsg = this.props.intl.formatMessage({ id: "reactcomponents.other", defaultMessage: "Other" });
+    const unknownGenderMsg = this.props.intl.formatMessage({ id: "reactcomponents.unknown", defaultMessage: "Unknown" });
     const givenName = this.props.intl.formatMessage({ id: "person.header.name.given" });
     const middleName = this.props.intl.formatMessage({ id: "person.header.name.middle" });
     const familyName = this.props.intl.formatMessage({ id: "person.header.name.family" });
@@ -185,7 +185,7 @@ class Header extends React.Component<PropsWithIntl<IHeaderProps>, IHeaderState> 
     return (
       <div className="patient-header-container">
         <div className="patient-header ">
-          {!this.props.loading && this.renderDemographics(personDetails)}
+          {!this.props.loading && !!this.props.isShowGenderPersonHeader && !!this.props.isShowAgePersonHeader && this.renderDemographics(personDetails)}
           {!this.props.loading && this.renderPatientIdentifier(personDetails)}
         </div>
         <div className="secondLineFragments">
