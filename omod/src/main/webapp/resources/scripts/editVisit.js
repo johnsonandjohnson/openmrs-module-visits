@@ -38,12 +38,64 @@ let editVisit = window.editVisit || {};
 editVisit.editVisitDialog = null;
 editVisit.extraInfoDialog = null;
 
-editVisit.showEditVisitDialog = function(isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid,
-                                  patientUuid, visitDate, visitTime, visitLocation, visitType, visitStatus) {
+/**
+ * Close HackWrap div and cleanup any changes.
+ */
+editVisit.hackWrapClose = function () {
+  jq('#simplemodal-container').detach().appendTo('body');
+  jq('#hackWrap').remove();
+  jq('body').css({'overflow': 'auto'});
+  editVisit.editVisitDialog.close();
+};
+
+editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid,
+                                          patientUuid, visitDate, visitTime, visitLocation, visitType, visitStatus) {
   editVisit.createEditVisitDialog(isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid,
-                                  patientUuid, visitDate);
+    patientUuid, visitDate);
 
   editVisit.editVisitDialog.show();
+
+  // Create custom scrollable overlay hackWrap div for https://www.ericmmartin.com/projects/simplemodal/
+  let hackWrap = document.createElement("div");
+  jq(hackWrap).attr('id', 'hackWrap').click(function (e) {
+    editVisit.hackWrapClose();
+  }).css({
+    position: 'fixed',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    overflow: 'auto',
+    'z-index': 1004,
+    display: 'flex'
+  });
+
+  // Prevent scrollable body and hackWrap at teh same time
+  jq('body').append(hackWrap).css({'overflow': 'hidden'});
+
+  // Change styles of original overlay and modal container and ensure they stay changed during window resize
+  let customContainerCSSOverride = {
+    position: 'relative',
+    height: '100%',
+    width: '100%',
+    left: 0,
+    top: 0,
+    'z-index': 1003
+  };
+  jq('#simplemodal-container').detach().appendTo(hackWrap).css(customContainerCSSOverride);
+  let customOverlayCSSOverride = {height: 0, width: 0};
+  jq('#modal-overlay').css(customOverlayCSSOverride);
+  $(window).on('resize', function () {
+    jq('#modal-overlay').css(customOverlayCSSOverride);
+    jq('#simplemodal-container').css(customContainerCSSOverride);
+  });
+
+  // Prevent propagation of click events to hackWrap overlay when clicked over a dialog div
+  jq('#edit-visit-dialog').click(function (e) {
+    e.stopPropagation();
+  });
 
   setTimeout(() => {
     jq('.datepicker').hide();
@@ -59,16 +111,21 @@ editVisit.showEditVisitDialog = function(isExtraInfoDialogEnabled, holidayWeekda
 
   jq('.error-label').hide();
   enableSaveButton();
-}
+};
 
-editVisit.createEditVisitDialog = function(isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid, patientUuid, visitDate) {
+editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid, patientUuid, visitDate) {
   editVisit.editVisitDialog = emr.setupConfirmationDialog({
     selector: '#edit-visit-dialog',
+    dialogOpts: {
+      onClose: function () {
+        editVisit.hackWrapClose();
+      }
+    },
     actions: {
-      confirm: function() {
-      if (isExtraInfoDialogEnabled) {
-        editVisit.showExtraInfoDialog(allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate);
-      } else {
+      confirm: function () {
+        if (isExtraInfoDialogEnabled) {
+          editVisit.showExtraInfoDialog(allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate);
+        } else {
           const requestBody = {
             "uuid": visitUuid,
             "startDate": getCurrentDateInServerFormat(),
@@ -85,26 +142,26 @@ editVisit.createEditVisitDialog = function(isExtraInfoDialogEnabled, holidayWeek
             headers: {
               'Content-type': 'application/json; charset=utf-8'
             },
-            success: function() {
+            success: function () {
               emr.successMessage("visits.genericSuccess");
               editVisit.editVisitDialog.close();
               location.reload();
             },
-            error: function() {
+            error: function () {
               emr.errorMessage("visits.genericFailure");
               editVisit.editVisitDialog.close();
             }
           });
         }
       },
-      cancel: function() {
+      cancel: function () {
         editVisit.editVisitDialog.close();
       }
     }
   })
 };
 
-editVisit.showExtraInfoDialog = function(allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate) {
+editVisit.showExtraInfoDialog = function (allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate) {
   editVisit.createExtraInfoDialog(visitUuid, patientUuid);
 
   jq('#extra-info-dialog').show();
@@ -114,11 +171,11 @@ editVisit.showExtraInfoDialog = function(allVisitDates, holidayWeekdays, visitUu
   setExtraInfoDialogContent(allVisitDates, holidayWeekdays, visitDate);
 }
 
-editVisit.createExtraInfoDialog = function(visitUuid, patientUuid) {
+editVisit.createExtraInfoDialog = function (visitUuid, patientUuid) {
   editVisit.extraInfoDialog = emr.setupConfirmationDialog({
     selector: '#extra-info-dialog',
     actions: {
-      confirm: function() {
+      confirm: function () {
         const requestBody = {
           "uuid": visitUuid,
           "startDate": getCurrentDateInServerFormat(),
@@ -135,36 +192,36 @@ editVisit.createExtraInfoDialog = function(visitUuid, patientUuid) {
           headers: {
             'Content-type': 'application/json; charset=utf-8'
           },
-          success: function() {
+          success: function () {
             emr.successMessage("visits.genericSuccess");
             jq('#extra-info-dialog').hide();
             location.reload();
           },
-          error: function() {
+          error: function () {
             emr.errorMessage("visits.genericFailure");
             jq('#extra-info-dialog').hide();
           }
         });
       },
-      cancel: function() {
+      cancel: function () {
         jq('#extra-info-dialog').hide();
       }
     }
   })
 };
 
-editVisit.handleDateInputOnClick = function() {
+editVisit.handleDateInputOnClick = function () {
   jq('.datepicker').show();
 }
 
-function getCurrentDateInServerFormat() {
+function getCurrentDateInServerFormat () {
   moment.locale(userLocale);
   const currentDateInputValue = moment(jq('#visit-date-select').val(), DISPLAY_FORMAT_DATE);
 
   return moment(currentDateInputValue).format(SERVER_FORMAT_DATE);
 }
 
-function setExtraInfoDialogContent(allVisitDates, holidayWeekdays, visitDate) {
+function setExtraInfoDialogContent (allVisitDates, holidayWeekdays, visitDate) {
   const allVisitDatesArray = allVisitDates.split(',');
   allVisitDatesArray.splice(allVisitDatesArray.indexOf(visitDate), 1);
 
@@ -244,7 +301,7 @@ function setExtraInfoDialogContent(allVisitDates, holidayWeekdays, visitDate) {
   }
 }
 
-function getNumberOfDaysBetweenDates(date1, date2) {
+function getNumberOfDaysBetweenDates (date1, date2) {
   if (date1 && date2) {
     return Math.abs((Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) -
       Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()))) / (24 * 60 * 60 * 1000);
@@ -252,7 +309,7 @@ function getNumberOfDaysBetweenDates(date1, date2) {
   return null;
 }
 
-function findClosestPreviousVisit(allVisitDates, currentVisitDate) {
+function findClosestPreviousVisit (allVisitDates, currentVisitDate) {
   const previousVisitDates = allVisitDates.filter(date => date < currentVisitDate);
   if (!previousVisitDates.length) {
     return null;
@@ -261,7 +318,7 @@ function findClosestPreviousVisit(allVisitDates, currentVisitDate) {
   return new Date(Math.max.apply(null, previousVisitDates));
 }
 
-function findClosestFutureVisit(allVisitDates, currentVisitDate) {
+function findClosestFutureVisit (allVisitDates, currentVisitDate) {
   const futureVisitDates = allVisitDates.filter(date => date > currentVisitDate);
   if (!futureVisitDates.length) {
     return null;
@@ -270,7 +327,7 @@ function findClosestFutureVisit(allVisitDates, currentVisitDate) {
   return new Date(Math.min.apply(null, futureVisitDates));
 }
 
-function onSelectChange(event) {
+function onSelectChange (event) {
   const selectedValue = event.value;
   const elementId = event.id;
   if (!selectedValue) {
@@ -284,7 +341,7 @@ function onSelectChange(event) {
   }
 }
 
-function isEditVisitFormValid() {
+function isEditVisitFormValid () {
   const requiredSelectFieldIDs = [
     "visit-location-select",
     "visit-type-select",
@@ -304,7 +361,7 @@ function isEditVisitFormValid() {
   return isValidForm;
 }
 
-function enableSaveButton() {
+function enableSaveButton () {
   jq('#save-button').removeClass('disabled-button');
   jq('#save-button').attr('disabled', false);
 }

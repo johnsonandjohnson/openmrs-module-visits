@@ -1,10 +1,10 @@
+.simplemodal-wrap {
+  padding: 5em;
+}
+
 #edit-visit-dialog {
   display: none;
   width: 380px !important;
-  position: fixed;
-  z-index: 1000;
-  top: 100px;
-  left: 500px;
 }
 
 #edit-visit-dialog select {
