@@ -157,7 +157,7 @@
                     '${attr.visitTypeUuid}', '${attr.visitDetails.status}')">
               </i>
               <% if (attr.visitDetails.formUri) { %>
-                <a href="../..${attr.visitDetails.formUri}">
+                <a href="../..${attr.visitDetails.formUri}&returnUrl=${ui.urlEncode(ui.thisUrl())}">
                   <i class="icon-stethoscope thirty-percent" title=${ui.message("cfl.visitNote.title")}></i>
                 <a/>
               <% } else { %>
