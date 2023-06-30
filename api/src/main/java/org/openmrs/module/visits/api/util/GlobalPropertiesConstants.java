@@ -26,13 +26,6 @@ public final class GlobalPropertiesConstants {
           "Limit of upcoming visits displayed on the patient dashboard visits widget.",
           true);
 
-  public static final GPDefinition VISIT_TIMES =
-      new GPDefinition(
-          "visits.visit-times",
-          "Morning,Afternoon,Evening",
-          "Coma separated list of visit types used to schedule a visit.",
-          true);
-
   public static final GPDefinition VISIT_STATUSES =
       new GPDefinition(
           "visits.visit-statuses",

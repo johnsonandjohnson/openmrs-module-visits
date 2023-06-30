@@ -14,15 +14,19 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.BaseOpenmrsMetadata;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.dto.VisitFormUrisMap;
+import org.openmrs.module.visits.api.entity.VisitTime;
 import org.openmrs.module.visits.api.service.ConfigService;
+import org.openmrs.module.visits.api.service.VisitTimeService;
 import org.openmrs.module.visits.api.util.GPDefinition;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** Provides the default implementation of module configuration set */
 public class ConfigServiceImpl implements ConfigService {
@@ -34,8 +38,10 @@ public class ConfigServiceImpl implements ConfigService {
 
   @Override
   public List<String> getVisitTimes() {
-    return GlobalPropertyUtil.parseList(
-        getGp(GlobalPropertiesConstants.VISIT_TIMES), COMMA_DELIMITER);
+    VisitTimeService visitTimeService = Context.getService(VisitTimeService.class);
+    List<VisitTime> visitTimes = visitTimeService.getAllVisitTimes(false);
+
+    return visitTimes.stream().map(BaseOpenmrsMetadata::getName).collect(Collectors.toList());
   }
 
   @Override

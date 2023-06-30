@@ -32,17 +32,6 @@ public class ConfigServiceTest extends ContextMockedTest {
     private ConfigService configService = new ConfigServiceImpl();
 
     @Test
-    public void shouldReturnVisitTimes() {
-        List<String> times = Arrays.asList("morning", "afternoon", "evening");
-        doReturn(StringUtils.join(times, ','))
-                .when(getAdministrationService())
-                .getGlobalProperty(GlobalPropertiesConstants.VISIT_TIMES.getKey());
-
-        List<String> visitTimes = configService.getVisitTimes();
-        assertThat(visitTimes, contains(times.toArray()));
-    }
-
-    @Test
     public void shouldReturnVisitStatuses() {
         List<String> statuses = Arrays.asList("SCHEDULED", "OCCURRED", "MISSED");
         doReturn(StringUtils.join(statuses, ','))

@@ -79,7 +79,6 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
   private void createGlobalProperties() {
     GlobalPropertyUtils.createGlobalSettingsIfNotExists(
         Arrays.asList(
-            GlobalPropertiesConstants.VISIT_TIMES,
             GlobalPropertiesConstants.VISIT_STATUSES,
             GlobalPropertiesConstants.PAST_VISITS_LIMIT,
             GlobalPropertiesConstants.UPCOMING_VISITS_LIMIT,

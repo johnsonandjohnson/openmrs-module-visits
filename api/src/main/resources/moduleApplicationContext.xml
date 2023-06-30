@@ -110,4 +110,27 @@
             </list>
         </property>
     </bean>
+
+    <bean id="visits.visitTimeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="target">
+            <bean class="org.openmrs.module.visits.api.service.impl.VisitTimeServiceImpl">
+                <property name="visitTimeDao">
+                    <bean class="org.openmrs.module.visits.api.dao.VisitTimeDAO">
+                        <property name="dbSessionFactory" ref="dbSessionFactory"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="preInterceptors" ref="serviceInterceptors"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.visits.api.service.VisitTimeService</value>
+                <ref bean="visits.visitTimeService"/>
+            </list>
+        </property>
+    </bean>
 </beans>

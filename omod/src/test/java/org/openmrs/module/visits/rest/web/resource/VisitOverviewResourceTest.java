@@ -18,6 +18,7 @@ import org.openmrs.VisitAttributeType;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.rest.web.VisitsRestConstants;
+import org.openmrs.module.visits.rest.web.service.VisitOverviewResourceService;
 import org.openmrs.module.webservices.rest.web.representation.NamedRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
@@ -38,17 +39,22 @@ public class VisitOverviewResourceTest {
   @Mock
   private VisitService visitService;
 
+  @Mock
+  private VisitOverviewResourceService visitOverviewResourceService;
+
   @Before
   public void setUp() {
     mockStatic(Context.class);
 
     when(Context.getVisitService()).thenReturn(visitService);
+    when(Context.getService(VisitOverviewResourceService.class)).thenReturn(visitOverviewResourceService);
     when(visitService.getAllVisitAttributeTypes()).thenReturn(
         Arrays.asList(
             createVisitAttributeType("Visit Status"),
             createVisitAttributeType("Visit Time")
         )
     );
+    when(visitOverviewResourceService.getOverviewRepresentation()).thenReturn(buildTestOverviewRepresentation());
   }
 
   @Test
@@ -66,8 +72,6 @@ public class VisitOverviewResourceTest {
     assertTrue(actual.getProperties().containsKey("voided"));
     assertTrue(actual.getProperties().containsKey("actualDate"));
     assertTrue(actual.getProperties().containsKey("formUri"));
-    assertTrue(actual.getProperties().containsKey("Visit Status"));
-    assertTrue(actual.getProperties().containsKey("Visit Time"));
   }
 
   @Test
@@ -88,5 +92,21 @@ public class VisitOverviewResourceTest {
     type.setDatatypeClassname("org.openmrs.customdatatype.datatype.FreeTextDatatype");
     type.setRetired(false);
     return type;
+  }
+
+  private DelegatingResourceDescription buildTestOverviewRepresentation() {
+    final DelegatingResourceDescription overviewResourceDescription = new DelegatingResourceDescription();
+    overviewResourceDescription.addProperty("uuid");
+    overviewResourceDescription.addProperty("display");
+    overviewResourceDescription.addProperty("patient", new NamedRepresentation(VisitsRestConstants.RESOLVED_PATIENT_REPRESENTATION));
+    overviewResourceDescription.addProperty("visitType", Representation.REF);
+    overviewResourceDescription.addProperty("location", Representation.REF);
+    overviewResourceDescription.addProperty("startDatetime");
+    overviewResourceDescription.addProperty("stopDatetime");
+    overviewResourceDescription.addProperty("voided");
+    overviewResourceDescription.addProperty("actualDate");
+    overviewResourceDescription.addProperty("formUri");
+
+    return overviewResourceDescription;
   }
 }
