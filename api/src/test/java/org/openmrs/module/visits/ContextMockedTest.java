@@ -27,6 +27,8 @@ import org.openmrs.api.context.Daemon;
 import org.openmrs.module.visits.api.mapper.VisitMapper;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.MissedVisitService;
+import org.openmrs.module.visits.api.service.VisitStatusService;
+import org.openmrs.module.visits.api.service.VisitTimeService;
 import org.openmrs.scheduler.SchedulerService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -35,85 +37,101 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({Context.class, Daemon.class})
 public abstract class ContextMockedTest extends BaseTest {
 
-    @Mock
-    private AdministrationService administrationService;
+  @Mock
+  private AdministrationService administrationService;
 
-    @Mock
-    private VisitMapper visitMapper;
+  @Mock
+  private VisitMapper visitMapper;
 
-    @Mock
-    private PatientService patientService;
+  @Mock
+  private PatientService patientService;
 
-    @Mock
-    private ConfigService configService;
+  @Mock
+  private ConfigService configService;
 
-    @Mock
-    private VisitService visitService;
+  @Mock
+  private VisitService visitService;
 
-    @Mock
-    private LocationService locationService;
+  @Mock
+  private LocationService locationService;
 
-    @Mock
-    private SchedulerService schedulerService;
+  @Mock
+  private SchedulerService schedulerService;
 
-    @Mock
-    private MissedVisitService missedVisitService;
+  @Mock
+  private MissedVisitService missedVisitService;
 
-    @Mock
-    private UserService userService;
+  @Mock
+  private UserService userService;
 
-    @Mock
-    private DatatypeService datatypeService;
+  @Mock
+  private DatatypeService datatypeService;
 
-    @Before
-    public void setUp() {
-        mockStatic(Context.class);
-        mockStatic(Daemon.class);
-        when(Context.getAdministrationService()).thenReturn(administrationService);
-        when(Context.getPatientService()).thenReturn(patientService);
-        when(Context.getRegisteredComponent("visits.visitMapper", VisitMapper.class)).thenReturn(visitMapper);
-        when(Context.getRegisteredComponent("visits.configService", ConfigService.class)).thenReturn(configService);
-        when(Context.getVisitService()).thenReturn(visitService);
-        when(Context.getLocationService()).thenReturn(locationService);
-        when(Context.getSchedulerService()).thenReturn(schedulerService);
-        when(Context.getService(MissedVisitService.class)).thenReturn(missedVisitService);
-        when(Context.getUserService()).thenReturn(userService);
-        when(Context.getDatatypeService()).thenReturn(datatypeService);
-    }
+  @Mock
+  private VisitTimeService visitTimeService;
 
-    public AdministrationService getAdministrationService() {
-        return administrationService;
-    }
+  @Mock
+  private VisitStatusService visitStatusService;
 
-    public ConfigService getConfigService() {
-        return configService;
-    }
+  @Before
+  public void setUp() {
+    mockStatic(Context.class);
+    mockStatic(Daemon.class);
+    when(Context.getAdministrationService()).thenReturn(administrationService);
+    when(Context.getPatientService()).thenReturn(patientService);
+    when(Context.getRegisteredComponent("visits.visitMapper", VisitMapper.class)).thenReturn(visitMapper);
+    when(Context.getRegisteredComponent("visits.configService", ConfigService.class)).thenReturn(configService);
+    when(Context.getVisitService()).thenReturn(visitService);
+    when(Context.getLocationService()).thenReturn(locationService);
+    when(Context.getSchedulerService()).thenReturn(schedulerService);
+    when(Context.getService(MissedVisitService.class)).thenReturn(missedVisitService);
+    when(Context.getUserService()).thenReturn(userService);
+    when(Context.getDatatypeService()).thenReturn(datatypeService);
+    when(Context.getService(VisitTimeService.class)).thenReturn(visitTimeService);
+    when(Context.getService(VisitStatusService.class)).thenReturn(visitStatusService);
+  }
 
-    public VisitMapper getVisitMapper() {
-        return visitMapper;
-    }
+  public AdministrationService getAdministrationService() {
+    return administrationService;
+  }
 
-    public PatientService getPatientService() {
-        return patientService;
-    }
+  public ConfigService getConfigService() {
+    return configService;
+  }
 
-    public VisitService getVisitService() {
-        return visitService;
-    }
+  public VisitMapper getVisitMapper() {
+    return visitMapper;
+  }
 
-    public LocationService getLocationService() {
-        return locationService;
-    }
+  public PatientService getPatientService() {
+    return patientService;
+  }
 
-    public SchedulerService getSchedulerService() {
-        return schedulerService;
-    }
+  public VisitService getVisitService() {
+    return visitService;
+  }
 
-    public MissedVisitService getMissedVisitService() {
-        return missedVisitService;
-    }
+  public LocationService getLocationService() {
+    return locationService;
+  }
 
-    public DatatypeService getDatatypeService() {
-        return datatypeService;
-    }
+  public SchedulerService getSchedulerService() {
+    return schedulerService;
+  }
+
+  public MissedVisitService getMissedVisitService() {
+    return missedVisitService;
+  }
+
+  public DatatypeService getDatatypeService() {
+    return datatypeService;
+  }
+
+  public VisitTimeService getVisitTimeService() {
+    return visitTimeService;
+  }
+
+  public VisitStatusService getVisitStatusService() {
+    return visitStatusService;
+  }
 }

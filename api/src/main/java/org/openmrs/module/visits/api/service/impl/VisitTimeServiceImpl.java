@@ -20,71 +20,71 @@ import java.util.List;
 
 public class VisitTimeServiceImpl extends BaseOpenmrsService implements VisitTimeService {
 
-  private VisitTimeDAO visitTimeDao;
+  private VisitTimeDAO visitTimeDAO;
 
-  public void setVisitTimeDao(VisitTimeDAO visitTimeDao) {
-    this.visitTimeDao = visitTimeDao;
+  public void setVisitTimeDAO(VisitTimeDAO visitTimeDAO) {
+    this.visitTimeDAO = visitTimeDAO;
   }
 
   @Transactional(readOnly = true)
   @Override
   public VisitTime getVisitTimeById(Integer visitTimeId) {
-    return visitTimeDao.getVisitTimeById(visitTimeId);
+    return visitTimeDAO.getVisitTimeById(visitTimeId);
   }
 
   @Transactional(readOnly = true)
   @Override
   public VisitTime getVisitTimeByUuid(String visitTimeUuid) {
-    return visitTimeDao.getVisitTimeByUuid(visitTimeUuid);
+    return visitTimeDAO.getVisitTimeByUuid(visitTimeUuid);
   }
 
   @Transactional(readOnly = true)
   @Override
   public VisitTime getVisitTimeByName(String visitTimeName) {
-    return visitTimeDao.getVisitTimeByName(visitTimeName);
+    return visitTimeDAO.getVisitTimeByName(visitTimeName);
   }
 
   @Transactional(readOnly = true)
   @Override
   public List<VisitTime> getVisitTimesByGroup(String groupName) {
-    return visitTimeDao.getVisitTimesByGroup(groupName);
+    return visitTimeDAO.getVisitTimesByGroup(groupName);
   }
 
   @Transactional(readOnly = true)
   @Override
   public List<VisitTime> getAllVisitTimes(boolean includeRetired) {
-    return visitTimeDao.getAllVisitTimes(includeRetired);
+    return visitTimeDAO.getAllVisitTimes(includeRetired);
   }
 
   @Transactional(readOnly = true)
   @Override
-  public long getVisitTimeCount(boolean includeRetired) {
-    return visitTimeDao.getVisitTimeCount(includeRetired);
+  public long getVisitTimesCount(boolean includeRetired) {
+    return visitTimeDAO.getVisitTimesCount(includeRetired);
   }
 
   @Transactional
   @Override
   public VisitTime saveVisitTime(VisitTime visitTime) {
-    return visitTimeDao.saveVisitTime(visitTime);
+    return visitTimeDAO.saveVisitTime(visitTime);
   }
 
   @Transactional
   @Override
   public VisitTime retireVisitTime(VisitTime visitTime, String reason) {
-    //fields set by OpenMRS AOP classes
-    return visitTimeDao.saveVisitTime(visitTime);
+    // fields set by OpenMRS AOP classes
+    return visitTimeDAO.saveVisitTime(visitTime);
   }
 
   @Transactional
   @Override
   public VisitTime unretireVisitTime(VisitTime visitTime) {
-    //fields set by OpenMRS AOP classes
-    return visitTimeDao.saveVisitTime(visitTime);
+    // fields set by OpenMRS AOP classes
+    return visitTimeDAO.saveVisitTime(visitTime);
   }
 
   @Transactional
   @Override
   public void purgeVisitTime(VisitTime visitTime) {
-    visitTimeDao.deleteVisitTime(visitTime);
+    visitTimeDAO.deleteVisitTime(visitTime);
   }
 }

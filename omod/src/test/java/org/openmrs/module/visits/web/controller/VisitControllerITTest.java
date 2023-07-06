@@ -10,6 +10,19 @@
 
 package org.openmrs.module.visits.web.controller;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
+import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
+import static org.openmrs.module.visits.util.JsonUtil.json;
+import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
+import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
@@ -29,20 +42,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Date;
-
-import static org.hamcrest.Matchers.hasItem;
-import static org.openmrs.module.visits.api.util.ConfigConstants.PATIENT_UUID_PARAM;
-import static org.openmrs.module.visits.api.util.ConfigConstants.VISIT_UUID_PARAM;
-import static org.openmrs.module.visits.util.JsonUtil.json;
-import static org.openmrs.module.visits.web.PageConstants.PAGE_PARAM;
-import static org.openmrs.module.visits.web.PageConstants.ROWS_PARAM;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebAppConfiguration
 public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActivatorTest {

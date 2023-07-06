@@ -10,10 +10,12 @@
 
 package org.openmrs.module.visits.api.dao;
 
+import org.hibernate.criterion.Restrictions;
+import org.openmrs.module.visits.api.entity.VisitStatus;
 import org.openmrs.module.visits.api.entity.VisitTime;
 import java.util.List;
 
-public class VisitTimeDAO extends VisitTimeOpenmrsObjectDAO<VisitTime> {
+public class VisitTimeDAO extends BaseOpenMRSEntityDAO<VisitTime> {
 
   VisitTimeDAO() {
     super(VisitTime.class);
@@ -32,19 +34,22 @@ public class VisitTimeDAO extends VisitTimeOpenmrsObjectDAO<VisitTime> {
   }
 
   public List<VisitTime> getVisitTimesByGroup(String groupName) {
-    return getByGroup(groupName);
+    return getSession()
+        .createCriteria(VisitStatus.class)
+        .add(Restrictions.eq("timeGroup", groupName))
+        .list();
   }
 
   public List<VisitTime> getAllVisitTimes(boolean includeRetired) {
     return getAll(includeRetired);
   }
 
-  public long getVisitTimeCount(boolean includeRetired) {
+  public long getVisitTimesCount(boolean includeRetired) {
     return countAll(includeRetired);
   }
 
   public VisitTime saveVisitTime(VisitTime visitTime) {
-    return saveOrUpdate(visitTime);
+    return save(visitTime);
   }
 
   public void deleteVisitTime(VisitTime visitTime) {

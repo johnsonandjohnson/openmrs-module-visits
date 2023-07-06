@@ -64,7 +64,7 @@ public interface VisitTimeService extends OpenmrsService {
    * @param includeRetired determines if result should contain retired visit times or not
    * @return number of visit times
    */
-  long getVisitTimeCount(boolean includeRetired);
+  long getVisitTimesCount(boolean includeRetired);
 
   /**
    * Saves visit time

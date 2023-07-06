@@ -10,23 +10,22 @@
 
 package org.openmrs.module.visits.api.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.BaseOpenmrsMetadata;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.dto.VisitFormUrisMap;
+import org.openmrs.module.visits.api.entity.VisitStatus;
 import org.openmrs.module.visits.api.entity.VisitTime;
 import org.openmrs.module.visits.api.service.ConfigService;
+import org.openmrs.module.visits.api.service.VisitStatusService;
 import org.openmrs.module.visits.api.service.VisitTimeService;
 import org.openmrs.module.visits.api.util.GPDefinition;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /** Provides the default implementation of module configuration set */
 public class ConfigServiceImpl implements ConfigService {
@@ -46,18 +45,10 @@ public class ConfigServiceImpl implements ConfigService {
 
   @Override
   public List<String> getVisitStatuses() {
-    if (StringUtils.isBlank(getGp(GlobalPropertiesConstants.VISIT_STATUSES))) {
-      LOGGER.warn("Visit statuses are not defined as a global property.");
-      return new ArrayList<>();
-    }
-    List<String> statuses =
-        GlobalPropertyUtil.parseList(
-            getGp(GlobalPropertiesConstants.VISIT_STATUSES), COMMA_DELIMITER);
-    if (CollectionUtils.isEmpty(statuses)) {
-      LOGGER.warn("Visit statuses are not defined as a global property.");
-    }
+    VisitStatusService visitStatusService = Context.getService(VisitStatusService.class);
+    List<VisitStatus> visitStatuses = visitStatusService.getAllVisitStatuses(false);
 
-    return statuses;
+    return visitStatuses.stream().map(BaseOpenmrsMetadata::getName).collect(Collectors.toList());
   }
 
   @Override
@@ -77,7 +68,19 @@ public class ConfigServiceImpl implements ConfigService {
 
   @Override
   public String getVisitInitialStatus() {
-    return !getVisitStatuses().isEmpty() ? getVisitStatuses().get(0) : null;
+    List<VisitStatus> visitStatuses =
+        Context.getService(VisitStatusService.class).getAllVisitStatuses(false);
+    if (CollectionUtils.isEmpty(visitStatuses)) {
+      return null;
+    }
+
+    VisitStatus initialStatus =
+        visitStatuses.stream()
+            .filter(VisitStatus::getDefault)
+            .findFirst()
+            .orElse(visitStatuses.get(0));
+
+    return initialStatus.getName();
   }
 
   @Override
