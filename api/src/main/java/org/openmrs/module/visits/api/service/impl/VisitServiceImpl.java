@@ -135,7 +135,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   }
 
   private void processVisitsInBatches(List<Integer> visitsIds, List<String> visitStatuses) {
-    String missedVisitStatus = configService.getStatusOfMissedVisit();
+    String missedVisitStatus = configService.getMissedVisitStatuses().get(0);
     VisitAttributeType visitStatusAttrType =
         Context.getVisitService().getVisitAttributeTypeByUuid(ConfigConstants.VISIT_STATUS_ATTRIBUTE_TYPE_UUID);
     int numOfIterations = (int) Math.ceil((float) visitsIds.size() / BATCH_SIZE);
@@ -161,8 +161,11 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   }
 
   private List<Integer> getMissedVisitsIds(List<String> statusesEndingVisit) {
-    return findAllByCriteria(VisitCriteria.forMissedVisits(configService.getMinimumVisitDelayToMarkItAsMissed(),
-        configService.getStatusOfMissedVisit(), statusesEndingVisit))
+    return findAllByCriteria(
+            VisitCriteria.forMissedVisits(
+                configService.getMinimumVisitDelayToMarkItAsMissed(),
+                configService.getMissedVisitStatuses().get(0),
+                statusesEndingVisit))
         .stream()
         .map(Visit::getVisitId)
         .collect(Collectors.toList());

@@ -70,39 +70,6 @@ public class ConfigServiceTest extends ContextMockedTest {
   }
 
   @Test
-  public void shouldReturnStatusesEndingVisit() {
-    String endingStatuses = GlobalPropertiesConstants.STATUSES_ENDING_VISIT.getDefaultValue();
-    doReturn(endingStatuses)
-        .when(getAdministrationService())
-        .getGlobalProperty(GlobalPropertiesConstants.STATUSES_ENDING_VISIT.getKey());
-
-    List<String> endingStatusesList = configService.getStatusesEndingVisit();
-    assertThat(endingStatusesList, contains(endingStatuses.split(",")));
-  }
-
-  @Test
-  public void shouldReturnStatusOfMissedVisit() {
-    String missedStatus = GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT.getDefaultValue();
-    doReturn(missedStatus)
-        .when(getAdministrationService())
-        .getGlobalProperty(GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT.getKey());
-
-    String statusOfMissedVisit = configService.getStatusOfMissedVisit();
-    assertThat(statusOfMissedVisit, equalTo(missedStatus));
-  }
-
-  @Test
-  public void shouldReturnStatusOfOccurredVisit() {
-    String occurredStatus = GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT.getDefaultValue();
-    doReturn(occurredStatus)
-        .when(getAdministrationService())
-        .getGlobalProperty(GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT.getKey());
-
-    String statusOfOccurredVisit = configService.getStatusOfOccurredVisit();
-    assertThat(statusOfOccurredVisit, equalTo(occurredStatus));
-  }
-
-  @Test
   public void shouldReturnVisitFormUrisMap() {
     doReturn(VISIT_URI_MAP_JSON)
         .when(getAdministrationService())
@@ -111,19 +78,7 @@ public class ConfigServiceTest extends ContextMockedTest {
     VisitFormUrisMap urisMap = configService.getVisitFormUrisMap();
     assertNotNull(urisMap);
   }
-
-  @Test
-  public void shouldReturnIfIsEncounterDatetimeValidationEnabled() {
-    String isValidationEnabledString =
-        GlobalPropertiesConstants.ENCOUNTER_DATETIME_VALIDATION.getDefaultValue();
-    doReturn(isValidationEnabledString)
-        .when(getAdministrationService())
-        .getGlobalProperty(GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT.getKey());
-
-    boolean isEnabled = configService.isEncounterDatetimeValidationEnabled();
-    assertThat(isEnabled, equalTo(false));
-  }
-
+  
   private VisitStatus buildVisitStatus(String name) {
     VisitStatus visitStatus = new VisitStatus();
     visitStatus.setName(name);

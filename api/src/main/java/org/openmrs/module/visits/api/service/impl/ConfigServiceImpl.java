@@ -20,19 +20,20 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.visits.api.dto.VisitFormUrisMap;
 import org.openmrs.module.visits.api.entity.VisitStatus;
 import org.openmrs.module.visits.api.entity.VisitTime;
+import org.openmrs.module.visits.api.exception.VisitsRuntimeException;
 import org.openmrs.module.visits.api.service.ConfigService;
 import org.openmrs.module.visits.api.service.VisitStatusService;
 import org.openmrs.module.visits.api.service.VisitTimeService;
 import org.openmrs.module.visits.api.util.GPDefinition;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
+import org.openmrs.module.visits.api.util.VisitStatusActionConstants;
 
 /** Provides the default implementation of module configuration set */
 public class ConfigServiceImpl implements ConfigService {
 
   private static final Log LOGGER = LogFactory.getLog(ConfigServiceImpl.class);
-
-  private static final String COMMA_DELIMITER = ",";
+  
   private static final int MINIMUM_DAYS_NUMBER_OF_VISIT_DELAY = 1;
 
   @Override
@@ -85,43 +86,44 @@ public class ConfigServiceImpl implements ConfigService {
 
   @Override
   public List<String> getStatusesEndingVisit() {
-    List<String> statusesEndingVisits =
-        GlobalPropertyUtil.parseList(
-            getGp(GlobalPropertiesConstants.STATUSES_ENDING_VISIT), COMMA_DELIMITER);
-    List<String> visitStatuses = getVisitStatuses();
-    if (!visitStatuses.containsAll(statusesEndingVisits)) {
-      LOGGER.warn(
-          String.format(
-              "Not all statuses ending a visit defined in GP (%s) are part of visit statuses (%s)",
-              statusesEndingVisits, visitStatuses));
+    List<VisitStatus> endingVisitStatuses= Context.getService(VisitStatusService.class)
+        .getVisitStatusesByGroup(VisitStatusActionConstants.ENDING_VISIT);
+
+    if (CollectionUtils.isEmpty(endingVisitStatuses)) {
+      throw new VisitsRuntimeException("Ending visit statues are not configured.");
     }
-    return statusesEndingVisits;
+    
+    return endingVisitStatuses.stream()
+        .map(BaseOpenmrsMetadata::getName)
+        .collect(Collectors.toList());
   }
 
   @Override
-  public String getStatusOfMissedVisit() {
-    String missedStatus = getGp(GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT);
-    List<String> visitStatuses = getVisitStatuses();
-    if (!visitStatuses.contains(missedStatus)) {
-      LOGGER.warn(
-          String.format(
-              "The missed visit's status defined in GP (%s) is not part of visit statuses (%s)",
-              missedStatus, visitStatuses));
+  public List<String> getMissedVisitStatuses() {
+    List<VisitStatus> missedVisitStatusList= Context.getService(VisitStatusService.class)
+        .getVisitStatusesByGroup(VisitStatusActionConstants.MISSED_VISIT_STATUS);
+
+    if (CollectionUtils.isEmpty(missedVisitStatusList)) {
+      throw new VisitsRuntimeException("Status(es) for MISSED visits are not configured.");
     }
-    return missedStatus;
+
+    return missedVisitStatusList.stream()
+        .map(BaseOpenmrsMetadata::getName)
+        .collect(Collectors.toList());
   }
 
   @Override
-  public String getStatusOfOccurredVisit() {
-    String missedStatus = getGp(GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT);
-    List<String> visitStatuses = getVisitStatuses();
-    if (!visitStatuses.contains(missedStatus)) {
-      LOGGER.warn(
-          String.format(
-              "The occurred visit's status defined in GP (%s) is not part of visit statuses (%s)",
-              missedStatus, visitStatuses));
+  public List<String> getOccurredVisitStatues() {
+    List<VisitStatus> occurredVisitStatusList = Context.getService(VisitStatusService.class)
+        .getVisitStatusesByGroup(VisitStatusActionConstants.OCCURRED_VISIT_STATUS);
+
+    if (CollectionUtils.isEmpty(occurredVisitStatusList)) {
+      throw new VisitsRuntimeException("Status(es) for OCCURRED visits are not configured.");
     }
-    return missedStatus;
+
+    return occurredVisitStatusList.stream()
+        .map(BaseOpenmrsMetadata::getName)
+        .collect(Collectors.toList());
   }
 
   @Override

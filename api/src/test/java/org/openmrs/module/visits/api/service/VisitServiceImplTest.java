@@ -178,7 +178,7 @@ public class VisitServiceImplTest extends ContextMockedTest {
   @Test
   public void changeStatusForMissedVisits() {
     doReturn(Collections.singletonList(visit)).when(dao).findAllByCriteria(any(VisitCriteria.class), any());
-    doReturn("MISSED").when(getConfigService()).getStatusOfMissedVisit();
+    doReturn(Collections.singletonList("MISSED")).when(getConfigService()).getMissedVisitStatuses();
     doReturn(new VisitAttributeType()).when(getVisitService()).getVisitAttributeTypeByUuid(anyString());
     doReturn(visit).when(dao).saveOrUpdate(any(Visit.class));
     when(Context.getAuthenticatedUser()).thenReturn(new User(1));

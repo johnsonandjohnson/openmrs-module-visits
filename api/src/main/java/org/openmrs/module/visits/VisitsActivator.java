@@ -79,7 +79,6 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
   private void createGlobalProperties() {
     GlobalPropertyUtils.createGlobalSettingsIfNotExists(
         Arrays.asList(
-            GlobalPropertiesConstants.VISIT_STATUSES,
             GlobalPropertiesConstants.PAST_VISITS_LIMIT,
             GlobalPropertiesConstants.UPCOMING_VISITS_LIMIT,
             GlobalPropertiesConstants.ENCOUNTER_DATETIME_VALIDATION,
@@ -91,10 +90,7 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
   private void createMissedVisitStatusChangerConfig() {
     GlobalPropertyUtils.createGlobalSettingsIfNotExists(
         Arrays.asList(
-            GlobalPropertiesConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED,
-            GlobalPropertiesConstants.STATUSES_ENDING_VISIT,
-            GlobalPropertiesConstants.STATUS_OF_MISSED_VISIT,
-            GlobalPropertiesConstants.STATUS_OF_OCCURRED_VISIT));
+            GlobalPropertiesConstants.MINIMUM_VISIT_DELAY_TO_MARK_IT_AS_MISSED));
   }
 
   private void configureDistribution() {

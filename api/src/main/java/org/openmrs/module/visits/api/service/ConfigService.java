@@ -54,20 +54,18 @@ public interface ConfigService {
   List<String> getStatusesEndingVisit();
 
   /**
-   * Provides the value specifying a status that will be set if the visit will be determined to be
-   * marked as missing.
+   * Returns list of missed visit statuses
    *
-   * @return - the visit status
+   * @return - list of visit statuses
    */
-  String getStatusOfMissedVisit();
+  List<String> getMissedVisitStatuses();
 
   /**
-   * Provides the value specifying a status that will be set if the visit will be determined to be
-   * marked as occurred.
+   * Returns list of occurred visit statuses
    *
-   * @return - the visit status
+   * @return - list of visit statuses
    */
-  String getStatusOfOccurredVisit();
+  List<String> getOccurredVisitStatues();
 
   /**
    * Provides the map specifying visit form uris for create/edit visit details.

@@ -10,9 +10,10 @@
 
 package org.openmrs.module.visits.api.dao;
 
-import org.hibernate.criterion.Restrictions;
-import org.openmrs.module.visits.api.entity.VisitStatus;
 import java.util.List;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.StringType;
+import org.openmrs.module.visits.api.entity.VisitStatus;
 
 public class VisitStatusDAO extends BaseOpenMRSEntityDAO<VisitStatus> {
 
@@ -31,11 +32,12 @@ public class VisitStatusDAO extends BaseOpenMRSEntityDAO<VisitStatus> {
   public VisitStatus getVisitStatusByName(String visitStatusName) {
     return getByName(visitStatusName);
   }
-
+  
   public List<VisitStatus> getVisitStatusByGroup(String groupName) {
+    String sql = "FIND_IN_SET(?, status_group) > 0";
     return getSession()
         .createCriteria(VisitStatus.class)
-        .add(Restrictions.eq("statusGroup", groupName))
+        .add(Restrictions.sqlRestriction(sql, groupName, StringType.INSTANCE))
         .list();
   }
 

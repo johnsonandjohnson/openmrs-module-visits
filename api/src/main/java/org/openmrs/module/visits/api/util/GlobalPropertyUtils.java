@@ -23,7 +23,7 @@ public final class GlobalPropertyUtils {
     private static Log log = LogFactory.getLog(GlobalPropertyUtils.class);
 
     public static String getGlobalProperty(String key) {
-        return Context.getAdministrationService().getGlobalProperty(key);
+        return Context.getAdministrationService().getGlobalProperty(key, null);
     }
 
     public static void createGlobalSettingsIfNotExists(Collection<GPDefinition> definitions) {
