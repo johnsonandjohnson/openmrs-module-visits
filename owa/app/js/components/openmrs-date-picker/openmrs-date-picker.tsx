@@ -13,7 +13,7 @@ import DatePicker from 'react-datepicker';
 import { startOfDay, format, parse } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { DATE_FORMAT, ISO_DATE_FORMAT, WEEK_DAYS_KEYS, MONTH_NAMES_KEYS } 
+import { DATE_FORMAT, ISO_DATE_FORMAT, WEEK_DAYS_KEYS, MONTH_NAMES_KEYS, TIME_FORMAT, DATETIME_FORMAT }
   from '../date-util/constants';
 import { parseDateOrDefault, ParsableToDate } from '../date-util/date-util';
 import DateDisplay from './date-display';
@@ -59,11 +59,17 @@ class OpenMrsDatePicker extends PureComponent<PropsWithIntl<IProps>, IState> {
 
     const locale = {
       localize: {
+        ordinalNumber: n => n,
+        era: n => n,
+        quarter: n => n,
+        dayPeriod: n => n,
         day: n => days[n],
         month: n => months[n]
       },
       formatLong: {
-        date: () => DATE_FORMAT
+        date: () => DATE_FORMAT,
+        time: () => TIME_FORMAT,
+        dateTime: () => DATETIME_FORMAT
       }
     }
     return locale;

@@ -10,6 +10,8 @@
 
 export const ISO_DATE_FORMAT = 'YYYY-MM-DD';
 export const DATE_FORMAT = 'dd MMM yyyy';
+export const TIME_FORMAT = 'hh:mm';
+export const DATETIME_FORMAT = 'dd MMM yyyy hh:mm';
 export const WEEK_DAYS_KEYS = [
     'cfl.weekDay.Sunday.shortName',
     'cfl.weekDay.Monday.shortName',

@@ -44,7 +44,7 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     return visit;
   }
 
-  getValidationSchema(validateNotTouched: boolean, intl: any, isEdit: boolean): Yup.ObjectSchema {
+  getValidationSchema(validateNotTouched: boolean, intl: any, isEdit: boolean): Yup.ObjectSchema<any> {
     const createValidators = {
       type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
         v => this.validateRequiredField('type', v, validateNotTouched)),
@@ -63,7 +63,7 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
     return Yup.object().shape(isEdit? editValidators : createValidators);
   }
 
-  validateRequiredField(key: string, value: string, validateNotTouched: boolean): boolean {
+  validateRequiredField(key: string, value: string | undefined, validateNotTouched: boolean): boolean {
     if (this.touchedFields[key] || validateNotTouched) {
       return !!(value && value.trim());
     }
