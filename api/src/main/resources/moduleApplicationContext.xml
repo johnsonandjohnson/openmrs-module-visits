@@ -39,9 +39,7 @@
                 <property name="visitMapper">
                     <ref bean="visits.visitMapper"/>
                 </property>
-                <property name="configService">
-                    <ref local="visits.configService"/>
-                </property>
+                <property name="configService" ref="visits.configService"/>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -62,9 +60,7 @@
         <property name="patientService">
             <ref bean="patientService"/>
         </property>
-        <property name="configService">
-            <ref local="visits.configService"/>
-        </property>
+        <property name="configService" ref="visits.configService"/>
     </bean>
     <bean id="visits.overviewMapper" class="org.openmrs.module.visits.api.mapper.OverviewMapper"/>
 
@@ -106,7 +102,7 @@
         <property name="moduleService">
             <list merge="true">
                 <value>org.openmrs.module.visits.api.service.MissedVisitService</value>
-                <ref local="visits.missedVisitService"/>
+                <ref bean="visits.missedVisitService"/>
             </list>
         </property>
     </bean>
