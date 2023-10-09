@@ -31,6 +31,10 @@
   width: 90px;
 }
 
+.visit-type {
+  width: 100px;
+}
+
 .icon-stethoscope {
   color: #363463;
 }
@@ -130,4 +134,8 @@
   border: #CCC 1px solid;
   color: #CCC;
   opacity: 0.65;
+}
+
+.visits-icon {
+  padding: 1px !important;
 }

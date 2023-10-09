@@ -198,6 +198,7 @@ public class VisitsSectionFragmentController {
     if (status != null) {
       result.put("status", status.toString());
       visitDTO.setStatus(status.toString());
+      result.put("statusIconColor", getStatusIconColor(status.toString()));
     }
 
     Visit extractedVisit = visit.getVisit();
@@ -291,5 +292,23 @@ public class VisitsSectionFragmentController {
     LocationService locationService = Context.getLocationService();
     LocationTag visitLocationTag = locationService.getLocationTagByName("Visit Location");
     return locationService.getLocationsByTag(visitLocationTag);
+  }
+
+  private String getStatusIconColor(String visitStatus) {
+    String statusIconColor = null;
+    ConfigService configService = Context.getService(ConfigService.class);
+    if (StringUtils.equalsIgnoreCase(visitStatus, configService.getVisitInitialStatus())) {
+      statusIconColor = "orange";
+    }
+
+    if (configService.getMissedVisitStatuses().contains(visitStatus)) {
+      statusIconColor = "red";
+    }
+
+    if (configService.getOccurredVisitStatues().contains(visitStatus)) {
+      statusIconColor = "green";
+    }
+
+    return statusIconColor;
   }
 }

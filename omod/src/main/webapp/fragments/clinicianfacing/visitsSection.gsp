@@ -150,7 +150,11 @@
          <% recentVisitsWithLinks.each { it, attr -> %>
             <li>
               <span class="visit-date">${attr.visitDateInDisplayFormat}</span>
-              <i class="icon-pencil thirty-percent" title=${ui.message("common.edit")}
+              <span class="visit-type">${attr.visitDetails.type}</span>
+              <% if (attr.statusIconColor) { %>
+                <i class="icon-circle visits-icon" style="color: ${attr.statusIconColor}"></i>
+              <% } %>
+              <i class="icon-pencil visits-icon" title=${ui.message("common.edit")}
                 onClick="editVisit.showEditVisitDialog(${isExtraInfoDialogEnabled}, '${holidayWeekdays}',
                     '${commaSeparatedVisitDates}', '${attr.visitUuid}', '${patient.uuid}',
                     '${attr.visitDateInServerFormat}', '${attr.visitDetails.time}', '${attr.visitLocationUuid}',
@@ -158,18 +162,13 @@
               </i>
               <% if (attr.visitDetails.formUri) { %>
                 <a href="../..${attr.visitDetails.formUri}&returnUrl=${ui.urlEncode(ui.thisUrl())}">
-                  <i class="icon-stethoscope thirty-percent" title=${ui.message("cfl.visitNote.title")}></i>
+                  <i class="icon-stethoscope visits-icon" title=${ui.message("cfl.visitNote.title")}></i>
                 <a/>
               <% } else { %>
                 <a>
-                  <i class="thirty-percent"}></i>
+                  <i></i>
                 <a/>
               <% } %>
-            <% if (config.showVisitStatus && attr.status) { %>
-               <div class="tag forty-percent">
-                 ${ attr.status }
-               </div>
-            <% } %>
             </li>
          <% } %>
       </ul>
