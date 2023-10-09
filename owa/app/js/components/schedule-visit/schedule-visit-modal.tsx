@@ -137,7 +137,8 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     label: string,
     fieldName: string,
     options: Array<React.ReactFragment>,
-    required?: boolean
+    required?: boolean,
+    disabled?: boolean
   ) => (
     <FormGroup controlId={fieldName}>
       <FormLabel label={label} mandatory={required}/>
@@ -147,6 +148,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
         value={this.props.visit[fieldName]}
         onChange={(e) => this.handleChange((e.target as HTMLInputElement).value, fieldName)}
         className={errors && errors[fieldName] ? ERROR_FORM_CLASS : FORM_CLASS}
+        disabled={disabled}
       >
         <option value=""/>
         {options}
@@ -188,7 +190,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       true
     );
 
-  renderVisitType = (errors) =>
+  renderVisitType = (errors) => 
     this.renderDropdown(
       errors,
       this.props.intl.formatMessage({ id: "visits.visitTypeLabel" }),
@@ -198,7 +200,8 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
           {type.display}
         </option>
       )),
-      true
+      true,
+      this.props.visit.actualDate != null
     );
 
   renderVisitStatus = (errors) =>

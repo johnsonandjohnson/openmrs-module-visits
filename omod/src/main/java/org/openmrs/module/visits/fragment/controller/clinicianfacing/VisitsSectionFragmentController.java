@@ -21,6 +21,7 @@
  */
 package org.openmrs.module.visits.fragment.controller.clinicianfacing;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -225,6 +226,7 @@ public class VisitsSectionFragmentController {
         "visitDateInDisplayFormat",
         DateUtil.convertDateWithLocale(
             extractedVisit.getStartDatetime(), "dd MMM YYYY", Context.getLocale()));
+    result.put("isVisitHasEncounters", CollectionUtils.isNotEmpty(extractedVisit.getEncounters()));
 
     return result;
   }

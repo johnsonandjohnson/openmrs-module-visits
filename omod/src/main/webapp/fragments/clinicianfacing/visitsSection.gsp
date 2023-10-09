@@ -154,7 +154,7 @@
                 onClick="editVisit.showEditVisitDialog(${isExtraInfoDialogEnabled}, '${holidayWeekdays}',
                     '${commaSeparatedVisitDates}', '${attr.visitUuid}', '${patient.uuid}',
                     '${attr.visitDateInServerFormat}', '${attr.visitDetails.time}', '${attr.visitLocationUuid}',
-                    '${attr.visitTypeUuid}', '${attr.visitDetails.status}')">
+                    '${attr.visitTypeUuid}', '${attr.visitDetails.status}', '${attr.isVisitHasEncounters}')">
               </i>
               <% if (attr.visitDetails.formUri) { %>
                 <a href="../..${attr.visitDetails.formUri}&returnUrl=${ui.urlEncode(ui.thisUrl())}">

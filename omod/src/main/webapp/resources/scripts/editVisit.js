@@ -49,7 +49,8 @@ editVisit.hackWrapClose = function () {
 };
 
 editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid,
-                                          patientUuid, visitDate, visitTime, visitLocation, visitType, visitStatus) {
+                                          patientUuid, visitDate, visitTime, visitLocation, visitType, visitStatus,
+                                          isVisitHasEncounters) {
   editVisit.createEditVisitDialog(isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid,
     patientUuid, visitDate);
 
@@ -108,6 +109,12 @@ editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWeekd
   jq('#visit-location-select').val(visitLocation);
   jq('#visit-type-select').val(visitType);
   jq('#visit-status-select').val(visitStatus);
+
+  if (isVisitHasEncounters == 'true') {
+    jq('#visit-type-select').attr('disabled', true);
+  } else {
+    jq('#visit-type-select').attr('disabled', false);
+  }
 
   jq('.error-label').hide();
   enableSaveButton();
