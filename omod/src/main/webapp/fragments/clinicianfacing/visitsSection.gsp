@@ -152,7 +152,7 @@
               <span class="visit-date">${attr.visitDateInDisplayFormat}</span>
               <span class="visit-type">${attr.visitDetails.type}</span>
               <% if (attr.statusIconColor) { %>
-                <i class="icon-circle visits-icon" style="color: ${attr.statusIconColor}"></i>
+                <i class="icon-circle visits-icon" style="color: ${attr.statusIconColor}" title=${attr.status}></i>
               <% } %>
               <i class="icon-pencil visits-icon" title=${ui.message("common.edit")}
                 onClick="editVisit.showEditVisitDialog(${isExtraInfoDialogEnabled}, '${holidayWeekdays}',
