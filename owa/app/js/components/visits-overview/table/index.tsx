@@ -222,11 +222,14 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
                 <span className="action-button"></span>
               )
               }
-              <DeleteRowAction
-                viewIndex={viewIndex}
-                visitUuid={visit.uuid}
-                refreshTableCallback={this.props.reloadDataCallback}
-              />
+              {visit.actualDate == null ?
+                <DeleteRowAction
+                  viewIndex={viewIndex}
+                  visitUuid={visit.uuid}
+                  refreshTableCallback={this.props.reloadDataCallback}
+                /> :
+                <span className="action-button"></span>
+              }
             </>
           );
         }
