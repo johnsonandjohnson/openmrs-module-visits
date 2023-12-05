@@ -43,7 +43,6 @@
     margin-bottom: 30px;
 
     .cfl-dialog-instructions {
-      padding-top: 1em;
       padding-bottom: 1em;
       font-style: italic;
     }
@@ -67,4 +66,13 @@
     .form-group {
       margin-bottom: 0px;
     }
+  }
+
+  .update-button {
+    padding: 0.5rem 1.85rem;
+    font-size: 11px;
+    text-transform: uppercase;
+    background-color: #00455c;
+    color: white;
+    border-color: #6c757d;
   }

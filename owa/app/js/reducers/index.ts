@@ -17,13 +17,14 @@ import notification, { NotificationState } from './notification.reducer';
 import customizeReducer, { CustomizeState } 
   from '../components/customize/customize.reducer';
 import person, { PersonState }
-  from '../components/person-header/person.reducer';
+  from './person.reducer';
 import personStatus, { PersonStatusState } 
   from '../components/person-status/person-status.reducer';
 import globalPropertyReducer, { GlobalPropertyState } from './global-property.reducer';
 import session from './session';
 import messages from './messages';
 import app from './app';
+import location from './location';
 
 export interface IRootState {
   readonly openmrs: any;
@@ -38,6 +39,7 @@ export interface IRootState {
   readonly session: any;
   readonly messages: any;
   readonly app: any;
+  readonly location: any;
 }
 
 export default combineReducers<IRootState>({
@@ -52,5 +54,6 @@ export default combineReducers<IRootState>({
   globalPropertyReducer,
   session,
   messages,
-  app
+  app,
+  location
 });
