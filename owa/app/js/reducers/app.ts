@@ -12,13 +12,15 @@ import axios from 'axios';
 import { FAILURE, REQUEST, SUCCESS } from './action-type.util';
 
 export const ACTION_TYPES = {
-  GET_APP: 'settings/GET_APP'
+  GET_APP: 'settings/GET_APP',
+  GET_PATIENT_HEADER_APP: 'settings/GET_PATIENT_HEADER_APP'
 };
 
 const initialState = {
   app: null,
   appLoading: false,
-  errorMessage: null
+  errorMessage: null,
+  patientHeaderApp: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -41,6 +43,24 @@ const reducer = (state = initialState, action) => {
         appLoading: false,
         app: action.payload.data
       };
+    case REQUEST(ACTION_TYPES.GET_PATIENT_HEADER_APP):
+    return {
+      ...state,
+      appLoading: true,
+      errorMessage: null
+    };
+    case FAILURE(ACTION_TYPES.GET_PATIENT_HEADER_APP):
+      return {
+        ...state,
+        appLoading: false,
+        errorMessage: action.payload.message
+      };
+    case SUCCESS(ACTION_TYPES.GET_PATIENT_HEADER_APP):
+      return {
+        ...state,
+        appLoading: false,
+        patientHeaderApp: action.payload.data
+      };
     default:
       return state;
   }
@@ -51,7 +71,15 @@ export const getAppById = (appId: string) => {
   return {
     type: ACTION_TYPES.GET_APP,
     payload: axios.get(requestUrl)
-  }
+  };
 };
+
+export const getPatientHeaderApp = () => {
+  const requestUrl = '/openmrs/ws/rest/v1/app/cfl.configurablePatientHeader';
+  return {
+    type: ACTION_TYPES.GET_PATIENT_HEADER_APP,
+    payload: axios.get(requestUrl)
+  };
+}
 
 export default reducer;

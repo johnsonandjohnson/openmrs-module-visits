@@ -10,8 +10,8 @@
 
 import _ from 'lodash';
 
-import { REQUEST, SUCCESS, FAILURE } from '../shared/action-type.util';
-import axiosInstance from '../shared/axios';
+import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
+import axiosInstance from '../components/shared/axios';
 
 export const ACTION_TYPES = {
   GET_PERSON: 'personReducer/GET_PERSON',

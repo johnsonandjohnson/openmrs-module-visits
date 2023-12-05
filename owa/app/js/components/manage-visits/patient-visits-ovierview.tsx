@@ -16,8 +16,8 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import VisitsOverview from '../visits-overview';
 import { VISITS_PATIENT_OVERVIEW_APP_ID } from '../visits-overview/constants';
-import Header from '../person-header/person-header';
 import PersonStatus from '../person-status/person-status';
+import PatientHeader from '../patient-header/patient-header';
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps<{ patientUuid: string }> {
 
@@ -41,9 +41,9 @@ class PatientVisitsOverview extends React.Component<PropsWithIntl<IProps>, IStat
       <>
         <div className="body-wrapper">
           <div className="content">
-            <Header {...newProps}>
-              <PersonStatus patientUuid={newProps.patientUuid}/>
-            </Header>
+            <PatientHeader {...newProps}>
+              <PersonStatus {...newProps}/>
+            </PatientHeader>
             <div className="visits-overview">
               <h2>{this.props.intl.formatMessage({ id: "visits.manageVisits" })}</h2>
               {!!this.props.sessionLocation ?

@@ -200,11 +200,11 @@ class VisitsOverview extends React.Component<PropsWithIntl<IVisitsOverviewProps>
               patientUuid={this.props.patientUuid}
               visitUuid={this.state.visitUuid}
               confirm={() => {
-              }} // TODO: NOT USED??!?!
+              }}
               cancel={this.closeScheduleVisitModal}
               saveVisitCallback={this.saveVisitCallback}
               refetchVisits={this.reloadData}
-              locale={null} // TODO: NOT USED?!?!
+              locale={null}
             />
           </div>
         </>
