@@ -10,7 +10,7 @@
 
   <groupId>org.openmrs.module</groupId>
   <artifactId>visits</artifactId>
-  <version>1.5.1-1-ship-SNAPSHOT</version>
+  <version>1.6.0-ship</version>
   <packaging>pom</packaging>
   <name>Visits Module</name>
   <description>
@@ -21,7 +21,7 @@
     <connection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/openmrs-module-visits.git</connection>
     <developerConnection>scm:git:https://sourcecode.jnj.com/scm/itx-bpv/openmrs-module-visits.git</developerConnection>
     <url>https://sourcecode.jnj.com/scm/itx-bpv/openmrs-module-visits.git</url>
-    <tag>HEAD</tag>
+    <tag>1.6.0-ship</tag>
   </scm>
 
   <modules>

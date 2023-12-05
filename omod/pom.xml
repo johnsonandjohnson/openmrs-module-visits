@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.openmrs.module</groupId>
     <artifactId>visits</artifactId>
-    <version>1.5.1-1-ship-SNAPSHOT</version>
+    <version>1.6.0-ship</version>
   </parent>
 
   <artifactId>visits-omod</artifactId>
@@ -16,7 +16,7 @@
     <dependency>
       <groupId>org.openmrs.module</groupId>
       <artifactId>visits-api</artifactId>
-      <version>1.5.1-1-ship-SNAPSHOT</version>
+      <version>1.6.0-ship</version>
     </dependency>
     <dependency>
       <groupId>org.openmrs.web</groupId>

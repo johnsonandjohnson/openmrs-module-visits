@@ -1,6 +1,6 @@
 {
   "name": "visits",
-  "version": "1.5.1-1-ship-SNAPSHOT",
+  "version": "1.6.0-ship",
   "description": "OWA project for Visits Module",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
