@@ -209,27 +209,6 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
                 itemsPerPage={this.state.itemsPerPage}
                 openScheduleVisitModalCallback={this.props.openScheduleVisitModalCallback}
               />
-              {!!visit.formUri ? (
-                <span className="action-button">
-                  <a
-                    id={`visit-note-button-${viewIndex}`}
-                    href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}
-                  >
-                    <FontAwesomeIcon icon={faStethoscope} size="1x"/>
-                  </a>
-                </span>
-              ) : (
-                <span className="action-button"></span>
-              )
-              }
-              {visit.actualDate == null ?
-                <DeleteRowAction
-                  viewIndex={viewIndex}
-                  visitUuid={visit.uuid}
-                  refreshTableCallback={this.props.reloadDataCallback}
-                /> :
-                <span className="action-button"></span>
-              }
             </>
           );
         }
