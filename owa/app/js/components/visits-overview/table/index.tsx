@@ -261,7 +261,7 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
         defaultPageSize={DEFAULT_ITEMS_PER_PAGE}
         defaultSorted={this.props.columns.filter(column => column.sortable).map(column => ({
           id: column.field,
-          desc: true
+          desc: false
         }))}
         minRows={MIN_ROWS}
         pageSizeOptions={PAGE_SIZE_OPTIONS}

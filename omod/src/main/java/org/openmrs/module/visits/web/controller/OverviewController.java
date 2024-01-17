@@ -113,7 +113,7 @@ public class OverviewController extends BaseRestController {
                                              Long dateTo,
                                          @ApiParam(name = "timePeriod", value = "timePeriod") @RequestParam(required = false)
                                              String timePeriod, @ApiParam(name = "startDatetimeSort", value = "startDatetimeSort")
-                                         @RequestParam(required = false) String startDatetimeSort) {
+                                         @RequestParam(required = false, defaultValue = "ASC") String startDatetimeSort) {
 
     final PagingInfo pagingInfo = pageableParams.getPagingInfo();
     final VisitSimpleQuery visitForLocationQuery = new VisitSimpleQuery.Builder()
