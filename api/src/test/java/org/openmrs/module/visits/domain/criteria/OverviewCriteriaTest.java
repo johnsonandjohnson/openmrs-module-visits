@@ -10,6 +10,11 @@
 
 package org.openmrs.module.visits.domain.criteria;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+
+import java.lang.reflect.Field;
+import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.internal.CriteriaImpl;
@@ -18,13 +23,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.openmrs.Location;
 import org.openmrs.module.visits.builder.LocationBuilder;
-
-import java.lang.reflect.Field;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class OverviewCriteriaTest {
 
@@ -41,7 +39,7 @@ public class OverviewCriteriaTest {
         Criteria criteria = new CriteriaImpl("Overview", session);
         overviewCriteria.loadHibernateCriteria(criteria);
 
-        assertThat(getCriterions(criteria), hasSize(2));
+        assertThat(getCriterions(criteria), hasSize(3));
     }
 
     private List<CriterionEntry> getCriterions(Criteria criteria) throws NoSuchFieldException, IllegalAccessException {
