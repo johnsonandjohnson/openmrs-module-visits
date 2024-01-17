@@ -75,6 +75,8 @@ public class OverviewCriteria extends BaseCriteria {
   private final String visitStatus;
   private final String timePeriod;
 
+  private final boolean isPatientVoided;
+
   public OverviewCriteria(Location location, String query, String visitStatus, Long dateFrom, Long dateTo,
                           String timePeriod) {
     this.locationUuid = location.getUuid();
@@ -88,6 +90,7 @@ public class OverviewCriteria extends BaseCriteria {
     this.sortResults = true;
     this.sortFieldName = START_DATE_TIME_FIELD_NAME;
     this.sortAscending = false;
+    this.isPatientVoided = false;
   }
 
   public OverviewCriteria(VisitSimpleQuery visitForLocationQuery) {
@@ -103,6 +106,7 @@ public class OverviewCriteria extends BaseCriteria {
     this.sortFieldName = START_DATE_TIME_FIELD_NAME;
     this.sortAscending =
         StringUtils.equalsIgnoreCase(visitForLocationQuery.getStartDatetimeSort(), VisitSimpleQuery.SORT_ASCENDING);
+    this.isPatientVoided = false;
   }
 
   @Override
@@ -171,10 +175,14 @@ public class OverviewCriteria extends BaseCriteria {
   }
 
   private void addPatientCriteria(Criteria criteria) {
-    if (StringUtils.isNotBlank(patientUuid)) {
-      final DetachedCriteria patientCriteria =
-          DetachedCriteria.forClass(Patient.class).add(Restrictions.eq(UUID, patientUuid)).setProjection(Projections.id());
+    final DetachedCriteria patientCriteria = DetachedCriteria.forClass(Patient.class);
+    patientCriteria
+        .add(Restrictions.eq(VOIDED_PROPERTY, isPatientVoided))
+        .setProjection(Projections.id());
+    criteria.add(Subqueries.propertyIn(PATIENT_ALIAS, patientCriteria));
 
+    if (StringUtils.isNotBlank(patientUuid)) {
+      patientCriteria.add(Restrictions.eq(UUID, patientUuid)).setProjection(Projections.id());
       criteria.add(Subqueries.propertyEq(PATIENT_ALIAS, patientCriteria));
     }
   }
