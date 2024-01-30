@@ -9,7 +9,7 @@
 
   <groupId>org.openmrs.module</groupId>
   <artifactId>visits</artifactId>
-  <version>1.6.1-leprosy-SNAPSHOT</version>
+  <version>1.6.1-leprosy-india-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Visits Module</name>
   <description>
