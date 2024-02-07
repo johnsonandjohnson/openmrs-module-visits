@@ -30,6 +30,7 @@ export interface ITableColumn {
   field: string
   dateTimeFormat?: string
   sortable?: boolean
+  defaultOrder: 'ASC' | 'DESC';
 }
 
 interface ITableData {
@@ -184,7 +185,7 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
           Header: this.props.intl.formatMessage({ id: `${column.label}` }),
           accessor: column.field,
           sortable: column.sortable,
-          defaultSortDesc: column.sortable ? true : undefined,
+          defaultSortDesc: column.sortable && column.defaultOrder === 'DESC',
           Cell: (props) => {
             return <OverviewTableCell column={column} value={props.value}/>
           },
@@ -261,7 +262,7 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
         defaultPageSize={DEFAULT_ITEMS_PER_PAGE}
         defaultSorted={this.props.columns.filter(column => column.sortable).map(column => ({
           id: column.field,
-          desc: true
+          desc: column.defaultOrder === 'DESC'
         }))}
         minRows={MIN_ROWS}
         pageSizeOptions={PAGE_SIZE_OPTIONS}

@@ -192,6 +192,7 @@ class VisitsOverview extends React.Component<PropsWithIntl<IVisitsOverviewProps>
                 onSelectAllCheckboxChange={this.onSelectAllCheckboxChange}
                 selectedVisitsUuids={this.state.selectedVisitsUuids}
                 isAllVisitsChecked={this.state.isAllVisitsChecked}
+                defaultOrder={app.config.columns.defaultOrder}
               />
             </div>
 
