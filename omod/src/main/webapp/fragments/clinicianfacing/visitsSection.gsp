@@ -24,7 +24,7 @@
   <div class="info-header" style="padding-bottom: 4px;">
     <i class="icon-calendar"></i>
     <h3>${ ui.message("visits.visits").toUpperCase() }</h3>
-    <% if (context.hasPrivilege("App: coreapps.patientVisits")) { %>
+    <% if (context.hasPrivilege("App: coreapps.patientVisits") && config.widgetPencilIconVisible) { %>
       <i class="icon-pencil edit-action right" onclick="location.href='${editPageUrl}'" title="${ ui.message("coreapps.edit") }"></i>
     <% } %>
   </div>
@@ -151,7 +151,7 @@
             <li>
               <span class="visit-date">${attr.visitDateInDisplayFormat}</span>
               <span class="visit-type">${attr.visitDetails.type}</span>
-              <% if (attr.statusIconColor) { %>
+              <% if (config.showVisitStatus && attr.statusIconColor) { %>
                 <i class="icon-circle visits-icon" style="color: ${attr.statusIconColor}" title=${attr.status}></i>
               <% } %>
               <i class="icon-pencil visits-icon" title=${ui.message("common.edit")}

@@ -193,6 +193,8 @@ class VisitsOverview extends React.Component<PropsWithIntl<IVisitsOverviewProps>
                 selectedVisitsUuids={this.state.selectedVisitsUuids}
                 isAllVisitsChecked={this.state.isAllVisitsChecked}
                 defaultOrder={app.config.columns.defaultOrder}
+                editVisitIconVisible={app.config.editVisitIconVisible}
+                deleteVisitIconVisible={app.config.deleteVisitIconVisible}
               />
             </div>
 

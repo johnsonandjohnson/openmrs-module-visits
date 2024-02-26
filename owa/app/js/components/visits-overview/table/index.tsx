@@ -49,7 +49,9 @@ interface IVisitsOverviewTableProps extends DispatchProps, StateProps {
   pagesCount: number
   actions: IConfigActions
   isAllVisitsChecked: boolean
-  selectedVisitsUuids: string[];
+  selectedVisitsUuids: string[]
+  editVisitIconVisible: boolean
+  deleteVisitIconVisible: boolean
   reloadDataCallback: (data: any) => void;
   onCheckboxesChangeData: (data: any) => void
   openScheduleVisitModalCallback: (visitUuid: string | null) => void
@@ -202,15 +204,18 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
           const { viewIndex } = row;
           const visit: IVisit = row.original;
           return (
-            <>
-              <EditVisitAction
-                viewIndex={viewIndex}
-                visit={visit}
-                activePage={this.state.activePage}
-                itemsPerPage={this.state.itemsPerPage}
-                openScheduleVisitModalCallback={this.props.openScheduleVisitModalCallback}
-              />
-              {!!visit.formUri ? (
+            <> 
+              {this.props.editVisitIconVisible ?
+                <EditVisitAction
+                  viewIndex={viewIndex}
+                  visit={visit}
+                  activePage={this.state.activePage}
+                  itemsPerPage={this.state.itemsPerPage}
+                  openScheduleVisitModalCallback={this.props.openScheduleVisitModalCallback}
+                /> :
+                <span className="action-button"></span>   
+              }
+              {!!visit.formUri ?
                 <span className="action-button">
                   <a
                     id={`visit-note-button-${viewIndex}`}
@@ -218,12 +223,10 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
                   >
                     <FontAwesomeIcon icon={faStethoscope} size="1x"/>
                   </a>
-                </span>
-              ) : (
+                </span> :
                 <span className="action-button"></span>
-              )
               }
-              {visit.actualDate == null ?
+              {this.props.deleteVisitIconVisible && visit.actualDate == null ?
                 <DeleteRowAction
                   viewIndex={viewIndex}
                   visitUuid={visit.uuid}
