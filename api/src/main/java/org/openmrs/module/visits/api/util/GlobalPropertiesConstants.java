@@ -69,5 +69,11 @@ public final class GlobalPropertiesConstants {
           "Saturday,Sunday",
           "Comma separated list of weekdays when visits should not be scheduled");
 
+  public static final GPDefinition SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP =
+      new GPDefinition(
+          "visits.outsideDateWindowInformationEnabled",
+          "false",
+          "Used to determine if additional information about falling outside the permitted visit date should be displayed");
+
   private GlobalPropertiesConstants() {}
 }

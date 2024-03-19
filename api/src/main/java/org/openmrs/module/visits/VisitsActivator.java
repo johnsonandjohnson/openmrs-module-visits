@@ -84,7 +84,8 @@ public class VisitsActivator extends BaseModuleActivator implements DaemonTokenA
             GlobalPropertiesConstants.ENCOUNTER_DATETIME_VALIDATION,
             GlobalPropertiesConstants.MISSED_VISIT_CHANGER_CREATION_GP,
             GlobalPropertiesConstants.SCHEDULE_VISIT_EXTRA_INFORMATION_GP,
-            GlobalPropertiesConstants.VISITS_HOLIDAY_WEEKDAYS_GP));
+            GlobalPropertiesConstants.VISITS_HOLIDAY_WEEKDAYS_GP,
+            GlobalPropertiesConstants.SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP));
   }
 
   private void createMissedVisitStatusChangerConfig() {

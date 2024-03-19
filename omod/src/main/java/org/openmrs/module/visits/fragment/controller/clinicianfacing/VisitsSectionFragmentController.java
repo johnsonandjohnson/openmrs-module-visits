@@ -21,6 +21,13 @@
  */
 package org.openmrs.module.visits.fragment.controller.clinicianfacing;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
@@ -55,14 +62,6 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Supports the containing PageModel having an "app" property whose config defines a "visitUrl"
@@ -155,18 +154,11 @@ public class VisitsSectionFragmentController {
     config.addAttribute(
         "showVisitTypeOnPatientHeaderSection",
         visitTypeHelper.showVisitTypeOnPatientHeaderSection());
-
-    model.addAttribute(
-        "isExtraInfoDialogEnabled",
-        GlobalPropertyUtil.parseBool(
-            GlobalPropertyUtils.getGlobalProperty(
-                GlobalPropertiesConstants.SCHEDULE_VISIT_EXTRA_INFORMATION_GP.getKey())));
-    model.addAttribute(
-        "holidayWeekdays",
-        GlobalPropertyUtils.getGlobalProperty(
-            GlobalPropertiesConstants.VISITS_HOLIDAY_WEEKDAYS_GP.getKey()));
+    
+    addGlobalPropertiesToModel(model);
+    
     model.addAttribute("locale", Context.getLocale().toLanguageTag().replace('_', '-'));
-
+    
     List<String> stringVisitDates =
         allVisits.stream()
             .map(VisitDomainWrapper::getStartDatetime)
@@ -180,6 +172,26 @@ public class VisitsSectionFragmentController {
     model.addAttribute("commaSeparatedVisitDates", commaSeparatedVisitDates);
 
     addAttributesForEditVisitWidget(model);
+  }
+  
+  private void addGlobalPropertiesToModel(FragmentModel model) {
+    model.addAttribute(
+        "isExtraInfoDialogEnabled",
+        GlobalPropertyUtil.parseBool(
+            GlobalPropertyUtils.getGlobalProperty(
+                GlobalPropertiesConstants.SCHEDULE_VISIT_EXTRA_INFORMATION_GP.getKey())));
+
+    model.addAttribute(
+        "holidayWeekdays",
+        GlobalPropertyUtils.getGlobalProperty(
+            GlobalPropertiesConstants.VISITS_HOLIDAY_WEEKDAYS_GP.getKey()));
+
+    model.addAttribute(
+        "isOutsideDateWindowInformationEnabled",
+        GlobalPropertyUtil.parseBool(
+            GlobalPropertyUtils.getGlobalProperty(
+                GlobalPropertiesConstants.SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP
+                    .getKey())));
   }
 
   private Map<String, Object> getVisitParams(
@@ -228,6 +240,19 @@ public class VisitsSectionFragmentController {
         DateUtil.convertDateWithLocale(
             extractedVisit.getStartDatetime(), "dd MMM YYYY", Context.getLocale()));
     result.put("isVisitHasEncounters", CollectionUtils.isNotEmpty(extractedVisit.getEncounters()));
+
+    String lowWindowAttributeValue = (String) visit.getVisitAttribute("Low Window");
+    String upWindowAttributeValue = (String) visit.getVisitAttribute("Up Window");
+
+    if (StringUtils.isNotBlank(lowWindowAttributeValue)) {
+      result.put(
+          "lowWindowDate",
+          DateUtil.getDatePlusDays(
+              visit.getStartDate(), -1 * Integer.parseInt(lowWindowAttributeValue)));
+      result.put(
+          "upWindowDate",
+          DateUtil.getDatePlusDays(visit.getStartDate(), Integer.parseInt(upWindowAttributeValue)));
+    }
 
     return result;
   }

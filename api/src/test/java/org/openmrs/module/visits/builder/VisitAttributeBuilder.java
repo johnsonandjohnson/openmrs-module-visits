@@ -32,6 +32,7 @@ public class VisitAttributeBuilder extends AbstractBuilder<VisitAttribute> {
         VisitAttribute va = new VisitAttribute();
         va.setVisitAttributeId(visitAttributeId == null ? getAndIncrementNumber() : visitAttributeId);
         va.setAttributeType(visitAttributeType);
+        va.setValueReferenceInternal("test value");
         return va;
     }
 }

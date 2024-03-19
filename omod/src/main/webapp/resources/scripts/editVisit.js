@@ -3,6 +3,21 @@ var userLocale = null;
 const DISPLAY_FORMAT_DATE = 'DD MMMM YYYY';
 const SERVER_FORMAT_DATE = 'YYYY-MM-DD';
 
+const PT_EN_MONTHS_MAPPING = {
+  'Janeiro': 'January',
+  'Fevereiro': 'February',
+  'Março': 'March',
+  'Abril': 'April',
+  'Maio': 'May',
+  'Junho': 'June',
+  'Julho': 'July',
+  'Agosto': 'August',
+  'Setembro': 'September',
+  'Outubro': 'October',
+  'Novembro': 'November',
+  'Dezembro': 'December'
+};
+
 jq(document).ready(function () {
   emr.loadMessages([
     "visits.genericSuccess",
@@ -20,7 +35,8 @@ jq(document).ready(function () {
     "cfl.weekDay.Wednesday.fullName",
     "cfl.weekDay.Thursday.fullName",
     "cfl.weekDay.Friday.fullName",
-    "cfl.weekDay.Saturday.fullName"
+    "cfl.weekDay.Saturday.fullName",
+    "visits.outsideDateWindowInfoMessage"
   ]);
 
   userLocale = jq('#locale-span').text();
@@ -48,11 +64,12 @@ editVisit.hackWrapClose = function () {
   editVisit.editVisitDialog.close();
 };
 
-editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid,
-                                          patientUuid, visitDate, visitTime, visitLocation, visitType, visitStatus,
-                                          isVisitHasEncounters) {
-  editVisit.createEditVisitDialog(isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid,
-    patientUuid, visitDate);
+editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideDateWindowInformationEnabled, holidayWeekdays,
+                                          allVisitDates, visitUuid, patientUuid, visitDate, visitTime, visitLocation,
+                                          visitType, visitStatus, isVisitHasEncounters, lowWindowDate, upWindowDate) {
+
+  editVisit.createEditVisitDialog(isExtraInfoDialogEnabled, isOutsideDateWindowInformationEnabled, holidayWeekdays,
+                                  allVisitDates, visitUuid, patientUuid, visitDate, visitStatus, lowWindowDate, upWindowDate);
 
   editVisit.editVisitDialog.show();
 
@@ -120,7 +137,15 @@ editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWeekd
   enableSaveButton();
 };
 
-editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWeekdays, allVisitDates, visitUuid, patientUuid, visitDate) {
+editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideDateWindowInformationEnabled,
+                                            holidayWeekdays, allVisitDates, visitUuid, patientUuid, visitDate,
+                                            visitStatus, lowWindowDate, upWindowDate) {
+
+  const lowWindowDateAsDateObject = new Date(lowWindowDate);
+  lowWindowDateAsDateObject.setHours(0, 0, 0, 0);
+  const upWindowDateAsDateObject = new Date(upWindowDate);
+  upWindowDateAsDateObject.setHours(0, 0, 0, 0);
+
   editVisit.editVisitDialog = emr.setupConfirmationDialog({
     selector: '#edit-visit-dialog',
     dialogOpts: {
@@ -130,8 +155,15 @@ editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWee
     },
     actions: {
       confirm: function () {
-        if (isExtraInfoDialogEnabled) {
-          editVisit.showExtraInfoDialog(allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate);
+        const currentVisitDate = new Date(getCurrentDateInServerFormat());
+        currentVisitDate.setHours(0, 0, 0, 0);
+        const isNewVisitDateInRange = currentVisitDate >= lowWindowDateAsDateObject && currentVisitDate <= upWindowDateAsDateObject;
+        const dateWindowInfoAvailable = lowWindowDate != 'null' && upWindowDate != 'null';
+        const shouldOutsideDateWindowInformationBeDisplayed = isOutsideDateWindowInformationEnabled && visitStatus === 'SCHEDULED'
+          && !isNewVisitDateInRange && dateWindowInfoAvailable;
+
+        if (isExtraInfoDialogEnabled || shouldOutsideDateWindowInformationBeDisplayed) {
+          editVisit.showExtraInfoDialog(isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed, allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate);
         } else {
           const requestBody = {
             "uuid": visitUuid,
@@ -168,14 +200,16 @@ editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, holidayWee
   })
 };
 
-editVisit.showExtraInfoDialog = function (allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate) {
+editVisit.showExtraInfoDialog = function (isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed,
+                                          allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate) {
   editVisit.createExtraInfoDialog(visitUuid, patientUuid);
 
   jq('#extra-info-dialog').show();
   jq('#infoMessagePart1').text('');
   jq('#infoMessagePart2').text('');
   jq('#infoMessagePart1').css('color', '#333333');
-  setExtraInfoDialogContent(allVisitDates, holidayWeekdays, visitDate);
+  jq('#outsideDateWindowInfo').text('');
+  setExtraInfoDialogContent(isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed, allVisitDates, holidayWeekdays, visitDate);
 }
 
 editVisit.createExtraInfoDialog = function (visitUuid, patientUuid) {
@@ -222,89 +256,112 @@ editVisit.handleDateInputOnClick = function () {
 }
 
 function getCurrentDateInServerFormat () {
-  moment.locale(userLocale);
-  const currentDateInputValue = moment(jq('#visit-date-select').val(), DISPLAY_FORMAT_DATE);
+  let stringVisitDate = jq('#visit-date-select').val();
+
+  if (userLocale.includes('pt')) {
+    for (const [ptMonth, enMonth] of Object.entries(PT_EN_MONTHS_MAPPING)) {
+      stringVisitDate = stringVisitDate.replace(ptMonth, enMonth);
+    }
+  }
+  const currentDateInputValue = moment(stringVisitDate, DISPLAY_FORMAT_DATE);
 
   return moment(currentDateInputValue).format(SERVER_FORMAT_DATE);
 }
 
-function setExtraInfoDialogContent (allVisitDates, holidayWeekdays, visitDate) {
-  const allVisitDatesArray = allVisitDates.split(',');
-  allVisitDatesArray.splice(allVisitDatesArray.indexOf(visitDate), 1);
+function setExtraInfoDialogContent(isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed,
+                                    allVisitDates, holidayWeekdays, visitDate) {
 
-  const newVisitDate = moment(jq('#visit-date-select').datepicker('getDate')).format(SERVER_FORMAT_DATE);
-  const isVisitDateDuplicated = allVisitDatesArray.includes(newVisitDate);
-  if (isVisitDateDuplicated) {
-    allVisitDatesArray.splice(allVisitDatesArray.indexOf(newVisitDate), 1);
-  }
+  if (isExtraInfoDialogEnabled) {
+    const allVisitDatesArray = allVisitDates.split(',');
+    allVisitDatesArray.splice(allVisitDatesArray.indexOf(visitDate), 1);
 
-  moment.locale(userLocale);
-  const currentVisitDate = moment(jq('#visit-date-select').val(), DISPLAY_FORMAT_DATE);
-  const dateInEnglish = currentVisitDate.locale('en').format(DISPLAY_FORMAT_DATE);
-  const currentVisitWeekDayName = moment(dateInEnglish).locale('en').format('dddd');
-  const weekDayNameToDisplay = emr.message('cfl.weekDay.' + currentVisitWeekDayName + '.fullName');
-
-  const currentVisitDateAsDateObject = new Date(currentVisitDate);
-  const allVisitDateObjects = allVisitDatesArray.map(date => new Date(date));
-  const closestPreviousVisit = findClosestPreviousVisit(allVisitDateObjects, currentVisitDateAsDateObject);
-  const closestFutureVisit = findClosestFutureVisit(allVisitDateObjects, currentVisitDateAsDateObject);
-
-  jq('#infoMessagePart1')
-    .append(emr.message('visitSavedOnText'))
-    .append(' ')
-    .append(weekDayNameToDisplay)
-    .append(', ')
-    .append(jq('#visit-date-select').val())
-    .append('.');
-
-  if (isVisitDateDuplicated) {
-    jq('#infoMessagePart1')
-      .append('</br>')
-      .append('<span>')
-      .append(emr.message('duplicatedVisitDateText'))
-      .append('</span>');
-  }
-
-  if (closestPreviousVisit != null) {
-    const numberOfDaysBetweenCurrentAndPastVisit = getNumberOfDaysBetweenDates(currentVisitDateAsDateObject, closestPreviousVisit);
-    jq('#infoMessagePart2')
-      .append(emr.message('precedingVisitPlannedOnText'))
-      .append(' ')
-      .append(numberOfDaysBetweenCurrentAndPastVisit)
-      .append(' ')
-      .append(emr.message('daysBeforeText'));
-
-    if (closestFutureVisit == null) {
-      jq('#infoMessagePart2').append('.');
+    const newVisitDate = moment(jq('#visit-date-select').datepicker('getDate')).format(SERVER_FORMAT_DATE);
+    const isVisitDateDuplicated = allVisitDatesArray.includes(newVisitDate);
+    if (isVisitDateDuplicated) {
+      allVisitDatesArray.splice(allVisitDatesArray.indexOf(newVisitDate), 1);
     }
-  }
 
-  if (closestPreviousVisit != null && closestFutureVisit != null) {
-    jq('#infoMessagePart2')
+    let stringVisitDate = jq('#visit-date-select').val();
+    if (userLocale.includes('pt')) {
+      for (const [ptMonth, enMonth] of Object.entries(PT_EN_MONTHS_MAPPING)) {
+        stringVisitDate = stringVisitDate.replace(ptMonth, enMonth);
+      }
+    }
+
+    const currentVisitDate = moment(stringVisitDate, DISPLAY_FORMAT_DATE);
+    const currentVisitWeekDayName = moment(currentVisitDate).format('dddd');
+    const weekDayNameToDisplay = emr.message('cfl.weekDay.' + currentVisitWeekDayName + '.fullName');
+
+    const currentVisitDateAsDateObject = new Date(currentVisitDate);
+    const allVisitDateObjects = allVisitDatesArray.map(date => new Date(date));
+    const closestPreviousVisit = findClosestPreviousVisit(allVisitDateObjects, currentVisitDateAsDateObject);
+    const closestFutureVisit = findClosestFutureVisit(allVisitDateObjects, currentVisitDateAsDateObject);
+
+    jq('#infoMessagePart1')
+      .append(emr.message('visitSavedOnText'))
+      .append(' ')
+      .append(weekDayNameToDisplay)
       .append(', ')
-      .append(emr.message('whileText'))
-      .append(' ');
-  }
-
-  if (closestFutureVisit != null) {
-    const numberOfDaysBetweenCurrentAndFutureVisit = getNumberOfDaysBetweenDates(currentVisitDateAsDateObject, closestFutureVisit);
-    jq('#infoMessagePart2')
-      .append(emr.message('nextVisitPlannedOnText'))
-      .append(' ')
-      .append(numberOfDaysBetweenCurrentAndFutureVisit)
-      .append(' ')
-      .append(emr.message('daysAfterVisitText'))
+      .append(jq('#visit-date-select').val())
       .append('.');
 
-    if (closestPreviousVisit == null) {
-      const infoMessageText = jq('#infoMessagePart2').text();
-      jq('#infoMessagePart2').html(infoMessageText.charAt(0).toUpperCase() + infoMessageText.slice(1));
+    if (isVisitDateDuplicated) {
+      jq('#infoMessagePart1')
+        .append('</br>')
+        .append('<span>')
+        .append(emr.message('duplicatedVisitDateText'))
+        .append('</span>');
     }
+
+    if (closestPreviousVisit != null) {
+      const numberOfDaysBetweenCurrentAndPastVisit = getNumberOfDaysBetweenDates(currentVisitDateAsDateObject, closestPreviousVisit);
+      jq('#infoMessagePart2')
+        .append(emr.message('precedingVisitPlannedOnText'))
+        .append(' ')
+        .append(numberOfDaysBetweenCurrentAndPastVisit)
+        .append(' ')
+        .append(emr.message('daysBeforeText'));
+
+      if (closestFutureVisit == null) {
+        jq('#infoMessagePart2').append('.');
+      }
+    }
+
+    if (closestPreviousVisit != null && closestFutureVisit != null) {
+      jq('#infoMessagePart2')
+        .append(', ')
+        .append(emr.message('whileText'))
+        .append(' ');
+    }
+
+    if (closestFutureVisit != null) {
+      const numberOfDaysBetweenCurrentAndFutureVisit = getNumberOfDaysBetweenDates(currentVisitDateAsDateObject, closestFutureVisit);
+      jq('#infoMessagePart2')
+        .append(emr.message('nextVisitPlannedOnText'))
+        .append(' ')
+        .append(numberOfDaysBetweenCurrentAndFutureVisit)
+        .append(' ')
+        .append(emr.message('daysAfterVisitText'))
+        .append('.');
+
+      if (closestPreviousVisit == null) {
+        const infoMessageText = jq('#infoMessagePart2').text();
+        jq('#infoMessagePart2').html(infoMessageText.charAt(0).toUpperCase() + infoMessageText.slice(1));
+      }
+    }
+
+    const holidayWeekdaysArray = holidayWeekdays.split(',');
+    if (holidayWeekdaysArray.includes(currentVisitWeekDayName)) {
+      jq('#infoMessagePart1').css('color', 'red');
+    }
+  } else {
+    jq('#extraInfoDiv').hide();
   }
 
-  const holidayWeekdaysArray = holidayWeekdays.split(',');
-  if (holidayWeekdaysArray.includes(currentVisitWeekDayName)) {
-    jq('#infoMessagePart1').css('color', 'red');
+  if (shouldOutsideDateWindowInformationBeDisplayed) {
+    jq('#outsideDateWindowInfo').append(emr.message('visits.outsideDateWindowInfoMessage'));
+  } else {
+    jq('#outsideDateWindowDiv').hide();
   }
 }
 

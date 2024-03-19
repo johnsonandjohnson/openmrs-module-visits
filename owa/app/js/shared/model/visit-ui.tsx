@@ -14,16 +14,16 @@ import * as Yup from "yup";
 import _ from 'lodash';
 import {validateFormSafely} from '../../components/validation/validation';
 import IVisitDetails from "./visit-details";
-import { Props } from "@fortawesome/react-fontawesome";
 
 export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDetails, IForm {
   uuid: string;
-  startDate: Date;
+  startDate: any;
   time: string | null;
   location: string | null;
   type: string;
   status: string | null;
   actualDate?: Date | undefined;
+  visitAttributes?: any
 
   errors: { [key: string]: string; };
   touchedFields: { [key: string]: boolean; };

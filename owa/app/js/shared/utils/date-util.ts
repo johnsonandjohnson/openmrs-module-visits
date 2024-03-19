@@ -11,8 +11,8 @@
 import { parse } from 'date-fns';
 import moment from 'moment';
 
-const CLEAR_DATE = null;
-const ONE_DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
+export const CLEAR_DATE = null;
+export const ONE_DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
 
 export const MEDIUM_DATE_FORMAT = 'DD MMM YYYY';
 

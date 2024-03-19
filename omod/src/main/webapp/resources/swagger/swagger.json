@@ -415,6 +415,12 @@
         },
         "typeName" : {
           "type" : "string"
+        },
+        "visitAttributes" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
         }
       }
     }

@@ -42,36 +42,47 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, int
 	const nextVisitPlannedConvertedText = !isPreviousAndNextVisit ? nextVisitPlannedText.charAt(0).toUpperCase() + nextVisitPlannedText.slice(1) : nextVisitPlannedText;
 	const infoMsgPartFour = ` ${nextVisitPlannedConvertedText} ${modalParams?.nextVistitDaysNumber} ${intl.formatMessage({id: "daysAfterVisitText" })}.`;
 	const visitForThisDateIsDuplicatedText = `${intl.formatMessage({id: "duplicatedVisitDateText" })}`;
-	
+
 	if (!show) {
 		return null;
 	}
 
 	return (
-		<Modal id="extra-info-modal" show={show} onHide={cancel}>
-			<Modal.Body>
-				<div className="modal-title">{intl.formatMessage({id: "informationLabel" })}</div>
-				<p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ''}>
-					{infoMsgPartOne}
-					<br />
-					{isVisitDateDuplicated && <span>{visitForThisDateIsDuplicatedText}</span>}
-				</p>
-				<p>
-					{isPreviousVisit && <span>{infoMsgPartTwo}</span>}
-					{isPreviousAndNextVisit && <span>{infoMsgPartThree}</span>}
-					{isNextVisit && <span>{infoMsgPartFour}</span>}
-				</p>
-				<Button
-					bsClass="button confirm right"
-					onClick={confirm}
-				>
-					{intl.formatMessage({id: "okLabel" })}
-				</Button>
-				<Button bsClass="button cancel" onClick={cancel}>
-					{intl.formatMessage({id: "visits.cancelButtonLabel" })}
-				</Button>
-			</Modal.Body>
-		</Modal>
+    <Modal id="extra-info-modal" show={show} onHide={cancel}>
+      <Modal.Body>
+        <div className="modal-title">{intl.formatMessage({id: "informationLabel" })}</div>
+        {modalParams?.isExtraInformationEnabled === 'true' && (
+          <>
+            <p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ''}>
+              {infoMsgPartOne}
+              <br />
+              {isVisitDateDuplicated && <span>{visitForThisDateIsDuplicatedText}</span>}
+            </p>
+            <p>
+              {isPreviousVisit && <span>{infoMsgPartTwo}</span>}
+              {isPreviousAndNextVisit && <span>{infoMsgPartThree}</span>}
+              {isNextVisit && <span>{infoMsgPartFour}</span>}
+            </p>
+          </>
+        )}
+
+        {modalParams?.isOutsideDateWindowInformationEnabled && (
+          <>
+            <p>{intl.formatMessage({id: "visits.outsideDateWindowInfoMessage" })}</p>
+          </>
+        )}
+
+        <Button
+          bsClass="button confirm right"
+          onClick={confirm}
+        >
+          {intl.formatMessage({id: "okLabel" })}
+        </Button>
+        <Button bsClass="button cancel" onClick={cancel}>
+          {intl.formatMessage({id: "visits.cancelButtonLabel" })}
+        </Button>
+      </Modal.Body>
+    </Modal>
 	);
 };
 
