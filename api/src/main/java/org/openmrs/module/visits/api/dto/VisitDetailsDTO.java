@@ -10,6 +10,8 @@
 
 package org.openmrs.module.visits.api.dto;
 
+import java.util.Map;
+
 /** Object representing a visit DTO extended with the additional properties */
 public class VisitDetailsDTO extends VisitDTO {
 
@@ -17,6 +19,7 @@ public class VisitDetailsDTO extends VisitDTO {
 
   private String locationName;
   private String typeName;
+  private Map<String, String> visitAttributes;
 
   public VisitDetailsDTO() {}
 
@@ -27,7 +30,11 @@ public class VisitDetailsDTO extends VisitDTO {
    * @param locationName name of the location
    * @param typeName name of the type
    */
-  public VisitDetailsDTO(VisitDTO visitDTO, String locationName, String typeName) {
+  public VisitDetailsDTO(
+      VisitDTO visitDTO,
+      String locationName,
+      String typeName,
+      Map<String, String> visitAttributes) {
     super(
         visitDTO.getUuid(),
         visitDTO.getLocation(),
@@ -38,6 +45,7 @@ public class VisitDetailsDTO extends VisitDTO {
         visitDTO.getVisitDateDTO());
     this.locationName = locationName;
     this.typeName = typeName;
+    this.visitAttributes = visitAttributes;
   }
 
   public String getLocationName() {
@@ -54,5 +62,13 @@ public class VisitDetailsDTO extends VisitDTO {
 
   public void setTypeName(String typeName) {
     this.typeName = typeName;
+  }
+
+  public Map<String, String> getVisitAttributes() {
+    return visitAttributes;
+  }
+
+  public void setVisitAttributes(Map<String, String> visitAttributes) {
+    this.visitAttributes = visitAttributes;
   }
 }

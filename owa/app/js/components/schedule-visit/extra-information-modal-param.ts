@@ -15,4 +15,11 @@ export default interface IExtraInformationModalParams {
 	nextVistitDaysNumber: number | null
 	isDayHolidayWeekday: boolean
 	isVisitDateDuplicated: boolean
+  isExtraInformationEnabled: string
+  isOutsideDateWindowInformationEnabled: string
+  lowWindowDate: Date
+  upWindowDate: Date
+  originalVisitDateObject: Date
+  visitStatus: string
+  currentVisitDateObject: Date
 }

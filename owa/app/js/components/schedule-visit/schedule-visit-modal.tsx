@@ -27,15 +27,15 @@ import {
   updateVisit
 } from "../../reducers/schedule-visit.reducer";
 import { getSession } from "../../reducers/session";
-import { getExtraInfoModalEnabledGP, getHolidayWeekdaysGP } from "../../reducers/global-property.reducer"
+import { getExtraInfoModalEnabledGP, getHolidayWeekdaysGP, getOutsideDateWindowInfoModalEnabledGP } from "../../reducers/global-property.reducer"
 import { Button, Col, Form, FormControl, FormGroup, Modal, Row, } from "react-bootstrap";
 import ErrorDesc from '../error-description/error-desc';
 import FormLabel from '../form-label/form-label';
 import OpenMrsDatePicker from '../openmrs-date-picker/openmrs-date-picker';
 import "../schedule-visit/schedule-visit-modal.scss"
 import ExtraInformationModal from "./extra-information-modal";
-import { getNumberOfDaysBetweenDates, visitDatesTheSame } from "../../shared/utils/date-util";
-import { VISIT_SAVE_DELAY_MS } from "../../shared/global-constants";
+import { ONE_DAY_IN_MILISECONDS, getNumberOfDaysBetweenDates, visitDatesTheSame } from "../../shared/utils/date-util";
+import { LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, VISIT_SAVE_DELAY_MS } from "../../shared/global-constants";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps {
   show: boolean;
@@ -94,6 +94,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     this.props.getVisitStatuses();
     this.props.getExtraInfoModalEnabledGP();
     this.props.getHolidayWeekdaysGP();
+    this.props.getOutsideDateWindowInfoModalEnabledGP();
 
     this.handleChange(this.props.patientUuid, "patientUuid");
   };
@@ -233,13 +234,44 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     this.setState({ showExtraInfoModal: true })
   };
 
+  shouldOutsideDateWindowInfoBeDisplayed = () => {
+    const visit = this.props.visit;
+
+    const isOutsideDateWindowInformationEnabled = this.props.isOutsideDateWindowInformationEnabled?.['value'];
+
+    const lowWindow = parseInt(visit.visitAttributes?.[LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
+    console.log('lowWindow->', lowWindow);
+    const upWindow = parseInt(visit.visitAttributes?.[UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
+    console.log('upWindow->', lowWindow);
+
+    const currentVisitDate = new Date(visit.startDate);
+    currentVisitDate.setHours(0, 0, 0, 0);
+
+    const originalVisitDate = this.props.patientVisits.find(patientVisit => patientVisit.uuid === visit.uuid)?.startDatetime || '';
+    const originalVisitDateObject = new Date(originalVisitDate);
+    originalVisitDateObject.setHours(0, 0, 0, 0);
+
+    const lowWindowDate = new Date(originalVisitDateObject.getTime() - lowWindow * ONE_DAY_IN_MILISECONDS);
+    console.log('lowWindowDate->', lowWindowDate);
+    const upWindowDate = new Date(originalVisitDateObject.getTime() + upWindow * ONE_DAY_IN_MILISECONDS);
+    console.log('upWindowDate->', upWindowDate);
+
+    const isNewVisitDateInRange = currentVisitDate >= lowWindowDate && currentVisitDate <= upWindowDate;
+
+    const dateWindowInfoAvailable = !isNaN(lowWindow) && !isNaN(upWindow);
+    console.log('dateWindowInfoAvailable->', dateWindowInfoAvailable);
+
+    return isOutsideDateWindowInformationEnabled === 'true' && visit.status === 'SCHEDULED' && !isNewVisitDateInRange && dateWindowInfoAvailable;
+  }
+
   renderSaveButton = () => {
-    const isExtraInformationEnabled = this.props.isExtraInformationEnabled!['value'];
+    const isExtraInformationEnabled = this.props.isExtraInformationEnabled?.['value'];
+    const openModal = isExtraInformationEnabled === 'true' || this.shouldOutsideDateWindowInfoBeDisplayed();
     return (
       <Button
         id="schedule-visit-save"
         className="btn btn-success btn-md pull-right confirm"
-        onClick={isExtraInformationEnabled === 'true' ? this.openExtraInfoModal : this.handleSave}
+        onClick={openModal ? this.openExtraInfoModal : this.handleSave}
         disabled={this.state.isSaveButtonDisabled}
       >
         {this.state.saveInProgress ? <i className="icon-spinner icon-spin icon-2x"/> : this.props.intl.formatMessage({
@@ -336,24 +368,28 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   }
 
   renderExtraInfoModal = () => {
-    const { visit, holidayWeekdays, isExtraInformationEnabled } = this.props;
+    const { visit, holidayWeekdays, isExtraInformationEnabled, isOutsideDateWindowInformationEnabled } = this.props;
 
-    if (!isExtraInformationEnabled || !holidayWeekdays) {
+    if (!isExtraInformationEnabled || !holidayWeekdays || !isOutsideDateWindowInformationEnabled) {
       return;
     }
+
+    const currentVisitDate = new Date(visit.startDate);
+    currentVisitDate.setHours(0, 0, 0, 0);
 
     const holidayWeekdaysValue: string = holidayWeekdays!['value'];
     const currentVisitWeekday = new Date(visit.startDate).toLocaleDateString('en-us', { weekday: 'long' });
     const isDayHolidayWeekday = holidayWeekdaysValue.split(",").includes(currentVisitWeekday);
-    const currentVisitDate = new Date(visit.startDate);
     const patientVisitsDates = this.getPatientVisitsDates();
     const modalParams = {
+      isExtraInformationEnabled: isExtraInformationEnabled?.['value'],
       currentVisitDate: visit.startDate,
       currentVisitWeekday,
       precedingVisitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(patientVisitsDates, currentVisitDate),
       nextVistitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestFutureVisit(patientVisitsDates, currentVisitDate),
       isDayHolidayWeekday,
-      isVisitDateDuplicated: this.isVisitForThisDayDuplicated(patientVisitsDates, currentVisitDate)
+      isVisitDateDuplicated: this.isVisitForThisDayDuplicated(patientVisitsDates, currentVisitDate),
+      isOutsideDateWindowInformationEnabled: this.shouldOutsideDateWindowInfoBeDisplayed()
     }
 
     return (
@@ -395,7 +431,8 @@ const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session, overvi
   locations: scheduleVisit.locations,
   patientVisits: overview.visits,
   isExtraInformationEnabled: globalPropertyReducer.isExtraInfoModalEnabled,
-  holidayWeekdays: globalPropertyReducer.holidayWeekdays
+  holidayWeekdays: globalPropertyReducer.holidayWeekdays,
+  isOutsideDateWindowInformationEnabled: globalPropertyReducer.isOutsideDateWindowModalEnabled
 });
 
 const mapDispatchToProps = ({
@@ -409,7 +446,8 @@ const mapDispatchToProps = ({
   getVisitStatuses,
   reset,
   getExtraInfoModalEnabledGP,
-  getHolidayWeekdaysGP
+  getHolidayWeekdaysGP,
+  getOutsideDateWindowInfoModalEnabledGP
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

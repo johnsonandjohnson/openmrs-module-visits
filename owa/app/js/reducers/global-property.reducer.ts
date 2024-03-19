@@ -15,7 +15,8 @@ export const ACTION_TYPES = {
   GET_EXTRA_INFO_MODAL_ENABLED_GP: 'globalProperty/GET_EXTRA_INFO_MODAL_ENABLED_GP',
   GET_HOLIDAY_WEEKDAYS_GP: 'globalProperty/GET_HOLIDAY_WEEKDAYS_GP',
   GET_SHOW_GENDER_PERSON_HEADER: 'globalProperty/GET_SHOW_GENDER_PERSON_HEADER',
-  GET_SHOW_AGE_PERSON_HEADER: 'globalProperty/GET_SHOW_AGE_PERSON_HEADER'
+  GET_SHOW_AGE_PERSON_HEADER: 'globalProperty/GET_SHOW_AGE_PERSON_HEADER',
+  GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP: 'globalProperty/GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP'
 }
 
 const initialState = {
@@ -24,7 +25,8 @@ const initialState = {
   isShowAgePersonHeader: null,
   holidayWeekdays: null,
   loading: false,
-  success: false
+  success: false,
+  isOutsideDateWindowModalEnabled: null
 };
 
 export type GlobalPropertyState = Readonly<typeof initialState>
@@ -111,6 +113,26 @@ export default (state = initialState, action) => {
           loading: false,
           success: true
         };
+        case REQUEST(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
+          return {
+            ...state,
+            loading: true,
+            success: false
+          };
+        case FAILURE(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
+          return {
+            ...state,
+            loading: false,
+            success: false
+          };
+        case SUCCESS(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
+          const outsideDateWindowModalGPResults = action.payload.data.results;
+          return {
+            ...state,
+            isOutsideDateWindowModalEnabled: outsideDateWindowModalGPResults?.length ? outsideDateWindowModalGPResults[0] : state.isOutsideDateWindowModalEnabled,
+            loading: false,
+            success: true
+          };
       default:
         return state;
   }
@@ -147,6 +169,14 @@ export const getHolidayWeekdaysGP = () => {
   const requestUrl = `${baseUrl}?q=visits.holidayWeekdays&v=default`;
   return {
     type: ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP,
+    payload: axios.get(requestUrl)
+  };
+};
+
+export const getOutsideDateWindowInfoModalEnabledGP = () => {
+  const requestUrl = `${baseUrl}?q=visits.outsideDateWindowInformationEnabled&v=default`;
+  return {
+    type: ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP,
     payload: axios.get(requestUrl)
   };
 };

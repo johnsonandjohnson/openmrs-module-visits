@@ -129,14 +129,25 @@
         <div class="dialog-content">
           <p class="extra-info-dialog-info-label">${ ui.message("informationLabel") }</p>
           </br></br>
-          <p class="extra-info-dialog-paragraph">
-            <span id="infoMessagePart1"></span>
-          </p>
-          </br></br>
-          <p class="extra-info-dialog-paragraph">
-            <span id="infoMessagePart2"></span>
-          </p>
-          </br></br>
+
+          <div id="extraInfoDiv">
+            <p class="extra-info-dialog-paragraph">
+              <span id="infoMessagePart1"></span>
+            </p>
+            </br></br>
+            <p class="extra-info-dialog-paragraph">
+              <span id="infoMessagePart2"></span>
+            </p>
+            </br></br>
+          </div>
+
+          <div id="outsideDateWindowDiv">
+            <p class="extra-info-dialog-paragraph">
+              <span id="outsideDateWindowInfo"></span>
+            </p>
+            </br></br>
+          </div>
+
           <button class="confirm right">
             ${ ui.message("okLabel") }
             <i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i>
@@ -155,10 +166,11 @@
                 <i class="icon-circle visits-icon" style="color: ${attr.statusIconColor}" title=${attr.status}></i>
               <% } %>
               <i class="icon-pencil visits-icon" title=${ui.message("common.edit")}
-                onClick="editVisit.showEditVisitDialog(${isExtraInfoDialogEnabled}, '${holidayWeekdays}',
-                    '${commaSeparatedVisitDates}', '${attr.visitUuid}', '${patient.uuid}',
+                onClick="editVisit.showEditVisitDialog(${isExtraInfoDialogEnabled}, ${isOutsideDateWindowInformationEnabled},
+                    '${holidayWeekdays}', '${commaSeparatedVisitDates}', '${attr.visitUuid}', '${patient.uuid}',
                     '${attr.visitDateInServerFormat}', '${attr.visitDetails.time}', '${attr.visitLocationUuid}',
-                    '${attr.visitTypeUuid}', '${attr.visitDetails.status}', '${attr.isVisitHasEncounters}')">
+                    '${attr.visitTypeUuid}', '${attr.visitDetails.status}', '${attr.isVisitHasEncounters}',
+                    '${attr.lowWindowDate}', '${attr.upWindowDate}')">
               </i>
               <% if (attr.visitDetails.formUri) { %>
                 <a href="../..${attr.visitDetails.formUri}&returnUrl=${ui.urlEncode(ui.thisUrl())}">
