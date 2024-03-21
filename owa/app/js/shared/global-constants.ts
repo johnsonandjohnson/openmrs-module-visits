@@ -4,3 +4,4 @@ export const VISIT_SAVE_DELAY_MS = 500;
 
 export const LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME = 'Low Window';
 export const UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME = 'Up Window';
+export const ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME = 'Original Visit Date';
