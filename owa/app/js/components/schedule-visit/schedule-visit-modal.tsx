@@ -35,7 +35,8 @@ import OpenMrsDatePicker from '../openmrs-date-picker/openmrs-date-picker';
 import "../schedule-visit/schedule-visit-modal.scss"
 import ExtraInformationModal from "./extra-information-modal";
 import { ONE_DAY_IN_MILISECONDS, getNumberOfDaysBetweenDates, visitDatesTheSame } from "../../shared/utils/date-util";
-import { LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, VISIT_SAVE_DELAY_MS } from "../../shared/global-constants";
+import { LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME, UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, VISIT_SAVE_DELAY_MS } from "../../shared/global-constants";
+import moment from "moment";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps {
   show: boolean;
@@ -239,27 +240,22 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
 
     const isOutsideDateWindowInformationEnabled = this.props.isOutsideDateWindowInformationEnabled?.['value'];
 
-    const lowWindow = parseInt(visit.visitAttributes?.[LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
-    console.log('lowWindow->', lowWindow);
-    const upWindow = parseInt(visit.visitAttributes?.[UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
-    console.log('upWindow->', lowWindow);
-
     const currentVisitDate = new Date(visit.startDate);
     currentVisitDate.setHours(0, 0, 0, 0);
 
-    const originalVisitDate = this.props.patientVisits.find(patientVisit => patientVisit.uuid === visit.uuid)?.startDatetime || '';
-    const originalVisitDateObject = new Date(originalVisitDate);
+    const originalVisitDate = visit.visitAttributes?.[ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME];
+    const originalVisitDateObject = moment(originalVisitDate, 'YYYY-MM-DD HH:mm:ss').toDate();
     originalVisitDateObject.setHours(0, 0, 0, 0);
 
+
+    const lowWindow = parseInt(visit.visitAttributes?.[LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
+    const upWindow = parseInt(visit.visitAttributes?.[UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
     const lowWindowDate = new Date(originalVisitDateObject.getTime() - lowWindow * ONE_DAY_IN_MILISECONDS);
-    console.log('lowWindowDate->', lowWindowDate);
     const upWindowDate = new Date(originalVisitDateObject.getTime() + upWindow * ONE_DAY_IN_MILISECONDS);
-    console.log('upWindowDate->', upWindowDate);
 
     const isNewVisitDateInRange = currentVisitDate >= lowWindowDate && currentVisitDate <= upWindowDate;
 
     const dateWindowInfoAvailable = !isNaN(lowWindow) && !isNaN(upWindow);
-    console.log('dateWindowInfoAvailable->', dateWindowInfoAvailable);
 
     return isOutsideDateWindowInformationEnabled === 'true' && visit.status === 'SCHEDULED' && !isNewVisitDateInRange && dateWindowInfoAvailable;
   }

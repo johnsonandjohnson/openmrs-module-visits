@@ -21,8 +21,10 @@
  */
 package org.openmrs.module.visits.fragment.controller.clinicianfacing;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +32,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
@@ -75,6 +79,7 @@ public class VisitsSectionFragmentController {
   private static final String PATIENT_ID = "patientId";
   private static final String VISIT_URL = "visitUrl";
   private static final String EDIT_PAGE_URL = "editPageUrl";
+  private static final Log LOGGER = LogFactory.getLog(VisitsSectionFragmentController.class);
 
   /**
    * Method used by OpenMRS for preparing the controller of Visit Section Fragment
@@ -154,11 +159,11 @@ public class VisitsSectionFragmentController {
     config.addAttribute(
         "showVisitTypeOnPatientHeaderSection",
         visitTypeHelper.showVisitTypeOnPatientHeaderSection());
-    
+
     addGlobalPropertiesToModel(model);
-    
+
     model.addAttribute("locale", Context.getLocale().toLanguageTag().replace('_', '-'));
-    
+
     List<String> stringVisitDates =
         allVisits.stream()
             .map(VisitDomainWrapper::getStartDatetime)
@@ -173,7 +178,7 @@ public class VisitsSectionFragmentController {
 
     addAttributesForEditVisitWidget(model);
   }
-  
+
   private void addGlobalPropertiesToModel(FragmentModel model) {
     model.addAttribute(
         "isExtraInfoDialogEnabled",
@@ -241,22 +246,35 @@ public class VisitsSectionFragmentController {
             extractedVisit.getStartDatetime(), "dd MMM YYYY", Context.getLocale()));
     result.put("isVisitHasEncounters", CollectionUtils.isNotEmpty(extractedVisit.getEncounters()));
 
-    String lowWindowAttributeValue = (String) visit.getVisitAttribute("Low Window");
-    String upWindowAttributeValue = (String) visit.getVisitAttribute("Up Window");
-
-    if (StringUtils.isNotBlank(lowWindowAttributeValue)) {
-      result.put(
-          "lowWindowDate",
-          DateUtil.getDatePlusDays(
-              visit.getStartDate(), -1 * Integer.parseInt(lowWindowAttributeValue)));
-      result.put(
-          "upWindowDate",
-          DateUtil.getDatePlusDays(visit.getStartDate(), Integer.parseInt(upWindowAttributeValue)));
-    }
+    addLowAndUpWindowDates(visit, result);
 
     return result;
   }
 
+  private void addLowAndUpWindowDates(VisitDomainWrapper visit, Map<String, Object> result) {
+    String lowWindowAttributeValue = (String) visit.getVisitAttribute("Low Window");
+    String upWindowAttributeValue = (String) visit.getVisitAttribute("Up Window");
+    String originalVisitDate = (String) visit.getVisitAttribute("Original Visit Date");
+    try {
+      if (StringUtils.isNotBlank(lowWindowAttributeValue)
+          && StringUtils.isNotBlank(upWindowAttributeValue)
+          && StringUtils.isNotBlank(originalVisitDate)) {
+        Date originalVisitDateAsDateObject =
+            DateUtil.convertStringToDate(originalVisitDate, "yyyy-MM-dd HH:mm:ss");
+        result.put(
+            "lowWindowDate",
+            DateUtil.getDatePlusDays(
+                originalVisitDateAsDateObject, -1 * Integer.parseInt(lowWindowAttributeValue)));
+        result.put(
+            "upWindowDate",
+            DateUtil.getDatePlusDays(
+                originalVisitDateAsDateObject, Integer.parseInt(upWindowAttributeValue)));
+      }
+    } catch (ParseException ex) {
+      LOGGER.error(String.format("Error while parsing date %s", originalVisitDate), ex);
+    }
+  }
+  
   private List<VisitDomainWrapper> getUpcomingVisits(List<VisitDomainWrapper> allVisits) {
     List<VisitDomainWrapper> result = new ArrayList<>();
     for (VisitDomainWrapper visit : allVisits) {
