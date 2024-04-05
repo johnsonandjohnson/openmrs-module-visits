@@ -9,146 +9,147 @@
  */
 
 .cfl-dialog-header {
+  color: white;
+  padding: 5px 20px 0px;
+
+  i {
+    font-size: 1.5em;
     color: white;
-    padding: 5px 20px 0px;
-  
-    i {
-      font-size: 1.5em;
-      color: white;
-      vertical-align: middle;
-      display: inline-block;
-      margin-bottom: 4px;
-    }
+    vertical-align: middle;
+    display: inline-block;
+    margin-bottom: 4px;
   }
-  
-  .cfl-dialog-content {
-    padding: 20px 30px 0 30px;
-    margin-bottom: 30px;
-  
-    .cfl-dialog-instructions {
-      padding-bottom: 1em;
-      font-style: italic;
-    }
-  
-    .control-label {
-      font-style: italic;
-      border-bottom: 1px solid #eeeeee;
-    }
-  
-    .form-control {
-      margin: 5px 0;
-      background-color: #fff;
-      border: 1px solid #dddddd;
-    }
-  
-    .error-field {
-      @extend .form-control;
-      border: 1px solid #ff0e0e;
-    }
-  
-    .form-group {
-      margin-bottom: 0px;
-    }
+}
+
+.cfl-dialog-content {
+  padding: 20px 30px 0 30px;
+  margin-bottom: 30px;
+
+  .cfl-dialog-instructions {
+    padding-bottom: 1em;
+    font-style: italic;
   }
-  
-  #schedule-visit-modal {
-    display: flex !important;
 
-    .modal-title {
-      font-size: 18px;
-      padding: 0 15px 20px;
-    }
+  .control-label {
+    font-style: italic;
+    border-bottom: 1px solid #eeeeee;
+  }
 
-    .modal-dialog {
-      margin: auto;
-      padding: 2em;
-      transition: none;
-      width: auto;
-  
-      .modal-body {
-        min-width: 300px;
+  .form-control {
+    margin: 5px 0;
+    background-color: #fff;
+    border: 1px solid #dddddd;
+  }
 
-        label {
-          font-weight: normal;
+  .error-field {
+    @extend .form-control;
+    border: 1px solid #ff0e0e;
+  }
+
+  .form-group {
+    margin-bottom: 0px;
+  }
+}
+
+#schedule-visit-modal {
+  display: flex !important;
+
+  .modal-title {
+    font-size: 18px;
+    padding: 0 15px 20px;
+  }
+
+  .modal-dialog {
+    margin: auto;
+    padding: 2em;
+    transition: none;
+    width: auto;
+
+    .modal-body {
+      min-width: 300px;
+
+      label {
+        font-weight: normal;
+      }
+
+      select,
+      input {
+        color: #333333;
+        outline: none !important;
+        border: 1px solid #ced4da !important;
+        box-shadow: none;
+
+        &:focus {
+          background-color: transparent;
+          box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+      }
+
+      .row {
+        margin-left: 0;
+        margin-right: 0;
+
+        .react-datepicker-wrapper {
+          width: 100%;
         }
 
-        select, input {
-          color: #333333;
-          outline: none !important;
-          border: 1px solid #ced4da !important;
-          box-shadow: none;
+        .react-datepicker-popper {
+          .react-datepicker__current-month,
+          .react-datepicker__day-name {
+            color: #333333;
+            font-family: CircularStd;
+          }
 
-          &:focus {
-            background-color: transparent;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+          .react-datepicker__navigation--previous {
+            border-right-color: #333333 !important;
+          }
+
+          .react-datepicker__navigation--next {
+            border-left-color: #333333 !important;
+          }
+
+          .react-datepicker__day:not(.react-datepicker__day--selected) {
+            color: #333333;
+          }
+
+          .react-datepicker__day--selected {
+            background: none;
+            background-color: #00455c !important;
           }
         }
+      }
 
-        .row {
-          margin-left: 0;
-          margin-right: 0;
+      .control-buttons {
+        padding: 10px 15px 0 15px;
 
-          .react-datepicker-wrapper {
-            width: 100%;
-          }
-
-          .react-datepicker-popper {
-            .react-datepicker__current-month,
-            .react-datepicker__day-name {
-              color: #333333;
-              font-family: CircularStd;
-            }
-
-            .react-datepicker__navigation--previous {
-              border-right-color: #333333 !important;
-            }
-
-            .react-datepicker__navigation--next {
-              border-left-color: #333333 !important;
-            }
-
-            .react-datepicker__day:not(.react-datepicker__day--selected) {
-              color: #333333;
-            }
-
-            .react-datepicker__day--selected {
-              background: none;
-              background-color: #00455C !important;
-            }
-          }
+        button#schedule-visit-save,
+        button#schedule-visit-save:hover,
+        button#schedule-visit-save:focus,
+        button#schedule-visit-save:active {
+          background-image: none;
+          background-color: #00455c;
+          border-color: #00455c;
+          margin: 0;
         }
-      
-        .control-buttons {
-          padding: 10px 15px 0 15px;
+      }
 
-          button#schedule-visit-save,
-          button#schedule-visit-save:hover,
-          button#schedule-visit-save:focus,
-          button#schedule-visit-save:active {
-            background-image: none;
-            background-color: #00455C;
-            border-color: #00455C;
-            margin: 0;
-          }
-        }
+      button#schedule-visit-cancel {
+        background: transparent;
+        border: #000000 1px solid !important;
+        color: #00455c;
+        font-size: 14px;
+      }
 
-        button#schedule-visit-cancel {
-          background: transparent;
-          border: #000000 1px solid !important;
-          color: #00455C;
-          font-size: 14px;
-        }
+      p {
+        margin-bottom: 20px;
+      }
 
-        p {
-          margin-bottom: 20px;
-        }
-
-        .openmrs-date-picker .add-on {
-          position: absolute;
-          top: 13px;
-          right: 5px;
-          left: unset;
-        }
+      .openmrs-date-picker .add-on {
+        position: absolute;
+        top: 13px;
+        right: 5px;
+        left: unset;
       }
     }
   }
+}

@@ -8,35 +8,37 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import React from 'react';
-import _ from 'lodash';
-import { Modal, Button } from 'react-bootstrap';
-import { FormattedMessage } from 'react-intl';
+import React from "react";
+import _ from "lodash";
+import { Modal, Button } from "react-bootstrap";
+import { FormattedMessage } from "react-intl";
 
-import IModalParams from './modal-params';
-import './delete-visit-modal.scss';
+import IModalParams from "./modal-params";
+import "./delete-visit-modal.scss";
 
 interface IProps {
-  show: boolean,
-  modalParams: IModalParams | null,
-  confirm: (modalParams: IModalParams | null) => void,
-  cancel: () => void
+  show: boolean;
+  modalParams: IModalParams | null;
+  confirm: (modalParams: IModalParams | null) => void;
+  cancel: () => void;
 }
 
-interface IState {
-}
+interface IState {}
 
 class DeleteVisitModal extends React.PureComponent<IProps, IState> {
-
   buildModal = (modalParams: IModalParams) => {
     const { show, confirm, cancel } = this.props;
     const title = <FormattedMessage id="deleteVisitModalTittle" />;
-    const txt = <FormattedMessage id= "deleteVisitModalQuestion" />;
-    const confirmLabel = <FormattedMessage id="yesLabel" />;
-    const cancelLabel = <FormattedMessage  id="noLabel" />;
+    const txt = <FormattedMessage id="deleteVisitModalQuestion" />;
+    const confirmLabel = <FormattedMessage id="common.confirm" />;
+    const cancelLabel = <FormattedMessage id="common.cancel" />;
 
     return (
-      <Modal id="delete-visit-modal" show={show} onHide={cancel}>
+      <Modal
+        id="delete-visit-modal"
+        show={show}
+        onHide={cancel}
+      >
         <Modal.Body>
           <div className="modal-title">{title}</div>
           <p>{txt}</p>
@@ -48,21 +50,20 @@ class DeleteVisitModal extends React.PureComponent<IProps, IState> {
           >
             {confirmLabel}
           </Button>
-          <Button bsClass="button cancel" onClick={this.props.cancel}>
+          <Button
+            bsClass="button cancel"
+            onClick={this.props.cancel}
+          >
             {cancelLabel}
           </Button>
         </Modal.Body>
       </Modal>
     );
-  }
+  };
 
   render() {
-    return (
-      this.props.show && !!this.props.modalParams
-        ? this.buildModal(this.props.modalParams)
-        : null
-    );
-  };
+    return this.props.show && !!this.props.modalParams ? this.buildModal(this.props.modalParams) : null;
+  }
 }
 
 export default DeleteVisitModal;

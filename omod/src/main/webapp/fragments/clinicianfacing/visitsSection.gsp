@@ -117,11 +117,11 @@
             </li>
           </ul>
           <button id="save-button" class="confirm right">
-            ${ ui.message("visits.saveButtonLabel") }
+            ${ ui.message("common.confirm") }
             <i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i>
           </button>
           <button class="cancel">
-            ${ ui.message("visits.cancelButtonLabel") }
+            ${ ui.message("common.cancel") }
           </button>
         </div>
       </div>
@@ -153,7 +153,7 @@
             <i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i>
           </button>
           <button class="cancel">
-            ${ ui.message("visits.cancelButtonLabel") }
+            ${ ui.message("common.cancel") }
           </button>
         </div>
       </div>

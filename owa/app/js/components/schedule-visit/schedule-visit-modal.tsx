@@ -9,13 +9,13 @@
  */
 
 import React from "react";
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
-import { PropsWithIntl } from '../../components/translation/PropsWithIntl';
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
+import { PropsWithIntl } from "../../components/translation/PropsWithIntl";
 import _ from "lodash";
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from "react-router-dom";
 import IModalParams from "../manage-visits/modal-params";
-import { IRootState } from '../../reducers';
+import { IRootState } from "../../reducers";
 import {
   getLocations,
   getVisit,
@@ -24,18 +24,27 @@ import {
   getVisitTypes,
   reset,
   saveVisit,
-  updateVisit
+  updateVisit,
 } from "../../reducers/schedule-visit.reducer";
 import { getSession } from "../../reducers/session";
-import { getExtraInfoModalEnabledGP, getHolidayWeekdaysGP, getOutsideDateWindowInfoModalEnabledGP } from "../../reducers/global-property.reducer"
-import { Button, Col, Form, FormControl, FormGroup, Modal, Row, } from "react-bootstrap";
-import ErrorDesc from '../error-description/error-desc';
-import FormLabel from '../form-label/form-label';
-import OpenMrsDatePicker from '../openmrs-date-picker/openmrs-date-picker';
-import "../schedule-visit/schedule-visit-modal.scss"
+import {
+  getExtraInfoModalEnabledGP,
+  getHolidayWeekdaysGP,
+  getOutsideDateWindowInfoModalEnabledGP,
+} from "../../reducers/global-property.reducer";
+import { Button, Col, Form, FormControl, FormGroup, Modal, Row } from "react-bootstrap";
+import ErrorDesc from "../error-description/error-desc";
+import FormLabel from "../form-label/form-label";
+import OpenMrsDatePicker from "../openmrs-date-picker/openmrs-date-picker";
+import "../schedule-visit/schedule-visit-modal.scss";
 import ExtraInformationModal from "./extra-information-modal";
 import { ONE_DAY_IN_MILISECONDS, getNumberOfDaysBetweenDates, visitDatesTheSame } from "../../shared/utils/date-util";
-import { LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME, UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME, VISIT_SAVE_DELAY_MS } from "../../shared/global-constants";
+import {
+  LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME,
+  ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME,
+  UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME,
+  VISIT_SAVE_DELAY_MS,
+} from "../../shared/global-constants";
 import moment from "moment";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps {
@@ -43,7 +52,7 @@ interface IProps extends DispatchProps, StateProps, RouteComponentProps {
   modalParams: IModalParams | null;
   patientUuid: string;
   visitUuid?: string;
-  locale?: string
+  locale?: string;
   confirm: (modalParams: IModalParams | null) => void;
   cancel: () => void;
   refetchVisits: () => void;
@@ -52,17 +61,17 @@ interface IProps extends DispatchProps, StateProps, RouteComponentProps {
 interface IState {
   isSaveButtonDisabled: boolean;
   showExtraInfoModal: boolean;
-  saveInProgress: boolean
+  saveInProgress: boolean;
 }
 
-const FORM_CLASS = 'form-control';
-const ERROR_FORM_CLASS = FORM_CLASS + ' error-field';
+const FORM_CLASS = "form-control";
+const ERROR_FORM_CLASS = FORM_CLASS + " error-field";
 
 class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, IState> {
   state = {
     isSaveButtonDisabled: true,
     showExtraInfoModal: false,
-    saveInProgress: false
+    saveInProgress: false,
   };
 
   componentDidMount() {
@@ -82,7 +91,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       this.props.reset(this.loadComponent);
     }
 
-    if(!this.isEdit() && prevProps.sessionLocation !== this.props.sessionLocation && !this.props.visit.location) {
+    if (!this.isEdit() && prevProps.sessionLocation !== this.props.sessionLocation && !this.props.visit.location) {
       this.handleChange(this.props.sessionLocation?.uuid, "location");
     }
   }
@@ -115,12 +124,14 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   };
 
   handleSave = () => {
-    this.setState({isSaveButtonDisabled: true, saveInProgress: true});
-    this.props.saveVisit(this.props.visit, this.props.intl, () => setTimeout(this.saveVisitCallback, VISIT_SAVE_DELAY_MS));
+    this.setState({ isSaveButtonDisabled: true, saveInProgress: true });
+    this.props.saveVisit(this.props.visit, this.props.intl, () =>
+      setTimeout(this.saveVisitCallback, VISIT_SAVE_DELAY_MS),
+    );
   };
 
   saveVisitCallback = () => {
-    this.setState({saveInProgress: false}, () => {
+    this.setState({ saveInProgress: false }, () => {
       this.closeModal();
       this.closeExtraInfoModal();
       this.props.refetchVisits();
@@ -140,10 +151,13 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     fieldName: string,
     options: Array<React.ReactFragment>,
     required?: boolean,
-    disabled?: boolean
+    disabled?: boolean,
   ) => (
     <FormGroup controlId={fieldName}>
-      <FormLabel label={label} mandatory={required}/>
+      <FormLabel
+        label={label}
+        mandatory={required}
+      />
       <FormControl
         componentClass="select"
         name={fieldName}
@@ -152,21 +166,21 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
         className={errors && errors[fieldName] ? ERROR_FORM_CLASS : FORM_CLASS}
         disabled={disabled}
       >
-        <option value=""/>
+        <option value="" />
         {options}
       </FormControl>
-      {errors && <ErrorDesc field={errors[fieldName]}/>}
+      {errors && <ErrorDesc field={errors[fieldName]} />}
     </FormGroup>
   );
 
   renderDatePicker = (errors, label: string, fieldName: string) => (
     <FormGroup controlId={fieldName}>
-      <FormLabel label={label}/>
+      <FormLabel label={label} />
       <OpenMrsDatePicker
         value={this.props.visit[fieldName]}
         onChange={(isoDate) => this.handleChange(isoDate, fieldName)}
       />
-      {errors && <ErrorDesc field={errors[fieldName]}/>}
+      {errors && <ErrorDesc field={errors[fieldName]} />}
     </FormGroup>
   );
 
@@ -174,9 +188,9 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     this.renderDatePicker(
       errors,
       this.props.intl.formatMessage({
-        id: "visits.visitPlannedDateLabel"
+        id: "visits.visitPlannedDateLabel",
       }),
-      "startDate"
+      "startDate",
     );
 
   renderLocation = (errors) =>
@@ -185,25 +199,33 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       this.props.intl.formatMessage({ id: "visits.locationLabel" }),
       "location",
       this.props.locations.map((location) => (
-        <option value={location.uuid} key={location.uuid}>
+        <option
+          value={location.uuid}
+          key={location.uuid}
+        >
           {location.display}
         </option>
       )),
-      true
+      true,
     );
 
-  renderVisitType = (errors) => 
+  renderVisitType = (errors) =>
     this.renderDropdown(
       errors,
       this.props.intl.formatMessage({ id: "visits.visitTypeLabel" }),
       "type",
-      this.props.visitTypes.filter(type => !type.retired).map((type) => (
-        <option value={type.uuid} key={type.uuid}>
-          {type.display}
-        </option>
-      )),
+      this.props.visitTypes
+        .filter((type) => !type.retired)
+        .map((type) => (
+          <option
+            value={type.uuid}
+            key={type.uuid}
+          >
+            {type.display}
+          </option>
+        )),
       true,
-      this.props.visit.actualDate != null
+      this.props.visit.actualDate != null,
     );
 
   renderVisitStatus = (errors) =>
@@ -212,11 +234,14 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       this.props.intl.formatMessage({ id: "visits.visitStatusLabel" }),
       "status",
       this.props.visitStatuses.map((status) => (
-        <option value={status} key={status}>
+        <option
+          value={status}
+          key={status}
+        >
           {status}
         </option>
       )),
-      true
+      true,
     );
 
   renderVisitTime = (errors) =>
@@ -225,28 +250,30 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
       this.props.intl.formatMessage({ id: "visits.visitTimeLabel" }),
       "time",
       this.props.visitTimes.map((time) => (
-        <option value={time} key={time}>
+        <option
+          value={time}
+          key={time}
+        >
           {time}
         </option>
-      ))
+      )),
     );
 
   openExtraInfoModal = () => {
-    this.setState({ showExtraInfoModal: true })
+    this.setState({ showExtraInfoModal: true });
   };
 
   shouldOutsideDateWindowInfoBeDisplayed = () => {
     const visit = this.props.visit;
 
-    const isOutsideDateWindowInformationEnabled = this.props.isOutsideDateWindowInformationEnabled?.['value'];
+    const isOutsideDateWindowInformationEnabled = this.props.isOutsideDateWindowInformationEnabled?.["value"];
 
     const currentVisitDate = new Date(visit.startDate);
     currentVisitDate.setHours(0, 0, 0, 0);
 
     const originalVisitDate = visit.visitAttributes?.[ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME];
-    const originalVisitDateObject = moment(originalVisitDate, 'YYYY-MM-DD HH:mm:ss').toDate();
+    const originalVisitDateObject = moment(originalVisitDate, "YYYY-MM-DD HH:mm:ss").toDate();
     originalVisitDateObject.setHours(0, 0, 0, 0);
-
 
     const lowWindow = parseInt(visit.visitAttributes?.[LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
     const upWindow = parseInt(visit.visitAttributes?.[UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME]);
@@ -257,12 +284,17 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
 
     const dateWindowInfoAvailable = !isNaN(lowWindow) && !isNaN(upWindow);
 
-    return isOutsideDateWindowInformationEnabled === 'true' && visit.status === 'SCHEDULED' && !isNewVisitDateInRange && dateWindowInfoAvailable;
-  }
+    return (
+      isOutsideDateWindowInformationEnabled === "true" &&
+      visit.status === "SCHEDULED" &&
+      !isNewVisitDateInRange &&
+      dateWindowInfoAvailable
+    );
+  };
 
   renderSaveButton = () => {
-    const isExtraInformationEnabled = this.props.isExtraInformationEnabled?.['value'];
-    const openModal = isExtraInformationEnabled === 'true' || this.shouldOutsideDateWindowInfoBeDisplayed();
+    const isExtraInformationEnabled = this.props.isExtraInformationEnabled?.["value"];
+    const openModal = isExtraInformationEnabled === "true" || this.shouldOutsideDateWindowInfoBeDisplayed();
     return (
       <Button
         id="schedule-visit-save"
@@ -270,20 +302,24 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
         onClick={openModal ? this.openExtraInfoModal : this.handleSave}
         disabled={this.state.isSaveButtonDisabled}
       >
-        {this.state.saveInProgress ? <i className="icon-spinner icon-spin icon-2x"/> : this.props.intl.formatMessage({
-          id: this.isEdit() ? "visits.saveButtonLabel" : "visits.scheduleVisitButtonLabel",
-          defaultMessage: this.props.intl.formatMessage({ id: "visits.saveButtonLabel"}),
-        })}
+        {this.state.saveInProgress ? (
+          <i className="icon-spinner icon-spin icon-2x" />
+        ) : (
+          this.props.intl.formatMessage({
+            id: "common.confirm",
+            defaultMessage: this.props.intl.formatMessage({ id: "common.confirm" }),
+          })
+        )}
       </Button>
     );
   };
 
   renderCancelButton = () => (
-    <Button 
-      id="schedule-visit-cancel" 
+    <Button
+      id="schedule-visit-cancel"
       onClick={this.closeModal}
     >
-      {this.props.intl.formatMessage({ id: "visits.cancelButtonLabel" })}
+      {this.props.intl.formatMessage({ id: "common.cancel" })}
     </Button>
   );
 
@@ -291,7 +327,11 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     const { show, cancel } = this.props;
     const { errors } = this.props.visit;
     return (
-      <Modal id="schedule-visit-modal" show={show} onHide={cancel}>
+      <Modal
+        id="schedule-visit-modal"
+        show={show}
+        onHide={cancel}
+      >
         <Modal.Body>
           <div className="modal-title">
             {this.isEdit()
@@ -321,7 +361,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   };
 
   findNumberOfDaysBetweenCurrentAndNearestFutureVisit = (allVisitDates: Date[], currentVisitDate: Date) => {
-    const laterVisits = allVisitDates.filter(date => date > currentVisitDate);
+    const laterVisits = allVisitDates.filter((date) => date > currentVisitDate);
 
     if (!laterVisits.length) {
       return null;
@@ -330,10 +370,10 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     const searchedDate = new Date(Math.min.apply(null, laterVisits));
 
     return getNumberOfDaysBetweenDates(currentVisitDate, searchedDate);
-  }
+  };
 
   findNumberOfDaysBetweenCurrentAndNearestPastVisit = (allVisitDates: Date[], currentVisitDate: Date) => {
-    const previousVisits = allVisitDates.filter(date => date < currentVisitDate);
+    const previousVisits = allVisitDates.filter((date) => date < currentVisitDate);
 
     if (!previousVisits.length) {
       return null;
@@ -342,12 +382,11 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     const searchedDate = new Date(Math.max.apply(null, previousVisits));
 
     return getNumberOfDaysBetweenDates(currentVisitDate, searchedDate);
-  }
+  };
 
   isVisitForThisDayDuplicated = (allVisitDates: Date[], currentVisitDate: Date) => {
-
-    return allVisitDates.some(date => visitDatesTheSame(date, currentVisitDate));
-  }
+    return allVisitDates.some((date) => visitDatesTheSame(date, currentVisitDate));
+  };
 
   getPatientVisitsDates = () => {
     let { patientVisits } = this.props;
@@ -361,7 +400,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     patientVisits.forEach(({ startDatetime }) => allPatientVisitsDates.push(new Date(startDatetime)));
 
     return allPatientVisitsDates;
-  }
+  };
 
   renderExtraInfoModal = () => {
     const { visit, holidayWeekdays, isExtraInformationEnabled, isOutsideDateWindowInformationEnabled } = this.props;
@@ -373,20 +412,26 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     const currentVisitDate = new Date(visit.startDate);
     currentVisitDate.setHours(0, 0, 0, 0);
 
-    const holidayWeekdaysValue: string = holidayWeekdays!['value'];
-    const currentVisitWeekday = new Date(visit.startDate).toLocaleDateString('en-us', { weekday: 'long' });
+    const holidayWeekdaysValue: string = holidayWeekdays!["value"];
+    const currentVisitWeekday = new Date(visit.startDate).toLocaleDateString("en-us", { weekday: "long" });
     const isDayHolidayWeekday = holidayWeekdaysValue.split(",").includes(currentVisitWeekday);
     const patientVisitsDates = this.getPatientVisitsDates();
     const modalParams = {
-      isExtraInformationEnabled: isExtraInformationEnabled?.['value'],
+      isExtraInformationEnabled: isExtraInformationEnabled?.["value"],
       currentVisitDate: visit.startDate,
       currentVisitWeekday,
-      precedingVisitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(patientVisitsDates, currentVisitDate),
-      nextVistitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestFutureVisit(patientVisitsDates, currentVisitDate),
+      precedingVisitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(
+        patientVisitsDates,
+        currentVisitDate,
+      ),
+      nextVistitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestFutureVisit(
+        patientVisitsDates,
+        currentVisitDate,
+      ),
       isDayHolidayWeekday,
       isVisitDateDuplicated: this.isVisitForThisDayDuplicated(patientVisitsDates, currentVisitDate),
-      isOutsideDateWindowInformationEnabled: this.shouldOutsideDateWindowInfoBeDisplayed()
-    }
+      isOutsideDateWindowInformationEnabled: this.shouldOutsideDateWindowInfoBeDisplayed(),
+    };
 
     return (
       <ExtraInformationModal
@@ -397,15 +442,15 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
         locale={this.props.locale}
       />
     );
-  }
+  };
 
   confirmSavingVisitOnExtraInfoModal = () => {
     this.handleSave();
-  }
+  };
 
   closeExtraInfoModal = () => {
-    this.setState({ showExtraInfoModal: false })
-  }
+    this.setState({ showExtraInfoModal: false });
+  };
 
   render() {
     this.validate();
@@ -428,10 +473,10 @@ const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session, overvi
   patientVisits: overview.visits,
   isExtraInformationEnabled: globalPropertyReducer.isExtraInfoModalEnabled,
   holidayWeekdays: globalPropertyReducer.holidayWeekdays,
-  isOutsideDateWindowInformationEnabled: globalPropertyReducer.isOutsideDateWindowModalEnabled
+  isOutsideDateWindowInformationEnabled: globalPropertyReducer.isOutsideDateWindowModalEnabled,
 });
 
-const mapDispatchToProps = ({
+const mapDispatchToProps = {
   getSession,
   getVisitTypes,
   getVisitTimes,
@@ -443,13 +488,10 @@ const mapDispatchToProps = ({
   reset,
   getExtraInfoModalEnabledGP,
   getHolidayWeekdaysGP,
-  getOutsideDateWindowInfoModalEnabledGP
-});
+  getOutsideDateWindowInfoModalEnabledGP,
+};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default injectIntl(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ScheduleVisitModal));
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ScheduleVisitModal));
