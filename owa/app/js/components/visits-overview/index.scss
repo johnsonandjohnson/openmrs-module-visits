@@ -9,7 +9,6 @@
  */
 
 #app .visits-overview {
-
   margin-top: 40px;
 
   .td-cell {
@@ -91,11 +90,11 @@
     }
 
     .change-visits-statuses-dropdown-div {
-      margin-right: 10px
+      margin-right: 10px;
     }
 
     .save-button-div {
-      margin-top: 2px
+      margin-top: 2px;
     }
 
     .visit-table .helper-text {
@@ -201,7 +200,7 @@
 
     .DateRangePickerInput__disabled {
       .DateRangePickerInput_calendarIcon,
-      .DateInput_input__disabled, 
+      .DateInput_input__disabled,
       &:hover {
         cursor: not-allowed;
       }
@@ -253,21 +252,47 @@
   }
 
   .visit-table {
-
     .ReactTable .action-column {
       text-align: center;
       margin: auto;
       display: flex;
       justify-content: center;
-  
+
       .action-button {
         padding: 5px;
         width: 30px;
-  
-        a, i {
+
+        a,
+        i {
           cursor: pointer;
           color: inherit;
         }
+      }
+    }
+
+    .-pagination .-previous .-btn {
+      float: left;
+    }
+
+    .-pagination .-next .-btn {
+      float: right;
+    }
+
+    button {
+      border-radius: 0;
+      color: #ffffff;
+      background-color: #00455c;
+      border: 1px solid #00455c;
+      width: 100px;
+      font-size: 11px;
+      text-transform: uppercase;
+
+      &:hover {
+        background-color: #00455c;
+      }
+
+      &:disabled {
+        opacity: 0.65;
       }
     }
   }
@@ -277,7 +302,7 @@
     margin-top: 15px;
 
     .reset-filter-text {
-      color: #003C52;
+      color: #003c52;
 
       &:hover {
         cursor: pointer;
@@ -289,9 +314,8 @@
     text-align: right;
     margin-top: 45px;
 
-      button {
-        margin-left: 10px;
-      }
+    button {
+      margin-left: 10px;
+    }
   }
 }
-

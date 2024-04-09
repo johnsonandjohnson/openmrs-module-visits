@@ -9,36 +9,36 @@
  */
 
 import React from "react";
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
-import { PropsWithIntl } from '../../../translation/PropsWithIntl';
-import { IRootState } from '../../../../reducers';
+import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
+import { PropsWithIntl } from "../../../translation/PropsWithIntl";
+import { IRootState } from "../../../../reducers";
 import { getVisitStatuses, reset, saveVisit } from "../../../../reducers/schedule-visit.reducer";
-import { Button, Col, Form, FormControl, FormGroup, Modal, Row, } from "react-bootstrap";
-import FormLabel from '../../../form-label/form-label';
+import { Button, Col, Form, FormControl, FormGroup, Modal, Row } from "react-bootstrap";
+import FormLabel from "../../../form-label/form-label";
 import { updateVisitStatuses } from "../../../../reducers/overview-visits.reducer";
 import "../../../schedule-visit/schedule-visit-modal.scss";
 import { VISIT_SAVE_DELAY_MS } from "../../../../shared/global-constants";
 
 interface IProps extends DispatchProps, StateProps {
-  show: boolean
-  visits: string[]
-  cancel: () => void
-  saveVisitsStatus: () => void
-  visitStatus: string
+  show: boolean;
+  visits: string[];
+  cancel: () => void;
+  saveVisitsStatus: () => void;
+  visitStatus: string;
 }
 
 interface IState {
-  isSaveButtonDisabled: boolean
-  newVisitStatus: string
-  saveInProgress: boolean
+  isSaveButtonDisabled: boolean;
+  newVisitStatus: string;
+  saveInProgress: boolean;
 }
 
 class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>, IState> {
   state = {
     isSaveButtonDisabled: true,
-    newVisitStatus: '',
-    saveInProgress: false
+    newVisitStatus: "",
+    saveInProgress: false,
   };
 
   componentDidMount() {
@@ -70,26 +70,24 @@ class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>,
   handleChange = (newValue: string) => {
     this.setState({
       newVisitStatus: newValue,
-      isSaveButtonDisabled: !newValue
-    })
+      isSaveButtonDisabled: !newValue,
+    });
   };
 
-  renderDropdown = (
-    label: string,
-    fieldName: string,
-    options: Array<React.ReactFragment>,
-    required?: boolean
-  ) => (
+  renderDropdown = (label: string, fieldName: string, options: Array<React.ReactFragment>, required?: boolean) => (
     <FormGroup controlId={fieldName}>
-      <FormLabel label={label} mandatory={required}/>
+      <FormLabel
+        label={label}
+        mandatory={required}
+      />
       <FormControl
         componentClass="select"
         name={fieldName}
         value={this.props.visitStatus}
-        onChange={e => this.handleChange((e.target as HTMLInputElement).value)}
-        className='form-control'
+        onChange={(e) => this.handleChange((e.target as HTMLInputElement).value)}
+        className="form-control"
       >
-        <option value=""/>
+        <option value="" />
         {options}
       </FormControl>
     </FormGroup>
@@ -98,17 +96,20 @@ class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>,
   renderVisitStatus = () =>
     this.renderDropdown(
       this.props.intl.formatMessage({ id: "visits.overviewSetSelectedVisitsLabelPart1" }) +
-      ' ' +
-      this.props.visits.length +
-      ' ' +
-      this.props.intl.formatMessage({ id: "visits.overviewSetSelectedVisitsLabelPart2" }),
+        " " +
+        this.props.visits.length +
+        " " +
+        this.props.intl.formatMessage({ id: "visits.overviewSetSelectedVisitsLabelPart2" }),
       "status",
       this.props.visitStatuses.map((status) => (
-        <option value={status} key={status}>
+        <option
+          value={status}
+          key={status}
+        >
           {status}
         </option>
       )),
-      false
+      false,
     );
 
   renderSaveButton = () => {
@@ -119,35 +120,41 @@ class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>,
         onClick={this.handleSave}
         disabled={this.state.isSaveButtonDisabled}
       >
-        {this.state.saveInProgress ? <i className="icon-spinner icon-spin icon-2x"/> : this.props.intl.formatMessage({
-          id: "visits.saveButtonLabel"
-        })}
+        {this.state.saveInProgress ? (
+          <i className="icon-spinner icon-spin icon-2x" />
+        ) : (
+          this.props.intl.formatMessage({
+            id: "common.confirm",
+          })
+        )}
       </Button>
     );
   };
 
   renderCancelButton = () => (
-    <Button 
-      id="schedule-visit-cancel" 
+    <Button
+      id="schedule-visit-cancel"
       onClick={this.closeModal}
     >
-      {this.props.intl.formatMessage({ id: "visits.cancelButtonLabel" })}
+      {this.props.intl.formatMessage({ id: "common.cancel" })}
     </Button>
   );
 
   buildModal = () => {
     const { show, cancel } = this.props;
     return (
-      <Modal id="schedule-visit-modal" show={show} onHide={cancel}>
+      <Modal
+        id="schedule-visit-modal"
+        show={show}
+        onHide={cancel}
+      >
         <Modal.Body>
           <div className="modal-title">
             {this.props.intl.formatMessage({ id: "visits.overviewChangeVisitStatusLabel" })}
           </div>
           <Form className="fields-form">
             <Row>
-              <Col md={12}>
-                {this.renderVisitStatus()}
-              </Col>
+              <Col md={12}>{this.renderVisitStatus()}</Col>
             </Row>
             <Row>
               <FormGroup className="control-buttons">
@@ -162,29 +169,22 @@ class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>,
   };
 
   render() {
-    return (
-      <>
-        {this.props.show ? this.buildModal() : null}
-      </>
-    );
+    return <>{this.props.show ? this.buildModal() : null}</>;
   }
 }
 
 const mapStateToProps = ({ scheduleVisit }: IRootState) => ({
-  visitStatuses: scheduleVisit.visitStatuses
+  visitStatuses: scheduleVisit.visitStatuses,
 });
 
-const mapDispatchToProps = ({
+const mapDispatchToProps = {
   saveVisit,
   getVisitStatuses,
   reset,
-  updateVisitStatuses
-});
+  updateVisitStatuses,
+};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default injectIntl(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChangeVisitsStatusModal));
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ChangeVisitsStatusModal));

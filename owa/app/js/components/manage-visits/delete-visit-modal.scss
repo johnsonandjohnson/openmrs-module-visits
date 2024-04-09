@@ -18,17 +18,23 @@
     .modal-body {
       padding: 15px 30px;
 
-      .button.confirm.right, .button.confirm.right:hover {
+      .button.confirm.right,
+      .button.confirm.right:hover {
         background-image: none;
-        background-color: #00455C;
-        border-color: #00455C;
+        background-color: #00455c;
+        border-color: #00455c;
+        font-size: 11px;
+        text-transform: uppercase;
       }
 
-      .button.cancel, .button.cancel:hover {
+      .button.cancel,
+      .button.cancel:hover {
         background-image: none;
         background-color: white;
-        border-color: #00455C;
-        color: #00455C;
+        border-color: #00455c;
+        color: #00455c;
+        font-size: 11px;
+        text-transform: uppercase;
       }
 
       .modal-title {
