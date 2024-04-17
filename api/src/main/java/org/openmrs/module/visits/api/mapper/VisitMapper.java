@@ -13,13 +13,10 @@ package org.openmrs.module.visits.api.mapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Visit;
-import org.openmrs.VisitAttribute;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
@@ -30,6 +27,7 @@ import org.openmrs.module.visits.api.dto.VisitDateDTO;
 import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.service.ConfigService;
+import org.openmrs.module.visits.api.util.VisitsUtil;
 
 /** Maps objects between the related visit types */
 public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
@@ -100,7 +98,8 @@ public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
         toDto(visit),
         visit.getLocation() == null ? null : visit.getLocation().getName(),
         visit.getVisitType() == null ? null : visit.getVisitType().getName(),
-        createVisitAttributesMap(visit));
+        VisitsUtil.createVisitAttributesMap(visit),
+        VisitsUtil.createLocationAttributeDTOs());
   }
 
   public List<VisitDetailsDTO> toDtosWithDetails(Collection<Visit> visits) {
@@ -110,16 +109,6 @@ public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
     }
 
     return dtos;
-  }
-
-  private Map<String, String> createVisitAttributesMap(Visit visit) {
-    List<VisitAttribute> visitAttributes = new ArrayList<>(visit.getActiveAttributes());
-    Map<String, String> visitAttributesMap = new HashMap<>();
-    for (VisitAttribute attribute : visitAttributes) {
-      visitAttributesMap.put(attribute.getAttributeType().getName(), attribute.getValueReference());
-    }
-    
-    return visitAttributesMap;
   }
 
   public void setVisitService(VisitService visitService) {

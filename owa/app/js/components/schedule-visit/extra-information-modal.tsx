@@ -26,15 +26,16 @@ interface IProps {
 
 const WARNING_CLASS = "warning";
 
-const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, intl }: PropsWithIntl<IProps>) => {
+const ExtraInformationModal = ({ show, modalParams, confirm, cancel, intl }: PropsWithIntl<IProps>) => {
   const isPreviousVisit = !!modalParams?.precedingVisitDaysNumber;
   const isNextVisit = !!modalParams?.nextVistitDaysNumber;
   const isPreviousAndNextVisit = isPreviousVisit && isNextVisit;
-  const formattedDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, modalParams?.currentVisitDate);
   const isVisitDateDuplicated = modalParams?.isVisitDateDuplicated;
 
-  const currentVisitWeekday = intl.formatMessage({ id: `${modalParams?.currentVisitWeekday.toUpperCase()}` });
-  const infoMsgPartOne = `${intl.formatMessage({ id: "visitSavedOnText" })} ${currentVisitWeekday}, ${formattedDate}.`;
+  const currentVisitWeekday = intl.formatMessage({ id: `${modalParams?.currentVisitWeekday}` });
+  const infoMsgPartOne = `${intl.formatMessage({ id: "visitSavedOnText" })} ${currentVisitWeekday}, ${
+    modalParams?.currentVisitDate
+  }.`;
   const infoMsgPartTwo = `${intl.formatMessage({ id: "precedingVisitPlannedOnText" })}
 		${modalParams?.precedingVisitDaysNumber} ${intl.formatMessage({ id: "daysBeforeText" })}${!isNextVisit ? "." : ""}`;
   const infoMsgPartThree = `, ${intl.formatMessage({ id: "whileText" })}`;
@@ -46,6 +47,8 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, int
     id: "daysAfterVisitText",
   })}.`;
   const visitForThisDateIsDuplicatedText = `${intl.formatMessage({ id: "duplicatedVisitDateText" })}`;
+  const visitDateOutsideDateWindowText = `${intl.formatMessage({ id: "visits.outsideDateWindowInfoMessage" })}`;
+  const clinicClosedText = `${intl.formatMessage({ id: "visits.closedClinicInfoMessage" })}`;
 
   if (!show) {
     return null;
@@ -61,7 +64,7 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, int
         <div className="modal-title">{intl.formatMessage({ id: "informationLabel" })}</div>
         {modalParams?.isExtraInformationEnabled === "true" && (
           <>
-            <p className={modalParams?.isDayHolidayWeekday ? WARNING_CLASS : ""}>
+            <p className={modalParams?.isClosedClinic ? WARNING_CLASS : ""}>
               {infoMsgPartOne}
               <br />
               {isVisitDateDuplicated && <span>{visitForThisDateIsDuplicatedText}</span>}
@@ -71,12 +74,13 @@ const ExtraInformationModal = ({ show, modalParams, confirm, cancel, locale, int
               {isPreviousAndNextVisit && <span>{infoMsgPartThree}</span>}
               {isNextVisit && <span>{infoMsgPartFour}</span>}
             </p>
+            {modalParams?.isClosedClinic && <p className="bold">{clinicClosedText}</p>}
           </>
         )}
 
-        {modalParams?.isOutsideDateWindowInformationEnabled && (
+        {modalParams?.shouldOutsideDateWindowInfoBeDisplayed && (
           <>
-            <p>{intl.formatMessage({ id: "visits.outsideDateWindowInfoMessage" })}</p>
+            <p className="bold">{visitDateOutsideDateWindowText}</p>
           </>
         )}
 

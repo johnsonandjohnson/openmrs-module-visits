@@ -6,6 +6,12 @@
 <% /* Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS */ %>
 <% /* graphic logo is a trademark of OpenMRS Inc. */ %>
 
+<style>
+  .bold {
+    font-weight: bold;
+  }
+</style>
+
 <%
   ui.includeJavascript("visits", "editVisit.js")
   ui.includeCss("visits", "visitsSection.css")
@@ -141,9 +147,16 @@
             </br></br>
           </div>
 
+          <div id="clinicClosedDiv">
+            <p class="extra-info-dialog-paragraph">
+              <span id="clinicClosedInfo" class="bold"></span>
+            </p>
+            </br></br>
+          </div>
+
           <div id="outsideDateWindowDiv">
             <p class="extra-info-dialog-paragraph">
-              <span id="outsideDateWindowInfo"></span>
+              <span id="outsideDateWindowInfo" class="bold"></span>
             </p>
             </br></br>
           </div>
@@ -166,11 +179,7 @@
                 <i class="icon-circle visits-icon" style="color: ${attr.statusIconColor}" title=${attr.status}></i>
               <% } %>
               <i class="icon-pencil visits-icon" title=${ui.message("common.edit")}
-                onClick="editVisit.showEditVisitDialog(${isExtraInfoDialogEnabled}, ${isOutsideDateWindowInformationEnabled},
-                    '${holidayWeekdays}', '${commaSeparatedVisitDates}', '${attr.visitUuid}', '${patient.uuid}',
-                    '${attr.visitDateInServerFormat}', '${attr.visitDetails.time}', '${attr.visitLocationUuid}',
-                    '${attr.visitTypeUuid}', '${attr.visitDetails.status}', '${attr.isVisitHasEncounters}',
-                    '${attr.lowWindowDate}', '${attr.upWindowDate}')">
+                onClick='editVisit.showEditVisitDialog(${attr.visitConfig}, ${generalConfig})'>
               </i>
               <% if (attr.visitDetails.formUri) { %>
                 <a href="../..${attr.visitDetails.formUri}&returnUrl=${ui.urlEncode(ui.thisUrl())}">

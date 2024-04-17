@@ -8,45 +8,50 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
- #extra-info-modal {
-    display: flex !important;
-  
-    .modal-dialog {
-      margin: auto;
-      transition: none;
-  
-      .modal-body {
-        padding: 15px 30px;
-  
-        .button.confirm.right, .button.confirm.right:hover {
-          background-image: none;
-          background-color: #00455C;
-          border-color: #00455C;
-          font-size: 11px;
-        }
-  
-        .button.cancel, .button.cancel:hover {
-          background-image: none;
-          background-color: white;
-          border: #000000 1px solid;
-          color: #00455C;
-          text-transform: uppercase;
-          font-size: 11px;
-        }
-  
-        .modal-title {
-          font-size: 18px;
-          padding-bottom: 20px;
-        }
-  
-        p {
-          margin-bottom: 20px;
-        }
+#extra-info-modal {
+  display: flex !important;
 
-        .warning {
-          color: red;
-        }
+  .modal-dialog {
+    margin: auto;
+    transition: none;
+
+    .modal-body {
+      padding: 15px 30px;
+
+      .button.confirm.right,
+      .button.confirm.right:hover {
+        background-image: none;
+        background-color: #00455c;
+        border-color: #00455c;
+        font-size: 11px;
+      }
+
+      .button.cancel,
+      .button.cancel:hover {
+        background-image: none;
+        background-color: white;
+        border: #000000 1px solid;
+        color: #00455c;
+        text-transform: uppercase;
+        font-size: 11px;
+      }
+
+      .modal-title {
+        font-size: 18px;
+        padding-bottom: 20px;
+      }
+
+      p {
+        margin-bottom: 20px;
+      }
+
+      .warning {
+        color: red;
+      }
+
+      .bold {
+        font-weight: bold;
       }
     }
   }
-  
+}

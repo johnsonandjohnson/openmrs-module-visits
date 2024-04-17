@@ -31,6 +31,7 @@ import {
   getExtraInfoModalEnabledGP,
   getHolidayWeekdaysGP,
   getOutsideDateWindowInfoModalEnabledGP,
+  getVisitTypeUuidsWithTimeWindowGP,
 } from "../../reducers/global-property.reducer";
 import { Button, Col, Form, FormControl, FormGroup, Modal, Row } from "react-bootstrap";
 import ErrorDesc from "../error-description/error-desc";
@@ -38,8 +39,16 @@ import FormLabel from "../form-label/form-label";
 import OpenMrsDatePicker from "../openmrs-date-picker/openmrs-date-picker";
 import "../schedule-visit/schedule-visit-modal.scss";
 import ExtraInformationModal from "./extra-information-modal";
-import { ONE_DAY_IN_MILISECONDS, getNumberOfDaysBetweenDates, visitDatesTheSame } from "../../shared/utils/date-util";
 import {
+  MEDIUM_DATE_FORMAT,
+  ONE_DAY_IN_MILISECONDS,
+  formatDateIfDefined,
+  getNumberOfDaysBetweenDates,
+  visitDatesTheSame,
+} from "../../shared/utils/date-util";
+import {
+  CLINIC_CLOSED_DATES_ATTRIBUTE_TYPE_UUID,
+  CLINIC_CLOSED_WEEKDAYS_ATTRIBUTE_TYPE_UUID,
   LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME,
   ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME,
   UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME,
@@ -105,6 +114,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     this.props.getExtraInfoModalEnabledGP();
     this.props.getHolidayWeekdaysGP();
     this.props.getOutsideDateWindowInfoModalEnabledGP();
+    this.props.getVisitTypeUuidsWithTimeWindowGP();
 
     this.handleChange(this.props.patientUuid, "patientUuid");
   };
@@ -284,11 +294,18 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
 
     const dateWindowInfoAvailable = !isNaN(lowWindow) && !isNaN(upWindow);
 
+    const visitTypesWithTimeWindowValue: string = this.props.visitTypesWithTimeWindow!["value"];
+    const isVisitTypeHasTimeWindow = visitTypesWithTimeWindowValue
+      .split(",")
+      .map((value) => value.trim())
+      .includes(visit.type);
+
     return (
       isOutsideDateWindowInformationEnabled === "true" &&
       visit.status === "SCHEDULED" &&
       !isNewVisitDateInRange &&
-      dateWindowInfoAvailable
+      dateWindowInfoAvailable &&
+      isVisitTypeHasTimeWindow
     );
   };
 
@@ -403,22 +420,44 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   };
 
   renderExtraInfoModal = () => {
-    const { visit, holidayWeekdays, isExtraInformationEnabled, isOutsideDateWindowInformationEnabled } = this.props;
+    const {
+      visit,
+      holidayWeekdays,
+      isExtraInformationEnabled,
+      isOutsideDateWindowInformationEnabled,
+      visitTypesWithTimeWindow,
+    } = this.props;
 
-    if (!isExtraInformationEnabled || !holidayWeekdays || !isOutsideDateWindowInformationEnabled) {
+    if (
+      !isExtraInformationEnabled ||
+      !holidayWeekdays ||
+      !isOutsideDateWindowInformationEnabled ||
+      !visitTypesWithTimeWindow
+    ) {
       return;
     }
 
     const currentVisitDate = new Date(visit.startDate);
     currentVisitDate.setHours(0, 0, 0, 0);
+    const formattedCurrentVisitDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, currentVisitDate);
 
-    const holidayWeekdaysValue: string = holidayWeekdays!["value"];
-    const currentVisitWeekday = new Date(visit.startDate).toLocaleDateString("en-us", { weekday: "long" });
-    const isDayHolidayWeekday = holidayWeekdaysValue.split(",").includes(currentVisitWeekday);
+    const closedClinicWeekdays = visit?.locationAttributeDTOS?.find(
+      (locationDTO) => locationDTO?.locationUuid === visit.location,
+    )?.locationAttributesMap?.[CLINIC_CLOSED_WEEKDAYS_ATTRIBUTE_TYPE_UUID];
+    const currentVisitWeekday = currentVisitDate.toLocaleDateString("en-us", { weekday: "long" });
+    const isClosedClinicWeekday = closedClinicWeekdays?.split(",").includes(currentVisitWeekday);
+
+    const closedClinicDates = visit?.locationAttributeDTOS?.find(
+      (locationDTO) => locationDTO?.locationUuid === visit.location,
+    )?.locationAttributesMap?.[CLINIC_CLOSED_DATES_ATTRIBUTE_TYPE_UUID];
+    const isClosedClinicDate = closedClinicDates?.split(",").includes(formattedCurrentVisitDate);
+    const isClosedClinic = isClosedClinicWeekday || isClosedClinicDate;
+
     const patientVisitsDates = this.getPatientVisitsDates();
+
     const modalParams = {
       isExtraInformationEnabled: isExtraInformationEnabled?.["value"],
-      currentVisitDate: visit.startDate,
+      currentVisitDate: formattedCurrentVisitDate,
       currentVisitWeekday,
       precedingVisitDaysNumber: this.findNumberOfDaysBetweenCurrentAndNearestPastVisit(
         patientVisitsDates,
@@ -428,9 +467,9 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
         patientVisitsDates,
         currentVisitDate,
       ),
-      isDayHolidayWeekday,
+      isClosedClinic,
       isVisitDateDuplicated: this.isVisitForThisDayDuplicated(patientVisitsDates, currentVisitDate),
-      isOutsideDateWindowInformationEnabled: this.shouldOutsideDateWindowInfoBeDisplayed(),
+      shouldOutsideDateWindowInfoBeDisplayed: this.shouldOutsideDateWindowInfoBeDisplayed(),
     };
 
     return (
@@ -474,6 +513,7 @@ const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session, overvi
   isExtraInformationEnabled: globalPropertyReducer.isExtraInfoModalEnabled,
   holidayWeekdays: globalPropertyReducer.holidayWeekdays,
   isOutsideDateWindowInformationEnabled: globalPropertyReducer.isOutsideDateWindowModalEnabled,
+  visitTypesWithTimeWindow: globalPropertyReducer.visitTypesWithTimeWindow,
 });
 
 const mapDispatchToProps = {
@@ -489,6 +529,7 @@ const mapDispatchToProps = {
   getExtraInfoModalEnabledGP,
   getHolidayWeekdaysGP,
   getOutsideDateWindowInfoModalEnabledGP,
+  getVisitTypeUuidsWithTimeWindowGP,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

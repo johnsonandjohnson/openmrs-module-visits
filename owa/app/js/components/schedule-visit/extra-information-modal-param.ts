@@ -9,17 +9,12 @@
  */
 
 export default interface IExtraInformationModalParams {
-	currentVisitDate: Date
-	currentVisitWeekday: string
-	precedingVisitDaysNumber: number | null
-	nextVistitDaysNumber: number | null
-	isDayHolidayWeekday: boolean
-	isVisitDateDuplicated: boolean
-  isExtraInformationEnabled: string
-  isOutsideDateWindowInformationEnabled: string
-  lowWindowDate: Date
-  upWindowDate: Date
-  originalVisitDateObject: Date
-  visitStatus: string
-  currentVisitDateObject: Date
+  currentVisitWeekday: string;
+  precedingVisitDaysNumber: number | null;
+  nextVistitDaysNumber: number | null;
+  isClosedClinic: boolean;
+  isVisitDateDuplicated: boolean;
+  isExtraInformationEnabled: string;
+  shouldOutsideDateWindowInfoBeDisplayed: boolean;
+  currentVisitDate: string;
 }

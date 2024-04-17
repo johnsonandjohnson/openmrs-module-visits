@@ -211,7 +211,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
             .setType(visit.getVisitType().getUuid());
     visitDTO.setVisitDateDTO(new VisitDateDTO(visit.getStartDatetime(), null, null));
     VisitDetailsDTO visitDetailsDTO =
-        new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName(), null);
+        new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName(), null, null);
 
     mockMvc
         .perform(
@@ -233,7 +233,7 @@ public class VisitControllerITTest extends BaseModuleWebContextSensitiveWithActi
             .setType(visit.getVisitType().getUuid());
     visitDTO.setVisitDateDTO(new VisitDateDTO(visit.getStartDatetime(), null, null));
     VisitDetailsDTO visitDetailsDTO =
-        new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName(), null);
+        new VisitDetailsDTO(visitDTO, LOCATION_NAME, visit.getVisitType().getName(), null, null);
 
     mockMvc
         .perform(

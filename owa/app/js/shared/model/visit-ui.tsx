@@ -8,11 +8,11 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import {ObjectUI} from "../../components/base-model/object-ui";
-import {IForm} from "../../components/validation/model/form";
+import { ObjectUI } from "../../components/base-model/object-ui";
+import { IForm } from "../../components/validation/model/form";
 import * as Yup from "yup";
-import _ from 'lodash';
-import {validateFormSafely} from '../../components/validation/validation';
+import _ from "lodash";
+import { validateFormSafely } from "../../components/validation/validation";
 import IVisitDetails from "./visit-details";
 
 export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDetails, IForm {
@@ -23,10 +23,11 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
   type: string;
   status: string | null;
   actualDate?: Date | undefined;
-  visitAttributes?: any
+  visitAttributes?: any;
+  locationAttributeDTOS?: any;
 
-  errors: { [key: string]: string; };
-  touchedFields: { [key: string]: boolean; };
+  errors: { [key: string]: string };
+  touchedFields: { [key: string]: boolean };
 
   constructor(baseObject: IVisitDetails) {
     super(baseObject);
@@ -36,7 +37,7 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
 
   async validate(validateNotTouched: boolean, intl: any, isEdit: boolean): Promise<VisitUI> {
     const schema = this.getValidationSchema(validateNotTouched, intl, isEdit);
-    
+
     const validationResult = await validateFormSafely(this, schema);
 
     const visit = _.clone(this);
@@ -46,21 +47,26 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
 
   getValidationSchema(validateNotTouched: boolean, intl: any, isEdit: boolean): Yup.ObjectSchema<any> {
     const createValidators = {
-      type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
-        v => this.validateRequiredField('type', v, validateNotTouched)),
-      location: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
-        v => this.validateRequiredField('location', v, validateNotTouched)),
+      type: Yup.string().test("mandatory check", intl.formatMessage({ id: "visits.fieldRequired" }), (v) =>
+        this.validateRequiredField("type", v, validateNotTouched),
+      ),
+      location: Yup.string().test("mandatory check", intl.formatMessage({ id: "visits.fieldRequired" }), (v) =>
+        this.validateRequiredField("location", v, validateNotTouched),
+      ),
     };
     const editValidators = {
-      type: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
-        v => this.validateRequiredField('type', v, validateNotTouched)),
-      status: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
-        v => this.validateRequiredField('status', v, validateNotTouched)),
-      location: Yup.string().test('mandatory check', intl.formatMessage({ id: "visits.fieldRequired" }),
-        v => this.validateRequiredField('location', v, validateNotTouched)),
+      type: Yup.string().test("mandatory check", intl.formatMessage({ id: "visits.fieldRequired" }), (v) =>
+        this.validateRequiredField("type", v, validateNotTouched),
+      ),
+      status: Yup.string().test("mandatory check", intl.formatMessage({ id: "visits.fieldRequired" }), (v) =>
+        this.validateRequiredField("status", v, validateNotTouched),
+      ),
+      location: Yup.string().test("mandatory check", intl.formatMessage({ id: "visits.fieldRequired" }), (v) =>
+        this.validateRequiredField("location", v, validateNotTouched),
+      ),
     };
 
-    return Yup.object().shape(isEdit? editValidators : createValidators);
+    return Yup.object().shape(isEdit ? editValidators : createValidators);
   }
 
   validateRequiredField(key: string, value: string | undefined, validateNotTouched: boolean): boolean {
@@ -72,8 +78,7 @@ export default class VisitUI extends ObjectUI<IVisitDetails> implements IVisitDe
 
   static getNew(): VisitUI {
     return new VisitUI({
-      startDate: new Date()
+      startDate: new Date(),
     } as IVisitDetails);
   }
-
 }
