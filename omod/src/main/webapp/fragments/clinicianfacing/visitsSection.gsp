@@ -6,12 +6,6 @@
 <% /* Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS */ %>
 <% /* graphic logo is a trademark of OpenMRS Inc. */ %>
 
-<style>
-  .bold {
-    font-weight: bold;
-  }
-</style>
-
 <%
   ui.includeJavascript("visits", "editVisit.js")
   ui.includeCss("visits", "visitsSection.css")

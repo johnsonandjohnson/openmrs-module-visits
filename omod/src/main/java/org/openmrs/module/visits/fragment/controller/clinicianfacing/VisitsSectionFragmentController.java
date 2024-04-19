@@ -106,8 +106,6 @@ public class VisitsSectionFragmentController {
       UiSessionContext sessionContext,
       @InjectBeans PatientDomainWrapper patientWrapper) {
 
-    Map<String, Object> generalConfig = new HashMap<>();
-
     TemplateFactory templateFactory =
         Context.getRegisteredComponent("appframeworkTemplateFactory", TemplateFactory.class);
     AdtService adtService = Context.getService(AdtService.class);
@@ -174,7 +172,6 @@ public class VisitsSectionFragmentController {
         "showVisitTypeOnPatientHeaderSection",
         visitTypeHelper.showVisitTypeOnPatientHeaderSection());
 
-    addGlobalPropertiesToModel(generalConfig);
     model.addAttribute("locale", Context.getLocale().toLanguageTag().replace('_', '-'));
 
     List<String> stringVisitDates =
@@ -186,6 +183,8 @@ public class VisitsSectionFragmentController {
                         v, VisitsConstants.DEFAULT_SERVER_SIDE_DATE_FORMAT, null))
             .collect(Collectors.toList());
 
+    Map<String, Object> generalConfig = new HashMap<>();
+    addGlobalPropertiesToModel(generalConfig);
     generalConfig.put("allVisitDates", stringVisitDates);
     generalConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
     generalConfig.put("locationAttributeDTOs", VisitsUtil.createLocationAttributeDTOs());
@@ -195,7 +194,7 @@ public class VisitsSectionFragmentController {
     try {
       model.addAttribute("generalConfig", new ObjectMapper().writeValueAsString(generalConfig));
     } catch (IOException ex) {
-      LOGGER.error("Unable to write general config into JSON string");
+      LOGGER.error("Unable to write general config into JSON string", ex);
     }
   }
 
@@ -271,7 +270,7 @@ public class VisitsSectionFragmentController {
     try {
       result.put("visitConfig", new ObjectMapper().writeValueAsString(result));
     } catch (IOException ex) {
-      LOGGER.error("Unable to write visit config into JSON string");
+      LOGGER.error("Unable to write visit config into JSON string", ex);
     }
 
     return result;

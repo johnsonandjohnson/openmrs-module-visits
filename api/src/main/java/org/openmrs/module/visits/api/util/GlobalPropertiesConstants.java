@@ -72,7 +72,7 @@ public final class GlobalPropertiesConstants {
   public static final GPDefinition SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP =
       new GPDefinition(
           "visits.outsideDateWindowInformationEnabled",
-          "true",
+          "false",
           "Used to determine if additional information about falling outside the permitted visit date should be displayed");
 
   public static final GPDefinition VISIT_TYPES_TIME_WINDOW =
