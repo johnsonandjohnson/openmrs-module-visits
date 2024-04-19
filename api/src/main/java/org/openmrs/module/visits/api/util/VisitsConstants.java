@@ -31,6 +31,10 @@ public final class VisitsConstants {
 
     public static final String VISIT_CONFIG_SERVICE_BEAN_NAME = "visits.configService";
 
+    public static final String CLINIC_CLOSED_WEEKDAYS_ATTRIBUTE_TYPE_UUID = "570e9b8f-752b-4577-9ffb-721e073387d9";
+
+    public static final String CLINIC_CLOSED_DATES_ATTRIBUTE_TYPE_UUID = "64b73c1c-c91a-403f-bb26-dd62dc91bfef";
+
     private VisitsConstants() {
     }
 }

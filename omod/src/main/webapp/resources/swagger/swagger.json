@@ -277,6 +277,20 @@
     }
   },
   "definitions" : {
+    "LocationAttributeDTO" : {
+      "type" : "object",
+      "properties" : {
+        "locationUuid" : {
+          "type" : "string"
+        },
+        "locationAttributesMap" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
     "NameUrlDTO" : {
       "type" : "object",
       "properties" : {
@@ -420,6 +434,12 @@
           "type" : "object",
           "additionalProperties" : {
             "type" : "string"
+          }
+        },
+        "locationAttributeDTOS" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/LocationAttributeDTO"
           }
         }
       }

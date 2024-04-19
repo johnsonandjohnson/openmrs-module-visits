@@ -99,6 +99,7 @@ public class VisitsSectionFragmentControllerTest {
     when(patientDomainWrapper.getPatient()).thenReturn(new Patient(1));
     doReturn(appContextModel).when(uiSessionContext).generateAppContextModel();
     when(GlobalPropertyUtils.getInteger(anyString())).thenReturn(1);
+    when(GlobalPropertyUtils.getGlobalProperty(anyString())).thenReturn("");
     when(Context.getService(ConfigService.class)).thenReturn(configService);
     when(Context.getVisitService()).thenReturn(visitService);
     when(Context.getLocationService()).thenReturn(locationService);

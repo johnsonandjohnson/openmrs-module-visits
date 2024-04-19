@@ -1,7 +1,10 @@
 var userLocale = null;
 
-const DISPLAY_FORMAT_DATE = 'DD MMMM YYYY';
+const FULL_DISPLAY_FORMAT_DATE = 'DD MMMM YYYY';
+const SHORT_DISPLAY_FORMAT_DATE = 'DD MMM YYYY';
 const SERVER_FORMAT_DATE = 'YYYY-MM-DD';
+const CLINIC_CLOSED_WEEKDAYS_ATTRIBUTE_TYPE_UUID = '570e9b8f-752b-4577-9ffb-721e073387d9';
+const CLINIC_CLOSED_DATES_ATTRIBUTE_TYPE_UUID = '64b73c1c-c91a-403f-bb26-dd62dc91bfef';
 
 const PT_EN_MONTHS_MAPPING = {
   'Janeiro': 'January',
@@ -36,7 +39,8 @@ jq(document).ready(function () {
     "cfl.weekDay.Thursday.fullName",
     "cfl.weekDay.Friday.fullName",
     "cfl.weekDay.Saturday.fullName",
-    "visits.outsideDateWindowInfoMessage"
+    "visits.outsideDateWindowInfoMessage",
+    "visits.closedClinicInfoMessage"
   ]);
 
   userLocale = jq('#locale-span').text();
@@ -64,13 +68,8 @@ editVisit.hackWrapClose = function () {
   editVisit.editVisitDialog.close();
 };
 
-editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideDateWindowInformationEnabled, holidayWeekdays,
-                                          allVisitDates, visitUuid, patientUuid, visitDate, visitTime, visitLocation,
-                                          visitType, visitStatus, isVisitHasEncounters, lowWindowDate, upWindowDate) {
-
-  editVisit.createEditVisitDialog(isExtraInfoDialogEnabled, isOutsideDateWindowInformationEnabled, holidayWeekdays,
-                                  allVisitDates, visitUuid, patientUuid, visitDate, visitStatus, lowWindowDate, upWindowDate);
-
+editVisit.showEditVisitDialog = function(visitConfig, generalConfig) {
+  editVisit.createEditVisitDialog(visitConfig, generalConfig);
   editVisit.editVisitDialog.show();
 
   // Create custom scrollable overlay hackWrap div for https://www.ericmmartin.com/projects/simplemodal/
@@ -120,14 +119,14 @@ editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideDat
     jq('#visit-date-select').blur();
   }, 50);
 
-  jq('#visit-date-select').datepicker('setDate', new Date(visitDate));
-  jq('#visit-date-select').val(moment(visitDate).locale(userLocale).format(DISPLAY_FORMAT_DATE));
-  jq('#visit-time-select').val(visitTime);
-  jq('#visit-location-select').val(visitLocation);
-  jq('#visit-type-select').val(visitType);
-  jq('#visit-status-select').val(visitStatus);
+  jq('#visit-date-select').datepicker('setDate', new Date(visitConfig.visitDateInServerFormat));
+  jq('#visit-date-select').val(moment(visitConfig.visitDateInServerFormat).locale(userLocale).format(FULL_DISPLAY_FORMAT_DATE));
+  jq('#visit-time-select').val(visitConfig.visitDetails.time);
+  jq('#visit-location-select').val(visitConfig.visitLocationUuid);
+  jq('#visit-type-select').val(visitConfig.visitTypeUuid);
+  jq('#visit-status-select').val(visitConfig.visitDetails.status);
 
-  if (isVisitHasEncounters == 'true') {
+  if (visitConfig.isVisitHasEncounters == 'true') {
     jq('#visit-type-select').attr('disabled', true);
   } else {
     jq('#visit-type-select').attr('disabled', false);
@@ -137,13 +136,10 @@ editVisit.showEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideDat
   enableSaveButton();
 };
 
-editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideDateWindowInformationEnabled,
-                                            holidayWeekdays, allVisitDates, visitUuid, patientUuid, visitDate,
-                                            visitStatus, lowWindowDate, upWindowDate) {
-
-  const lowWindowDateAsDateObject = new Date(lowWindowDate);
+editVisit.createEditVisitDialog = function(visitConfig, generalConfig) {
+  const lowWindowDateAsDateObject = new Date(visitConfig.lowWindowDate);
   lowWindowDateAsDateObject.setHours(0, 0, 0, 0);
-  const upWindowDateAsDateObject = new Date(upWindowDate);
+  const upWindowDateAsDateObject = new Date(visitConfig.upWindowDate);
   upWindowDateAsDateObject.setHours(0, 0, 0, 0);
 
   editVisit.editVisitDialog = emr.setupConfirmationDialog({
@@ -155,27 +151,31 @@ editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideD
     },
     actions: {
       confirm: function () {
-        const currentVisitDate = new Date(getCurrentDateInServerFormat());
+        const currentVisitDate = new Date(getSelectedVisitDate(SERVER_FORMAT_DATE));
         currentVisitDate.setHours(0, 0, 0, 0);
         const isNewVisitDateInRange = currentVisitDate >= lowWindowDateAsDateObject && currentVisitDate <= upWindowDateAsDateObject;
-        const dateWindowInfoAvailable = lowWindowDate != 'null' && upWindowDate != 'null';
-        const shouldOutsideDateWindowInformationBeDisplayed = isOutsideDateWindowInformationEnabled && visitStatus === 'SCHEDULED'
-          && !isNewVisitDateInRange && dateWindowInfoAvailable;
+        const dateWindowInfoAvailable = visitConfig.lowWindowDate != 'null' && visitConfig.upWindowDate != 'null';
 
-        if (isExtraInfoDialogEnabled || shouldOutsideDateWindowInformationBeDisplayed) {
-          editVisit.showExtraInfoDialog(isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed, allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate);
+        const selectedVisitTypeUuid = jq('#visit-type-select').val();
+        const isVisitTypeHasTimeWindow = generalConfig.visitTypeUuidsWithTimeWindow.includes(selectedVisitTypeUuid);
+
+        const shouldOutsideDateWindowInformationBeDisplayed = generalConfig.isOutsideDateWindowInformationEnabled && visitConfig.visitDetails.status === 'SCHEDULED'
+          && !isNewVisitDateInRange && dateWindowInfoAvailable && isVisitTypeHasTimeWindow;
+
+        if (generalConfig.isExtraInfoDialogEnabled || shouldOutsideDateWindowInformationBeDisplayed) {
+          editVisit.showExtraInfoDialog(visitConfig, generalConfig, shouldOutsideDateWindowInformationBeDisplayed);
         } else {
           const requestBody = {
-            "uuid": visitUuid,
-            "startDate": getCurrentDateInServerFormat(),
+            "uuid": visitConfig.visitUuid,
+            "startDate": getSelectedVisitDate(SERVER_FORMAT_DATE),
             "location": jq('#visit-location-select').val(),
             "time": jq('#visit-time-select').val(),
             "type": jq('#visit-type-select').val(),
             "status": jq('#visit-status-select').val(),
-            "patientUuid": patientUuid
+            "patientUuid": generalConfig.patientUuid
           };
           jq.ajax({
-            url: `/${OPENMRS_CONTEXT_PATH}/ws/visits/${visitUuid}`,
+            url: `/${OPENMRS_CONTEXT_PATH}/ws/visits/${visitConfig.visitUuid}`,
             type: 'PUT',
             data: JSON.stringify(requestBody),
             headers: {
@@ -200,26 +200,25 @@ editVisit.createEditVisitDialog = function (isExtraInfoDialogEnabled, isOutsideD
   })
 };
 
-editVisit.showExtraInfoDialog = function (isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed,
-                                          allVisitDates, holidayWeekdays, visitUuid, patientUuid, visitDate) {
-  editVisit.createExtraInfoDialog(visitUuid, patientUuid);
+editVisit.showExtraInfoDialog = function(visitConfig, generalConfig, shouldOutsideDateWindowInformationBeDisplayed) {
+  editVisit.createExtraInfoDialog(visitConfig.visitUuid, generalConfig.patientUuid);
 
   jq('#extra-info-dialog').show();
   jq('#infoMessagePart1').text('');
   jq('#infoMessagePart2').text('');
-  jq('#infoMessagePart1').css('color', '#333333');
   jq('#outsideDateWindowInfo').text('');
-  setExtraInfoDialogContent(isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed, allVisitDates, holidayWeekdays, visitDate);
+  jq('#clinicClosedInfo').text('');
+  setExtraInfoDialogContent(visitConfig, generalConfig, shouldOutsideDateWindowInformationBeDisplayed);
 }
 
-editVisit.createExtraInfoDialog = function (visitUuid, patientUuid) {
+editVisit.createExtraInfoDialog = function(visitUuid, patientUuid) {
   editVisit.extraInfoDialog = emr.setupConfirmationDialog({
     selector: '#extra-info-dialog',
     actions: {
-      confirm: function () {
+      confirm: function() {
         const requestBody = {
           "uuid": visitUuid,
-          "startDate": getCurrentDateInServerFormat(),
+          "startDate": getSelectedVisitDate(SERVER_FORMAT_DATE),
           "location": jq('#visit-location-select').val(),
           "time": jq('#visit-time-select').val(),
           "type": jq('#visit-type-select').val(),
@@ -233,12 +232,12 @@ editVisit.createExtraInfoDialog = function (visitUuid, patientUuid) {
           headers: {
             'Content-type': 'application/json; charset=utf-8'
           },
-          success: function () {
+          success: function() {
             emr.successMessage("visits.genericSuccess");
             jq('#extra-info-dialog').hide();
             location.reload();
           },
-          error: function () {
+          error: function() {
             emr.errorMessage("visits.genericFailure");
             jq('#extra-info-dialog').hide();
           }
@@ -251,11 +250,11 @@ editVisit.createExtraInfoDialog = function (visitUuid, patientUuid) {
   })
 };
 
-editVisit.handleDateInputOnClick = function () {
+editVisit.handleDateInputOnClick = function() {
   jq('.datepicker').show();
 }
 
-function getCurrentDateInServerFormat () {
+function getSelectedVisitDate(targetFormat) {
   let stringVisitDate = jq('#visit-date-select').val();
 
   if (userLocale.includes('pt')) {
@@ -263,17 +262,15 @@ function getCurrentDateInServerFormat () {
       stringVisitDate = stringVisitDate.replace(ptMonth, enMonth);
     }
   }
-  const currentDateInputValue = moment(stringVisitDate, DISPLAY_FORMAT_DATE);
+  const currentDateInputValue = moment(stringVisitDate, FULL_DISPLAY_FORMAT_DATE);
 
-  return moment(currentDateInputValue).format(SERVER_FORMAT_DATE);
+  return moment(currentDateInputValue).format(targetFormat);
 }
 
-function setExtraInfoDialogContent(isExtraInfoDialogEnabled, shouldOutsideDateWindowInformationBeDisplayed,
-                                    allVisitDates, holidayWeekdays, visitDate) {
-
-  if (isExtraInfoDialogEnabled) {
-    const allVisitDatesArray = allVisitDates.split(',');
-    allVisitDatesArray.splice(allVisitDatesArray.indexOf(visitDate), 1);
+function setExtraInfoDialogContent(visitConfig, generalConfig, shouldOutsideDateWindowInformationBeDisplayed) {
+  if (generalConfig.isExtraInfoDialogEnabled) {
+    const allVisitDatesArray = [...generalConfig.allVisitDates];
+    allVisitDatesArray.splice(allVisitDatesArray.indexOf(visitConfig.visitDateInServerFormat), 1);
 
     const newVisitDate = moment(jq('#visit-date-select').datepicker('getDate')).format(SERVER_FORMAT_DATE);
     const isVisitDateDuplicated = allVisitDatesArray.includes(newVisitDate);
@@ -288,7 +285,7 @@ function setExtraInfoDialogContent(isExtraInfoDialogEnabled, shouldOutsideDateWi
       }
     }
 
-    const currentVisitDate = moment(stringVisitDate, DISPLAY_FORMAT_DATE);
+    const currentVisitDate = moment(stringVisitDate, FULL_DISPLAY_FORMAT_DATE);
     const currentVisitWeekDayName = moment(currentVisitDate).format('dddd');
     const weekDayNameToDisplay = emr.message('cfl.weekDay.' + currentVisitWeekDayName + '.fullName');
 
@@ -296,6 +293,18 @@ function setExtraInfoDialogContent(isExtraInfoDialogEnabled, shouldOutsideDateWi
     const allVisitDateObjects = allVisitDatesArray.map(date => new Date(date));
     const closestPreviousVisit = findClosestPreviousVisit(allVisitDateObjects, currentVisitDateAsDateObject);
     const closestFutureVisit = findClosestFutureVisit(allVisitDateObjects, currentVisitDateAsDateObject);
+
+    const closedClinicWeekdays = generalConfig.locationAttributeDTOs.find((locationDTO) =>
+      locationDTO.locationUuid === visitConfig.visitLocationUuid)?.locationAttributesMap?.[CLINIC_CLOSED_WEEKDAYS_ATTRIBUTE_TYPE_UUID];
+    const currentVisitWeekday = new Date(getSelectedVisitDate(SERVER_FORMAT_DATE)).toLocaleDateString("en-us", { weekday: "long" });
+    const isClosedClinicWeekday = closedClinicWeekdays?.split(",").includes(currentVisitWeekday);
+
+    const closedClinicDates = generalConfig.locationAttributeDTOs.find((locationDTO) =>
+      locationDTO.locationUuid === visitConfig.visitLocationUuid)?.locationAttributesMap?.[CLINIC_CLOSED_DATES_ATTRIBUTE_TYPE_UUID];
+    const selectedDateInShortDisplayFormat = getSelectedVisitDate(SHORT_DISPLAY_FORMAT_DATE);
+    const isClosedClinicDate = closedClinicDates?.split(",").includes(selectedDateInShortDisplayFormat);
+
+    const isClosedClinic = isClosedClinicWeekday || isClosedClinicDate;
 
     jq('#infoMessagePart1')
       .append(emr.message('visitSavedOnText'))
@@ -350,22 +359,27 @@ function setExtraInfoDialogContent(isExtraInfoDialogEnabled, shouldOutsideDateWi
       }
     }
 
-    const holidayWeekdaysArray = holidayWeekdays.split(',');
-    if (holidayWeekdaysArray.includes(currentVisitWeekDayName)) {
+    if (isClosedClinic) {
       jq('#infoMessagePart1').css('color', 'red');
+      jq('#clinicClosedDiv').show();
+      jq('#clinicClosedInfo').append(emr.message('visits.closedClinicInfoMessage'));
+    } else {
+      jq('#infoMessagePart1').css('color', '#333333');
+      jq('#clinicClosedDiv').hide();
     }
   } else {
     jq('#extraInfoDiv').hide();
   }
 
   if (shouldOutsideDateWindowInformationBeDisplayed) {
+    jq('#outsideDateWindowDiv').show();
     jq('#outsideDateWindowInfo').append(emr.message('visits.outsideDateWindowInfoMessage'));
   } else {
     jq('#outsideDateWindowDiv').hide();
   }
 }
 
-function getNumberOfDaysBetweenDates (date1, date2) {
+function getNumberOfDaysBetweenDates(date1, date2) {
   if (date1 && date2) {
     return Math.abs((Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) -
       Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()))) / (24 * 60 * 60 * 1000);
@@ -373,7 +387,7 @@ function getNumberOfDaysBetweenDates (date1, date2) {
   return null;
 }
 
-function findClosestPreviousVisit (allVisitDates, currentVisitDate) {
+function findClosestPreviousVisit(allVisitDates, currentVisitDate) {
   const previousVisitDates = allVisitDates.filter(date => date < currentVisitDate);
   if (!previousVisitDates.length) {
     return null;
@@ -382,7 +396,7 @@ function findClosestPreviousVisit (allVisitDates, currentVisitDate) {
   return new Date(Math.max.apply(null, previousVisitDates));
 }
 
-function findClosestFutureVisit (allVisitDates, currentVisitDate) {
+function findClosestFutureVisit(allVisitDates, currentVisitDate) {
   const futureVisitDates = allVisitDates.filter(date => date > currentVisitDate);
   if (!futureVisitDates.length) {
     return null;
@@ -391,7 +405,7 @@ function findClosestFutureVisit (allVisitDates, currentVisitDate) {
   return new Date(Math.min.apply(null, futureVisitDates));
 }
 
-function onSelectChange (event) {
+function onSelectChange(event) {
   const selectedValue = event.value;
   const elementId = event.id;
   if (!selectedValue) {
@@ -405,7 +419,7 @@ function onSelectChange (event) {
   }
 }
 
-function isEditVisitFormValid () {
+function isEditVisitFormValid() {
   const requiredSelectFieldIDs = [
     "visit-location-select",
     "visit-type-select",
@@ -425,7 +439,7 @@ function isEditVisitFormValid () {
   return isValidForm;
 }
 
-function enableSaveButton () {
+function enableSaveButton() {
   jq('#save-button').removeClass('disabled-button');
   jq('#save-button').attr('disabled', false);
 }

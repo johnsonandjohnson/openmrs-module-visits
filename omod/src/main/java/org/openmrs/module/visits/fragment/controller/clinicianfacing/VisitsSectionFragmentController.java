@@ -21,8 +21,10 @@
  */
 package org.openmrs.module.visits.fragment.controller.clinicianfacing;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,10 +32,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
@@ -61,11 +65,16 @@ import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtils;
 import org.openmrs.module.visits.api.util.VisitsConstants;
+import org.openmrs.module.visits.api.util.VisitsUtil;
 import org.openmrs.module.visits.util.ComparatorsHelper;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+
+import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.SCHEDULE_VISIT_EXTRA_INFORMATION_GP;
+import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP;
+import static org.openmrs.module.visits.api.util.GlobalPropertiesConstants.VISIT_TYPES_TIME_WINDOW;
 
 /**
  * Supports the containing PageModel having an "app" property whose config defines a "visitUrl"
@@ -147,20 +156,21 @@ public class VisitsSectionFragmentController {
 
     Map<VisitDomainWrapper, Map<String, Object>> recentVisitsWithLinks =
         new LinkedHashMap<>(visitsToDisplay.size());
+
     for (VisitDomainWrapper visit : visitsToDisplay) {
       contextModel.put(VISIT, new VisitContextModel(visit));
       // since the "visit" isn't part of the context module, we bind it first to the visit url,
       // before doing the handlebars binding against the context
+
       recentVisitsWithLinks.put(
           visit,
           getVisitParams(templateFactory, ui, visitsPageWithSpecificVisitUrl, visit, contextModel));
     }
     model.addAttribute("recentVisitsWithLinks", recentVisitsWithLinks);
+
     config.addAttribute(
         "showVisitTypeOnPatientHeaderSection",
         visitTypeHelper.showVisitTypeOnPatientHeaderSection());
-
-    addGlobalPropertiesToModel(model);
 
     model.addAttribute("locale", Context.getLocale().toLanguageTag().replace('_', '-'));
 
@@ -173,30 +183,37 @@ public class VisitsSectionFragmentController {
                         v, VisitsConstants.DEFAULT_SERVER_SIDE_DATE_FORMAT, null))
             .collect(Collectors.toList());
 
-    String commaSeparatedVisitDates = String.join(",", stringVisitDates);
-    model.addAttribute("commaSeparatedVisitDates", commaSeparatedVisitDates);
+    Map<String, Object> generalConfig = new HashMap<>();
+    addGlobalPropertiesToModel(generalConfig);
+    generalConfig.put("allVisitDates", stringVisitDates);
+    generalConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
+    generalConfig.put("locationAttributeDTOs", VisitsUtil.createLocationAttributeDTOs());
 
     addAttributesForEditVisitWidget(model);
+
+    try {
+      model.addAttribute("generalConfig", new ObjectMapper().writeValueAsString(generalConfig));
+    } catch (IOException ex) {
+      LOGGER.error("Unable to write general config into JSON string", ex);
+    }
   }
 
-  private void addGlobalPropertiesToModel(FragmentModel model) {
-    model.addAttribute(
+  private void addGlobalPropertiesToModel(Map<String, Object> generalConfig) {
+    generalConfig.put(
         "isExtraInfoDialogEnabled",
         GlobalPropertyUtil.parseBool(
-            GlobalPropertyUtils.getGlobalProperty(
-                GlobalPropertiesConstants.SCHEDULE_VISIT_EXTRA_INFORMATION_GP.getKey())));
-
-    model.addAttribute(
-        "holidayWeekdays",
-        GlobalPropertyUtils.getGlobalProperty(
-            GlobalPropertiesConstants.VISITS_HOLIDAY_WEEKDAYS_GP.getKey()));
-
-    model.addAttribute(
+            GlobalPropertyUtils.getGlobalProperty(SCHEDULE_VISIT_EXTRA_INFORMATION_GP.getKey())));
+    generalConfig.put(
         "isOutsideDateWindowInformationEnabled",
         GlobalPropertyUtil.parseBool(
             GlobalPropertyUtils.getGlobalProperty(
-                GlobalPropertiesConstants.SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP
-                    .getKey())));
+                SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP.getKey())));
+    generalConfig.put(
+        "visitTypeUuidsWithTimeWindow",
+        Arrays.stream(
+                GlobalPropertyUtils.getGlobalProperty(VISIT_TYPES_TIME_WINDOW.getKey()).split(","))
+            .map(String::trim)
+            .collect(Collectors.toList()));
   }
 
   private Map<String, Object> getVisitParams(
@@ -243,10 +260,18 @@ public class VisitsSectionFragmentController {
     result.put(
         "visitDateInDisplayFormat",
         DateUtil.convertDateWithLocale(
-            extractedVisit.getStartDatetime(), "dd MMM YYYY", Context.getLocale()));
+            extractedVisit.getStartDatetime(),
+            VisitsConstants.DEFAULT_FRONT_END_DATE_FORMAT,
+            Context.getLocale()));
     result.put("isVisitHasEncounters", CollectionUtils.isNotEmpty(extractedVisit.getEncounters()));
 
     addLowAndUpWindowDates(visit, result);
+
+    try {
+      result.put("visitConfig", new ObjectMapper().writeValueAsString(result));
+    } catch (IOException ex) {
+      LOGGER.error("Unable to write visit config into JSON string", ex);
+    }
 
     return result;
   }
@@ -274,7 +299,7 @@ public class VisitsSectionFragmentController {
       LOGGER.error(String.format("Error while parsing date %s", originalVisitDate), ex);
     }
   }
-  
+
   private List<VisitDomainWrapper> getUpcomingVisits(List<VisitDomainWrapper> allVisits) {
     List<VisitDomainWrapper> result = new ArrayList<>();
     for (VisitDomainWrapper visit : allVisits) {

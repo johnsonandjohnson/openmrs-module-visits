@@ -8,16 +8,17 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import axios from 'axios';
-import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
+import axios from "axios";
+import { REQUEST, SUCCESS, FAILURE } from "./action-type.util";
 
 export const ACTION_TYPES = {
-  GET_EXTRA_INFO_MODAL_ENABLED_GP: 'globalProperty/GET_EXTRA_INFO_MODAL_ENABLED_GP',
-  GET_HOLIDAY_WEEKDAYS_GP: 'globalProperty/GET_HOLIDAY_WEEKDAYS_GP',
-  GET_SHOW_GENDER_PERSON_HEADER: 'globalProperty/GET_SHOW_GENDER_PERSON_HEADER',
-  GET_SHOW_AGE_PERSON_HEADER: 'globalProperty/GET_SHOW_AGE_PERSON_HEADER',
-  GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP: 'globalProperty/GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP'
-}
+  GET_EXTRA_INFO_MODAL_ENABLED_GP: "globalProperty/GET_EXTRA_INFO_MODAL_ENABLED_GP",
+  GET_HOLIDAY_WEEKDAYS_GP: "globalProperty/GET_HOLIDAY_WEEKDAYS_GP",
+  GET_SHOW_GENDER_PERSON_HEADER: "globalProperty/GET_SHOW_GENDER_PERSON_HEADER",
+  GET_SHOW_AGE_PERSON_HEADER: "globalProperty/GET_SHOW_AGE_PERSON_HEADER",
+  GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP: "globalProperty/GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP",
+  GET_VISIT_TYPES_WITH_TIME_WINDOW_GP: "globalProperty/GET_VISIT_TYPES_WITH_TIME_WINDOW_GP",
+};
 
 const initialState = {
   isExtraInfoModalEnabled: null,
@@ -26,10 +27,11 @@ const initialState = {
   holidayWeekdays: null,
   loading: false,
   success: false,
-  isOutsideDateWindowModalEnabled: null
+  isOutsideDateWindowModalEnabled: null,
+  visitTypesWithTimeWindow: null,
 };
 
-export type GlobalPropertyState = Readonly<typeof initialState>
+export type GlobalPropertyState = Readonly<typeof initialState>;
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -37,115 +39,145 @@ export default (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        success: false
+        success: false,
       };
     case FAILURE(ACTION_TYPES.GET_EXTRA_INFO_MODAL_ENABLED_GP):
       return {
         ...state,
         loading: false,
-        success: false
+        success: false,
       };
     case SUCCESS(ACTION_TYPES.GET_EXTRA_INFO_MODAL_ENABLED_GP):
       const extraInfoModalEnabledGPResults = action.payload.data.results;
       return {
         ...state,
-        isExtraInfoModalEnabled: extraInfoModalEnabledGPResults?.length ? extraInfoModalEnabledGPResults[0] : state.isExtraInfoModalEnabled,
+        isExtraInfoModalEnabled: extraInfoModalEnabledGPResults?.length
+          ? extraInfoModalEnabledGPResults[0]
+          : state.isExtraInfoModalEnabled,
         loading: false,
-        success: true
+        success: true,
       };
     case REQUEST(ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER):
       return {
         ...state,
         loading: true,
-        success: false
+        success: false,
       };
     case FAILURE(ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER):
       return {
         ...state,
         loading: false,
-        success: false
+        success: false,
       };
     case SUCCESS(ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER):
       const showGenderPersonHeaderResult = action.payload.data.results;
       return {
         ...state,
-        isShowGenderPersonHeader: showGenderPersonHeaderResult?.length ? showGenderPersonHeaderResult[0] : state.isShowGenderPersonHeader,
+        isShowGenderPersonHeader: showGenderPersonHeaderResult?.length
+          ? showGenderPersonHeaderResult[0]
+          : state.isShowGenderPersonHeader,
         loading: false,
-        success: true
+        success: true,
       };
     case REQUEST(ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER):
       return {
         ...state,
         loading: true,
-        success: false
+        success: false,
       };
     case FAILURE(ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER):
       return {
         ...state,
         loading: false,
-        success: false
+        success: false,
       };
     case SUCCESS(ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER):
       const showAgePersonHeaderResult = action.payload.data.results;
       return {
         ...state,
-        isShowAgePersonHeader: showAgePersonHeaderResult?.length ? showAgePersonHeaderResult[0] : state.isShowAgePersonHeader,
+        isShowAgePersonHeader: showAgePersonHeaderResult?.length
+          ? showAgePersonHeaderResult[0]
+          : state.isShowAgePersonHeader,
         loading: false,
-        success: true
+        success: true,
       };
-      case REQUEST(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
-        return {
-          ...state,
-          loading: true,
-          success: false
-        };
-      case FAILURE(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
-        return {
-          ...state,
-          loading: false,
-          success: false
-        };
-      case SUCCESS(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
-        const holidayWeekdaysResults = action.payload.data.results;
-        return {
-          ...state,
-          holidayWeekdays: holidayWeekdaysResults?.length ? holidayWeekdaysResults[0] : state.holidayWeekdays,
-          loading: false,
-          success: true
-        };
-        case REQUEST(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
-          return {
-            ...state,
-            loading: true,
-            success: false
-          };
-        case FAILURE(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
-          return {
-            ...state,
-            loading: false,
-            success: false
-          };
-        case SUCCESS(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
-          const outsideDateWindowModalGPResults = action.payload.data.results;
-          return {
-            ...state,
-            isOutsideDateWindowModalEnabled: outsideDateWindowModalGPResults?.length ? outsideDateWindowModalGPResults[0] : state.isOutsideDateWindowModalEnabled,
-            loading: false,
-            success: true
-          };
-      default:
-        return state;
+    case REQUEST(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
+      return {
+        ...state,
+        loading: true,
+        success: false,
+      };
+    case FAILURE(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
+      return {
+        ...state,
+        loading: false,
+        success: false,
+      };
+    case SUCCESS(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
+      const holidayWeekdaysResults = action.payload.data.results;
+      return {
+        ...state,
+        holidayWeekdays: holidayWeekdaysResults?.length ? holidayWeekdaysResults[0] : state.holidayWeekdays,
+        loading: false,
+        success: true,
+      };
+    case REQUEST(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
+      return {
+        ...state,
+        loading: true,
+        success: false,
+      };
+    case FAILURE(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
+      return {
+        ...state,
+        loading: false,
+        success: false,
+      };
+    case SUCCESS(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
+      const outsideDateWindowModalGPResults = action.payload.data.results;
+      return {
+        ...state,
+        isOutsideDateWindowModalEnabled: outsideDateWindowModalGPResults?.length
+          ? outsideDateWindowModalGPResults[0]
+          : state.isOutsideDateWindowModalEnabled,
+        loading: false,
+        success: true,
+      };
+    case REQUEST(ACTION_TYPES.GET_VISIT_TYPES_WITH_TIME_WINDOW_GP):
+      return {
+        ...state,
+        loading: true,
+        success: false,
+      };
+    case FAILURE(ACTION_TYPES.GET_VISIT_TYPES_WITH_TIME_WINDOW_GP):
+      return {
+        ...state,
+        loading: false,
+        success: false,
+      };
+    case SUCCESS(ACTION_TYPES.GET_VISIT_TYPES_WITH_TIME_WINDOW_GP):
+      const visitTypesWithTimeWindowGPResults = action.payload.data.results;
+      return {
+        ...state,
+        visitTypesWithTimeWindow: visitTypesWithTimeWindowGPResults?.length
+          ? visitTypesWithTimeWindowGPResults[0]
+          : state.visitTypesWithTimeWindow,
+        loading: false,
+        success: true,
+      };
+    default:
+      return state;
   }
 };
 
-const baseUrl = "/openmrs/ws/rest/v1/systemsetting"
+const baseUrl = "/openmrs/ws/rest/v1/systemsetting";
 
 //actions
 export const getExtraInfoModalEnabledGP = () => {
   const requestUrl = `${baseUrl}?q=visits.extraSchedulingInformationEnabled&v=default`;
   return {
     type: ACTION_TYPES.GET_EXTRA_INFO_MODAL_ENABLED_GP,
-    payload: axios.get(requestUrl)
+    payload: axios.get(requestUrl),
   };
 };
 
@@ -153,7 +185,7 @@ export const getShowGenderPersonHeader = () => {
   const requestUrl = `${baseUrl}?q=cfl.showGenderPersonHeader&v=default`;
   return {
     type: ACTION_TYPES.GET_SHOW_GENDER_PERSON_HEADER,
-    payload: axios.get(requestUrl)
+    payload: axios.get(requestUrl),
   };
 };
 
@@ -161,7 +193,7 @@ export const getShowAgePersonHeader = () => {
   const requestUrl = `${baseUrl}?q=cfl.showAgePersonHeader&v=default`;
   return {
     type: ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER,
-    payload: axios.get(requestUrl)
+    payload: axios.get(requestUrl),
   };
 };
 
@@ -169,7 +201,7 @@ export const getHolidayWeekdaysGP = () => {
   const requestUrl = `${baseUrl}?q=visits.holidayWeekdays&v=default`;
   return {
     type: ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP,
-    payload: axios.get(requestUrl)
+    payload: axios.get(requestUrl),
   };
 };
 
@@ -177,6 +209,14 @@ export const getOutsideDateWindowInfoModalEnabledGP = () => {
   const requestUrl = `${baseUrl}?q=visits.outsideDateWindowInformationEnabled&v=default`;
   return {
     type: ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP,
-    payload: axios.get(requestUrl)
+    payload: axios.get(requestUrl),
+  };
+};
+
+export const getVisitTypeUuidsWithTimeWindowGP = () => {
+  const requestUrl = `${baseUrl}?q=visits.visitTypesWithTimeWindow&v=default`;
+  return {
+    type: ACTION_TYPES.GET_VISIT_TYPES_WITH_TIME_WINDOW_GP,
+    payload: axios.get(requestUrl),
   };
 };

@@ -75,5 +75,11 @@ public final class GlobalPropertiesConstants {
           "false",
           "Used to determine if additional information about falling outside the permitted visit date should be displayed");
 
+  public static final GPDefinition VISIT_TYPES_TIME_WINDOW =
+      new GPDefinition(
+          "visits.visitTypesWithTimeWindow",
+          "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "Comma separated list of visit type uuids used to determine which should have time window defined.");
+
   private GlobalPropertiesConstants() {}
 }
