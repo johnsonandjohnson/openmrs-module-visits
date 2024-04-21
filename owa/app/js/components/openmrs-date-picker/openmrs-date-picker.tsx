@@ -8,18 +8,22 @@
  *  graphic logo is a trademark of OpenMRS Inc.
  */
 
-import React, { PureComponent } from 'react';
-import DatePicker from 'react-datepicker';
-import { startOfDay, format, parse } from 'date-fns';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { PureComponent } from "react";
+import DatePicker from "react-datepicker";
+import "./openmrs-date-picker.scss";
+import { format, parse, startOfDay } from "date-fns";
 
-import { DATE_FORMAT, ISO_DATE_FORMAT, WEEK_DAYS_KEYS, MONTH_NAMES_KEYS, TIME_FORMAT, DATETIME_FORMAT }
-  from '../date-util/constants';
-import { parseDateOrDefault, ParsableToDate } from '../date-util/date-util';
-import DateDisplay from './date-display';
-import './openmrs-date-picker.scss';
-import { PropsWithIntl } from '../../components/translation/PropsWithIntl';
-import { injectIntl } from 'react-intl';
+import {
+  DATE_FORMAT,
+  DATETIME_FORMAT,
+  ISO_DATE_FORMAT,
+  MONTH_NAMES_KEYS,
+  TIME_FORMAT,
+  WEEK_DAYS_KEYS,
+} from "../date-util/constants";
+import { ParsableToDate, parseDateOrDefault } from "../date-util/date-util";
+import { PropsWithIntl } from "../translation/PropsWithIntl";
+import { injectIntl } from "react-intl";
 
 interface IProps {
   value: ParsableToDate;
@@ -27,11 +31,9 @@ interface IProps {
   onChange?: (isoDate: string) => void;
 }
 
-interface IState {
-}
+interface IState {}
 
 class OpenMrsDatePicker extends PureComponent<PropsWithIntl<IProps>, IState> {
-
   getDate = (val: ParsableToDate | null): Date => {
     const defaultDate = parse(Date.now());
     return parseDateOrDefault(!!val ? val : defaultDate, defaultDate);
@@ -46,34 +48,33 @@ class OpenMrsDatePicker extends PureComponent<PropsWithIntl<IProps>, IState> {
   };
 
   getDayLabelsKey = () => {
-    return WEEK_DAYS_KEYS.map(key => this.props.intl.formatMessage({ id: key }));
-  }
+    return WEEK_DAYS_KEYS.map((key) => this.props.intl.formatMessage({ id: key }));
+  };
 
   getMonthLabelsKey = () => {
-    return MONTH_NAMES_KEYS.map(key => this.props.intl.formatMessage({ id: key }));
-  }
+    return MONTH_NAMES_KEYS.map((key) => this.props.intl.formatMessage({ id: key }));
+  };
 
   getDatePickerLocaleConfig = () => {
     const days = this.getDayLabelsKey();
     const months = this.getMonthLabelsKey();
 
-    const locale = {
+    return {
       localize: {
-        ordinalNumber: n => n,
-        era: n => n,
-        quarter: n => n,
-        dayPeriod: n => n,
-        day: n => days[n],
-        month: n => months[n]
+        ordinalNumber: (n) => n,
+        era: (n) => n,
+        quarter: (n) => n,
+        dayPeriod: (n) => n,
+        day: (n) => days[n],
+        month: (n) => months[n],
       },
       formatLong: {
         date: () => DATE_FORMAT,
         time: () => TIME_FORMAT,
-        dateTime: () => DATETIME_FORMAT
-      }
-    }
-    return locale;
-  }
+        dateTime: () => DATETIME_FORMAT,
+      },
+    };
+  };
 
   render() {
     const { value } = this.props;
@@ -83,7 +84,10 @@ class OpenMrsDatePicker extends PureComponent<PropsWithIntl<IProps>, IState> {
     return (
       <span className="openmrs-date-picker">
         <DatePicker
-          customInput={<DateDisplay />}
+          peekNextMonth={true}
+          showMonthDropdown={true}
+          showYearDropdown={true}
+          dropdownMode={"select"}
           dateFormat={DATE_FORMAT}
           onChange={this.handleChange}
           selected={parsed}
@@ -92,7 +96,7 @@ class OpenMrsDatePicker extends PureComponent<PropsWithIntl<IProps>, IState> {
         />
       </span>
     );
-  };
+  }
 }
 
 export default injectIntl(OpenMrsDatePicker);

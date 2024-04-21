@@ -8,88 +8,95 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import React from 'react';
-import { injectIntl } from 'react-intl';
+import React from "react";
+import { injectIntl } from "react-intl";
 import ReactTable from "react-table";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { PropsWithIntl } from "../../translation/PropsWithIntl";
 import { IRootState } from "../../../reducers";
-import { DEFAULT_ACTIVE_PAGE, DEFAULT_ITEMS_PER_PAGE, MIN_ROWS, PAGE_SIZE_OPTIONS } from "../../overview-visits/table/constants";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  DEFAULT_ACTIVE_PAGE,
+  DEFAULT_ITEMS_PER_PAGE,
+  MIN_ROWS,
+  PAGE_SIZE_OPTIONS,
+} from "../../overview-visits/table/constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStethoscope } from "@fortawesome/free-solid-svg-icons";
-import IVisit from '../../../shared/model/visit';
+import IVisit from "../../../shared/model/visit";
 import DeleteRowAction from "./delete-row-action";
 import OverviewTableCell from "./OverviewTableCell";
 import EditVisitAction from "./edit-visit-action";
-import IModalParams from '../../manage-visits/modal-params';
+import IModalParams from "../../manage-visits/modal-params";
 
-const OPEN_MRS_ROUTE = '../..';
+const OPEN_MRS_ROUTE = "../..";
 
 export interface ITableColumn {
-  label: string
-  field: string
-  dateTimeFormat?: string
-  sortable?: boolean
-  defaultOrder: 'ASC' | 'DESC';
+  label: string;
+  field: string;
+  dateTimeFormat?: string;
+  sortable?: boolean;
+  defaultOrder: "ASC" | "DESC";
 }
 
 interface ITableData {
-  uuid: string
+  uuid: string;
 }
 
 interface IConfigActions {
-  changeVisitsStatus: boolean
-  scheduleNewVisit: boolean
+  changeVisitsStatus: boolean;
+  scheduleNewVisit: boolean;
 }
 
 interface IVisitsOverviewTableProps extends DispatchProps, StateProps {
-  loading: boolean
-  columns: ITableColumn[]
-  data: ITableData[]
-  pagesCount: number
-  actions: IConfigActions
-  isAllVisitsChecked: boolean
-  selectedVisitsUuids: string[]
-  editVisitIconVisible: boolean
-  deleteVisitIconVisible: boolean
+  loading: boolean;
+  columns: ITableColumn[];
+  data: ITableData[];
+  pagesCount: number;
+  actions: IConfigActions;
+  isAllVisitsChecked: boolean;
+  selectedVisitsUuids: string[];
+  editVisitIconVisible: boolean;
+  deleteVisitIconVisible: boolean;
   reloadDataCallback: (data: any) => void;
-  onCheckboxesChangeData: (data: any) => void
-  openScheduleVisitModalCallback: (visitUuid: string | null) => void
-  onSelectAllCheckboxChange: (data: any) => void
+  onCheckboxesChangeData: (data: any) => void;
+  openScheduleVisitModalCallback: (visitUuid: string | null) => void;
+  onSelectAllCheckboxChange: (data: any) => void;
 }
 
 interface IVisitsOverviewTableState {
   activePage: number;
   itemsPerPage: number;
   showEditVisitModal: boolean;
-  modalParams: IModalParams | null
+  modalParams: IModalParams | null;
 }
 
 class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewTableProps>, IVisitsOverviewTableState> {
   fetchData = (state, instance) => {
-    this.setState({
+    this.setState(
+      {
         activePage: state.page,
-        itemsPerPage: state.pageSize
+        itemsPerPage: state.pageSize,
       },
-      () => this.props.reloadDataCallback(state))
+      () => this.props.reloadDataCallback(state),
+    );
   };
 
   state = {
     activePage: DEFAULT_ACTIVE_PAGE,
     itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
     showEditVisitModal: false,
-    modalParams: null
-  }
+    modalParams: null,
+  };
 
   private getReturnUrlParamForCurrentLocation() {
-    const pathCorrectionString = '?'; // used to compensate OpenMRS returnUrl invalid handling
-    let url = location.href.replace(location.origin, '');
+    const pathCorrectionString = "?"; // used to compensate OpenMRS returnUrl invalid handling
+    let url = location.href.replace(location.origin, "");
     url = encodeURIComponent(`${url}${pathCorrectionString}`);
-    const paramName = 'returnUrl';
+    const paramName = "returnUrl";
     return `${paramName}=${url}`;
   }
 
-  private handleOnClickVisitCheckbox = e => {
+  private handleOnClickVisitCheckbox = (e) => {
     e.stopPropagation();
     const checkBoxElement = e.target;
     const visitUuid = checkBoxElement.id;
@@ -101,12 +108,11 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
       selectedVisitsUuids.push(visitUuid);
     }
 
-    
     const isAnyVisitSelected = selectedVisitsUuids.length > 0;
     let isChangeVisitStatusButtonDisabled = true;
     let isAllVisitsChecked = this.props.isAllVisitsChecked;
     if (isAnyVisitSelected) {
-      isChangeVisitStatusButtonDisabled = false
+      isChangeVisitStatusButtonDisabled = false;
     } else {
       isAllVisitsChecked = false;
     }
@@ -114,11 +120,11 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
     this.props.onCheckboxesChangeData({
       selectedVisitsUuids,
       isChangeVisitStatusButtonDisabled,
-      isAllVisitsChecked
+      isAllVisitsChecked,
     });
-  }
+  };
 
-  private handleSelectAll = e => {
+  private handleSelectAll = (e) => {
     const selectAllCheckbox = e.target as HTMLInputElement;
     const isSelectAllCheckboxChecked = selectAllCheckbox.checked;
 
@@ -136,60 +142,62 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
 
     this.props.onCheckboxesChangeData({
       selectedVisitsUuids,
-      isChangeVisitStatusButtonDisabled
+      isChangeVisitStatusButtonDisabled,
     });
 
     this.props.onSelectAllCheckboxChange({
       isAllVisitsChecked,
-      selectedVisitsUuids
+      selectedVisitsUuids,
     });
-  }
+  };
 
   getColumns = () => {
     return [
-      this.props.actions.changeVisitsStatus ?
-        {
-          width: 50,
-          accessor: "uuid",
-          Header: () => {
-            return (
-              <div>
-                <input
-                  id="selectAllCheckbox"
-                  type="checkbox"
-                  className="omrs-checkbox"
-                  checked={this.props.isAllVisitsChecked}
-                  onClick={this.handleSelectAll}
-                />
-              </div>
-            );
-          },
-          Cell: ({ value }) => {
-            return (
-              <div>
-                <input
-                  id={value}
-                  type="checkbox"
-                  className="omrs-checkbox"
-                  checked={this.props.selectedVisitsUuids.includes(value)}
-                  onClick={this.handleOnClickVisitCheckbox}/>
-              </div>
-            );
+      this.props.actions.changeVisitsStatus
+        ? {
+            width: 50,
+            accessor: "uuid",
+            Header: () => {
+              return (
+                <div>
+                  <input
+                    id="selectAllCheckbox"
+                    type="checkbox"
+                    className="omrs-checkbox"
+                    checked={this.props.isAllVisitsChecked}
+                    onClick={this.handleSelectAll}
+                  />
+                </div>
+              );
+            },
+            Cell: ({ value }) => {
+              return (
+                <div>
+                  <input
+                    id={value}
+                    type="checkbox"
+                    className="omrs-checkbox"
+                    checked={this.props.selectedVisitsUuids.includes(value)}
+                    onClick={this.handleOnClickVisitCheckbox}
+                  />
+                </div>
+              );
+            },
           }
-        } : {
-          width: 0,
-          accessor: "",
-          Header: () => {},
-          Cell: () => {}
-        },
-      ...this.props.columns.map(column => {
+        : {
+            width: 0,
+            accessor: "",
+            Header: () => {},
+            Cell: () => {},
+          },
+      ...this.props.columns.map((column) => {
         return {
           Header: this.props.intl.formatMessage({ id: `${column.label}` }),
           accessor: column.field,
           sortable: column.sortable,
-          defaultSortDesc: column.sortable && column.defaultOrder === 'DESC',
+          defaultSortDesc: column.sortable && column.defaultOrder === "DESC",
           Cell: (props) => {
-            return <OverviewTableCell column={column} value={props.value}/>
+            return <OverviewTableCell column={column} value={props.value} />;
           },
         };
       }),
@@ -197,76 +205,80 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
         Header: this.props.intl.formatMessage({ id: "visits.actionsColumnLabel" }),
         getProps: () => {
           return {
-            className: 'action-column'
+            className: "action-column",
           };
         },
         Cell: (row) => {
           const { viewIndex } = row;
           const visit: IVisit = row.original;
           return (
-            <> 
-              {this.props.editVisitIconVisible ?
+            <>
+              {this.props.editVisitIconVisible ? (
                 <EditVisitAction
                   viewIndex={viewIndex}
                   visit={visit}
                   activePage={this.state.activePage}
                   itemsPerPage={this.state.itemsPerPage}
                   openScheduleVisitModalCallback={this.props.openScheduleVisitModalCallback}
-                /> :
-                <span className="action-button"></span>   
-              }
-              {!!visit.formUri ?
+                />
+              ) : (
+                <span className="action-button"></span>
+              )}
+              {!!visit.formUri ? (
                 <span className="action-button">
                   <a
                     id={`visit-note-button-${viewIndex}`}
                     href={`${OPEN_MRS_ROUTE}${visit.formUri}&${this.getReturnUrlParamForCurrentLocation()}`}
                   >
-                    <FontAwesomeIcon icon={faStethoscope} size="1x"/>
+                    <FontAwesomeIcon icon={faStethoscope} size="1x" />
                   </a>
-                </span> :
+                </span>
+              ) : (
                 <span className="action-button"></span>
-              }
-              {this.props.deleteVisitIconVisible && visit.actualDate == null ?
+              )}
+              {this.props.deleteVisitIconVisible && visit.actualDate == null ? (
                 <DeleteRowAction
                   viewIndex={viewIndex}
                   visitUuid={visit.uuid}
                   refreshTableCallback={this.props.reloadDataCallback}
-                /> :
+                />
+              ) : (
                 <span className="action-button"></span>
-              }
+              )}
             </>
           );
-        }
-      }
+        },
+      },
     ];
   };
 
   render = () => {
     const NullComponent = () => null;
-    const noDataText = this.props.intl.formatMessage({ id: 'visits.overviewNoResultsFoundLabel' });
-    const previousText = this.props.intl.formatMessage({ id: 'visits.overviewPreviousLabel' });
-    const nextText = this.props.intl.formatMessage({ id: 'visits.overviewNextLabel' });
-    const loadingText = this.props.intl.formatMessage({ id: 'visits.overviewLoadingLabel' });
-    const pageText = this.props.intl.formatMessage({ id: 'visits.overviewPageLabel' });
-    const ofText = this.props.intl.formatMessage({ id: 'visits.overviewOfLabel' });
-    const rowsText = this.props.intl.formatMessage({ id: 'visits.overviewResultsLabel' });
+    const noDataText = this.props.intl.formatMessage({ id: "visits.overviewNoResultsFoundLabel" });
+    const previousText = this.props.intl.formatMessage({ id: "visits.overviewPreviousLabel" });
+    const nextText = this.props.intl.formatMessage({ id: "visits.overviewNextLabel" });
+    const loadingText = this.props.intl.formatMessage({ id: "visits.overviewLoadingLabel" });
+    const pageText = this.props.intl.formatMessage({ id: "visits.overviewPageLabel" });
+    const ofText = this.props.intl.formatMessage({ id: "visits.overviewOfLabel" });
+    const rowsText = this.props.intl.formatMessage({ id: "visits.overviewResultsLabel" });
 
     return (
       <ReactTable
         className="-striped -highlight"
         collapseOnDataChange={false}
         manual={true}
-        multisort={false}
         columns={this.getColumns()}
         data={this.props.data}
         pages={this.props.pagesCount}
         loading={this.props.loading}
         onFetchData={this.fetchData}
         defaultPageSize={DEFAULT_ITEMS_PER_PAGE}
-        defaultSorted={this.props.columns.filter(column => column.sortable).map(column => ({
-          id: column.field,
-          desc: column.defaultOrder === 'DESC'
-        }))}
+        defaultSorted={this.props.columns
+          .filter((column) => column.sortable)
+          .map((column) => ({
+            id: column.field,
+            desc: column.defaultOrder === "DESC",
+          }))}
         minRows={MIN_ROWS}
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         nextText={nextText}
@@ -287,12 +299,9 @@ class VisitsOverviewTable extends React.Component<PropsWithIntl<IVisitsOverviewT
 }
 
 const mapStateToProps = ({}: IRootState) => ({});
-const mapDispatchToProps = ({});
+const mapDispatchToProps = {};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default injectIntl(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(VisitsOverviewTable));
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(VisitsOverviewTable));
