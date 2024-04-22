@@ -29,7 +29,6 @@ import {
 import { getSession } from "../../reducers/session";
 import {
   getExtraInfoModalEnabledGP,
-  getHolidayWeekdaysGP,
   getOutsideDateWindowInfoModalEnabledGP,
   getVisitTypeUuidsWithTimeWindowGP,
 } from "../../reducers/global-property.reducer";
@@ -112,7 +111,6 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     this.props.getVisitTimes();
     this.props.getVisitStatuses();
     this.props.getExtraInfoModalEnabledGP();
-    this.props.getHolidayWeekdaysGP();
     this.props.getOutsideDateWindowInfoModalEnabledGP();
     this.props.getVisitTypeUuidsWithTimeWindowGP();
 
@@ -420,20 +418,10 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   };
 
   renderExtraInfoModal = () => {
-    const {
-      visit,
-      holidayWeekdays,
-      isExtraInformationEnabled,
-      isOutsideDateWindowInformationEnabled,
-      visitTypesWithTimeWindow,
-    } = this.props;
+    const { visit, isExtraInformationEnabled, isOutsideDateWindowInformationEnabled, visitTypesWithTimeWindow } =
+      this.props;
 
-    if (
-      !isExtraInformationEnabled ||
-      !holidayWeekdays ||
-      !isOutsideDateWindowInformationEnabled ||
-      !visitTypesWithTimeWindow
-    ) {
+    if (!isExtraInformationEnabled || !isOutsideDateWindowInformationEnabled || !visitTypesWithTimeWindow) {
       return;
     }
 
@@ -511,7 +499,6 @@ const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session, overvi
   locations: scheduleVisit.locations,
   patientVisits: overview.visits,
   isExtraInformationEnabled: globalPropertyReducer.isExtraInfoModalEnabled,
-  holidayWeekdays: globalPropertyReducer.holidayWeekdays,
   isOutsideDateWindowInformationEnabled: globalPropertyReducer.isOutsideDateWindowModalEnabled,
   visitTypesWithTimeWindow: globalPropertyReducer.visitTypesWithTimeWindow,
 });
@@ -527,7 +514,6 @@ const mapDispatchToProps = {
   getVisitStatuses,
   reset,
   getExtraInfoModalEnabledGP,
-  getHolidayWeekdaysGP,
   getOutsideDateWindowInfoModalEnabledGP,
   getVisitTypeUuidsWithTimeWindowGP,
 };

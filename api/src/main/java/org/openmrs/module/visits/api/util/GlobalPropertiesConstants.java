@@ -63,12 +63,6 @@ public final class GlobalPropertiesConstants {
           "Used to determine if additional information(e.g. warning that visit will be scheduled on one of holiday day)"
               + " should be visible when scheduling a visit.");
 
-  public static final GPDefinition VISITS_HOLIDAY_WEEKDAYS_GP =
-      new GPDefinition(
-          "visits.holidayWeekdays",
-          "Saturday,Sunday",
-          "Comma separated list of weekdays when visits should not be scheduled");
-
   public static final GPDefinition SCHEDULE_VISIT_OUTSIDE_DATE_WINDOW_EXTRA_INFORMATION_GP =
       new GPDefinition(
           "visits.outsideDateWindowInformationEnabled",

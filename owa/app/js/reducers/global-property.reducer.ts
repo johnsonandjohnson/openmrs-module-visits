@@ -13,7 +13,6 @@ import { REQUEST, SUCCESS, FAILURE } from "./action-type.util";
 
 export const ACTION_TYPES = {
   GET_EXTRA_INFO_MODAL_ENABLED_GP: "globalProperty/GET_EXTRA_INFO_MODAL_ENABLED_GP",
-  GET_HOLIDAY_WEEKDAYS_GP: "globalProperty/GET_HOLIDAY_WEEKDAYS_GP",
   GET_SHOW_GENDER_PERSON_HEADER: "globalProperty/GET_SHOW_GENDER_PERSON_HEADER",
   GET_SHOW_AGE_PERSON_HEADER: "globalProperty/GET_SHOW_AGE_PERSON_HEADER",
   GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP: "globalProperty/GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP",
@@ -24,7 +23,6 @@ const initialState = {
   isExtraInfoModalEnabled: null,
   isShowGenderPersonHeader: null,
   isShowAgePersonHeader: null,
-  holidayWeekdays: null,
   loading: false,
   success: false,
   isOutsideDateWindowModalEnabled: null,
@@ -101,26 +99,6 @@ export default (state = initialState, action) => {
         loading: false,
         success: true,
       };
-    case REQUEST(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
-      return {
-        ...state,
-        loading: true,
-        success: false,
-      };
-    case FAILURE(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
-      return {
-        ...state,
-        loading: false,
-        success: false,
-      };
-    case SUCCESS(ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP):
-      const holidayWeekdaysResults = action.payload.data.results;
-      return {
-        ...state,
-        holidayWeekdays: holidayWeekdaysResults?.length ? holidayWeekdaysResults[0] : state.holidayWeekdays,
-        loading: false,
-        success: true,
-      };
     case REQUEST(ACTION_TYPES.GET_OUTSIDE_DATE_WINDOW_MODAL_ENABLED_GP):
       return {
         ...state,
@@ -193,14 +171,6 @@ export const getShowAgePersonHeader = () => {
   const requestUrl = `${baseUrl}?q=cfl.showAgePersonHeader&v=default`;
   return {
     type: ACTION_TYPES.GET_SHOW_AGE_PERSON_HEADER,
-    payload: axios.get(requestUrl),
-  };
-};
-
-export const getHolidayWeekdaysGP = () => {
-  const requestUrl = `${baseUrl}?q=visits.holidayWeekdays&v=default`;
-  return {
-    type: ACTION_TYPES.GET_HOLIDAY_WEEKDAYS_GP,
     payload: axios.get(requestUrl),
   };
 };
