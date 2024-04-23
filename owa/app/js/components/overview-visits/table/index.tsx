@@ -12,8 +12,8 @@ import React from "react";
 import ReactTable from "react-table";
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, MIN_ROWS, PAGE_SIZE_OPTIONS } from "./constants";
 import _ from "lodash";
-import { FormattedMessage } from 'react-intl';
-import { PropsWithIntl } from '../../../components/translation/PropsWithIntl';
+import { FormattedMessage } from "react-intl";
+import { PropsWithIntl } from "../../../components/translation/PropsWithIntl";
 
 interface IPaginationBaseState {
   itemsPerPage: number;
@@ -41,7 +41,7 @@ export interface ITableProps {
     sort: string,
     order: string,
     filters?: {},
-    query?: string
+    query?: string,
   ): void;
   onRowClick(rowEntity: {}): void;
 }
@@ -80,8 +80,8 @@ export default class OverviewVisitTable extends React.PureComponent<PropsWithInt
           this.state.sort,
           this.state.order,
           this.props.filters,
-          this.props.query
-        )
+          this.props.query,
+        ),
     );
   };
 
@@ -93,7 +93,7 @@ export default class OverviewVisitTable extends React.PureComponent<PropsWithInt
     const loadingText = <FormattedMessage id="visits.overviewLoadingLabel" />;
     const pageText = <FormattedMessage id="visits.overviewPageLabel" />;
     const ofText = <FormattedMessage id="visits.overviewOfLabel" />;
-    const rowsText = <FormattedMessage id="visits.overviewResultsLabel" />;
+    const rowsText = this.props.intl.formatMessage({ id: "visits.overviewResultsLabel" });
 
     return (
       <ReactTable
@@ -108,7 +108,6 @@ export default class OverviewVisitTable extends React.PureComponent<PropsWithInt
         pages={this.props.pages}
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         onFetchData={this.fetchData}
-        multisort={false}
         nextText={nextText}
         previousText={previousText}
         rowsText={rowsText}
@@ -122,7 +121,7 @@ export default class OverviewVisitTable extends React.PureComponent<PropsWithInt
         multiSort={_.get(this.props, "multiSort", true)}
         resizable={_.get(this.props, "resizable", true)}
         getTrProps={(_, rowInfo) => ({
-          onClick: () => this.props.onRowClick(rowInfo.original)
+          onClick: () => this.props.onRowClick(rowInfo.original),
         })}
       />
     );

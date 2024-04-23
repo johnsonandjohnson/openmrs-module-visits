@@ -8,29 +8,22 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import React from 'react';
-import ReactTable from 'react-table';
-import { LocalizedMessage } from '@openmrs/react-components';
-import _ from 'lodash';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from "react";
+import ReactTable from "react-table";
+import _ from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import {
-  DEFAULT_ITEMS_PER_PAGE,
-  DEFAULT_SORT,
-  DEFAULT_ORDER,
-  MIN_ROWS,
-  PAGE_SIZE_OPTIONS
-} from './constants';
-import { withFiltersChangedCallback } from './with-filters-changed-callback';
-import IVisit from '../../../shared/model/visit';
-import ITableParams from '../table-params';
-import IModalParams, { createModalParams } from '../modal-params';
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_SORT, DEFAULT_ORDER, MIN_ROWS, PAGE_SIZE_OPTIONS } from "./constants";
+import { withFiltersChangedCallback } from "./with-filters-changed-callback";
+import IVisit from "../../../shared/model/visit";
+import ITableParams from "../table-params";
+import IModalParams, { createModalParams } from "../modal-params";
 import { faPencilAlt, faStethoscope } from "@fortawesome/free-solid-svg-icons";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
-import { FormattedMessage } from 'react-intl';
-import { PropsWithIntl } from '../../../components/translation/PropsWithIntl';
+import { FormattedMessage } from "react-intl";
+import { PropsWithIntl } from "../../../components/translation/PropsWithIntl";
 
-const OPEN_MRS_ROUTE = '../..';
+const OPEN_MRS_ROUTE = "../..";
 
 interface IPaginationBaseState {
   itemsPerPage: number;
@@ -52,12 +45,12 @@ export interface ITableProps {
   sortable?: boolean;
   multiSort?: boolean;
   resizable?: boolean;
-  noDataText? : string;
-  locale?: string,
+  noDataText?: string;
+  locale?: string;
   fetchDataCallback(params: ITableParams): void;
   deleteCallback(params: IModalParams): void;
   updateCallback(params: IModalParams): void;
-};
+}
 
 export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<ITableProps>, IPaginationBaseState> {
   filters: any;
@@ -68,7 +61,7 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
       itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
       sort: DEFAULT_SORT,
       order: DEFAULT_ORDER,
-      filters: {}
+      filters: {},
     };
     if (this.props.filtersComponent) {
       this.filters = withFiltersChangedCallback(this.filtersChanged)(this.props.filtersComponent);
@@ -84,9 +77,9 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
       sort,
       order,
       filters,
-      query
+      query,
     };
-  }
+  };
 
   componentDidUpdate(prevProps) {
     if (prevProps.query != this.props.query) {
@@ -95,10 +88,10 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
   }
 
   private getReturnUrlParamForCurrentLocation() {
-    const pathCorrectionString = '?'; // used to compensate OpenMRS returnUrl invalid handling
-    let url = location.href.replace(location.origin, '');
+    const pathCorrectionString = "?"; // used to compensate OpenMRS returnUrl invalid handling
+    let url = location.href.replace(location.origin, "");
     url = encodeURIComponent(`${url}${pathCorrectionString}`);
-    const paramName = 'returnUrl';
+    const paramName = "returnUrl";
     return `${paramName}=${url}`;
   }
 
@@ -107,7 +100,7 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
       Header: this.props.intl.formatMessage({ id: "visits.actionsColumnLabel" }),
       getProps: () => {
         return {
-          className: 'action-column'
+          className: "action-column",
         };
       },
       Cell: (row) => {
@@ -117,10 +110,7 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
         return (
           <>
             <span className="action-button">
-              <i
-                id={`visit-update-button-${viewIndex}`}
-                onClick={() => this.update(visit)}
-              >
+              <i id={`visit-update-button-${viewIndex}`} onClick={() => this.update(visit)}>
                 <FontAwesomeIcon icon={faPencilAlt} size="1x" />
               </i>
             </span>
@@ -133,45 +123,41 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
                   <FontAwesomeIcon icon={faStethoscope} size="1x" />
                 </a>
               </span>
-              ) : (
+            ) : (
               <span className="action-button"></span>
-              )
-            }
+            )}
             <span className="action-button">
-              <i
-                id={`visit-delete-button-${viewIndex}`}
-                onClick={() => this.delete(visit)}
-              >
-                <FontAwesomeIcon icon={faTrashAlt} size="1x"  />
+              <i id={`visit-delete-button-${viewIndex}`} onClick={() => this.delete(visit)}>
+                <FontAwesomeIcon icon={faTrashAlt} size="1x" />
               </i>
             </span>
           </>
         );
-      }
+      },
     };
-  }
+  };
 
   delete = (visit: IVisit) => {
     const modalParams: IModalParams = createModalParams(visit, this.stateToTableParams());
     this.props.deleteCallback(modalParams);
-  }
+  };
 
   update = (visit: IVisit) => {
     const modalParams: IModalParams = createModalParams(visit, this.stateToTableParams());
     this.props.updateCallback(modalParams);
-  }
+  };
 
   getColumns = () => {
     return [
-      { Header: this.props.intl.formatMessage({ id: "visits.visitPlannedDateLabel" }), accessor: 'startDate'},
-      { Header: this.props.intl.formatMessage({ id: "visits.visitActualDateLabel" }), accessor: 'actualDate'},
-      { Header: this.props.intl.formatMessage({ id: "visits.timeColumnLabel" }), accessor: 'time'},
-      { Header: this.props.intl.formatMessage({ id: "visits.locationColumnLabel" }), accessor: 'locationName'},
-      { Header: this.props.intl.formatMessage({ id: "visits.typeColumnLabel" }), accessor: 'typeName'},
-      { Header: this.props.intl.formatMessage({ id: "visits.statusColumnLabel" }), accessor: 'status' },
-      this.getActionsColumn()
+      { Header: this.props.intl.formatMessage({ id: "visits.visitPlannedDateLabel" }), accessor: "startDate" },
+      { Header: this.props.intl.formatMessage({ id: "visits.visitActualDateLabel" }), accessor: "actualDate" },
+      { Header: this.props.intl.formatMessage({ id: "visits.timeColumnLabel" }), accessor: "time" },
+      { Header: this.props.intl.formatMessage({ id: "visits.locationColumnLabel" }), accessor: "locationName" },
+      { Header: this.props.intl.formatMessage({ id: "visits.typeColumnLabel" }), accessor: "typeName" },
+      { Header: this.props.intl.formatMessage({ id: "visits.statusColumnLabel" }), accessor: "status" },
+      this.getActionsColumn(),
     ];
-  }
+  };
 
   fetchData = (state, instance) => {
     this.setState(
@@ -179,14 +165,17 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
         activePage: state.page,
         itemsPerPage: state.pageSize,
         sort: state.sorted[0] ? state.sorted[0].id : DEFAULT_SORT,
-        order: state.sorted[0] ? (state.sorted[0].desc ? 'desc' : 'asc') : DEFAULT_ORDER
+        order: state.sorted[0] ? (state.sorted[0].desc ? "desc" : "asc") : DEFAULT_ORDER,
       },
-      () => this.props.fetchDataCallback(this.stateToTableParams())
+      () => this.props.fetchDataCallback(this.stateToTableParams()),
     );
-  }
+  };
 
-  filtersChanged = (changedFilters: {}) => this.setState(((prevState, props) => ({ filters: { ...prevState.filters, ...changedFilters } })),
-    () => this.props.fetchDataCallback(this.stateToTableParams()));
+  filtersChanged = (changedFilters: {}) =>
+    this.setState(
+      (prevState, props) => ({ filters: { ...prevState.filters, ...changedFilters } }),
+      () => this.props.fetchDataCallback(this.stateToTableParams()),
+    );
 
   render = () => {
     const NullComponent = () => null;
@@ -200,7 +189,9 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
 
     return (
       <div>
-        {this.props.filtersComponent && <this.filters {...this.props.filterProps} {...this.state.filters} {...this.props.filterProps} />}
+        {this.props.filtersComponent && (
+          <this.filters {...this.props.filterProps} {...this.state.filters} {...this.props.filterProps} />
+        )}
         <ReactTable
           className="-striped -highlight"
           collapseOnDataChange={false}
@@ -213,21 +204,20 @@ export default class ManageVisitTable extends React.PureComponent<PropsWithIntl<
           pages={this.props.pages}
           pageSizeOptions={PAGE_SIZE_OPTIONS}
           onFetchData={this.fetchData}
-          multisort={false}
           nextText={nextText}
           previousText={previousText}
           rowsText={rowsText}
           loadingText={loadingText}
           ofText={ofText}
-          noDataText={_.get(this.props, 'noDataText', <span className="sortableTable-noDataText">{noDataText}</span>)}
+          noDataText={_.get(this.props, "noDataText", <span className="sortableTable-noDataText">{noDataText}</span>)}
           NoDataComponent={NullComponent}
           pageText={pageText}
-          showPagination={_.get(this.props, 'showPagination', true)}
-          sortable={_.get(this.props, 'sortable', true)}
-          multiSort={_.get(this.props, 'multiSort', true)}
-          resizable={_.get(this.props, 'resizable', true)}
+          showPagination={_.get(this.props, "showPagination", true)}
+          sortable={_.get(this.props, "sortable", true)}
+          multiSort={_.get(this.props, "multiSort", true)}
+          resizable={_.get(this.props, "resizable", true)}
         />
       </div>
     );
-  }
+  };
 }
