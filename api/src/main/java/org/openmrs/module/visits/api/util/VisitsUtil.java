@@ -10,12 +10,8 @@
 
 package org.openmrs.module.visits.api.util;
 
-import org.openmrs.Location;
-import org.openmrs.LocationAttribute;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttribute;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.visits.api.dto.LocationAttributeDTO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,23 +27,6 @@ public final class VisitsUtil {
     }
 
     return visitAttributesMap;
-  }
-
-  public static List<LocationAttributeDTO> createLocationAttributeDTOs() {
-    List<LocationAttributeDTO> locationAttributeDTOS = new ArrayList<>();
-    List<Location> allLocations = Context.getLocationService().getAllLocations(false);
-    for (Location location : allLocations) {
-      List<LocationAttribute> locationAttributes = new ArrayList<>(location.getActiveAttributes());
-      Map<String, String> locationAttributesMap = new HashMap<>();
-      for (LocationAttribute attribute : locationAttributes) {
-        locationAttributesMap.put(
-            attribute.getAttributeType().getUuid(), attribute.getValueReference());
-      }
-      locationAttributeDTOS.add(
-          new LocationAttributeDTO(location.getUuid(), locationAttributesMap));
-    }
-
-    return locationAttributeDTOS;
   }
 
   private VisitsUtil() {}

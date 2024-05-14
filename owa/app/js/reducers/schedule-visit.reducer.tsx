@@ -8,29 +8,28 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
-import { REQUEST, SUCCESS, FAILURE } from './action-type.util';
-import axiosInstance from '../components/shared/axios'
-import IVisitType from '../shared/model/visit-type';
-import VisitUI from '../shared/model/visit-ui';
-import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
-import ILocation from '../shared/model/location';
-import IVisitDetails from '../shared/model/visit-details'; 
-import IModalParams from '../components/manage-visits/modal-params';
+import { REQUEST, SUCCESS, FAILURE } from "./action-type.util";
+import axiosInstance from "../components/shared/axios";
+import IVisitType from "../shared/model/visit-type";
+import VisitUI from "../shared/model/visit-ui";
+import { handleRequest } from "../components/request-toast-handler/request-toast-handler";
+import ILocation from "../shared/model/location";
+import IVisitDetails from "../shared/model/visit-details";
 
 export const ACTION_TYPES = {
-  GET_VISITS: 'scheduleVisitReducer/GET_VISITS',
-  GET_VISITS_PAGES_COUNT: 'scheduleVisitReducer/GET_VISITS_PAGES_COUNT',
-  GET_VISIT_TYPES: 'scheduleVisitReducer/GET_VISIT_TYPES',
-  GET_VISIT_TIMES: 'scheduleVisitReducer/GET_VISIT_TIMES',
-  GET_VISIT_STATUSES: 'scheduleVisitReducer/GET_VISIT_STATUSES',
-  GET_LOCATIONS: 'scheduleVisitReducer/GET_LOCATIONS',
-  GET_VISIT: 'scheduleVisitReducer/GET_VISIT',
-  DELETE_VISIT: 'scheduleVisitReducer/DELETE_VISIT',
-  UPDATE_VISIT: 'scheduleVisitReducer/UPDATE_VISIT',
-  POST_VISIT: 'scheduleVisitReducer/POST_VISIT',
-  RESET: 'scheduleVisitReducer/RESET'
+  GET_VISITS: "scheduleVisitReducer/GET_VISITS",
+  GET_VISITS_PAGES_COUNT: "scheduleVisitReducer/GET_VISITS_PAGES_COUNT",
+  GET_VISIT_TYPES: "scheduleVisitReducer/GET_VISIT_TYPES",
+  GET_VISIT_TIMES: "scheduleVisitReducer/GET_VISIT_TIMES",
+  GET_VISIT_STATUSES: "scheduleVisitReducer/GET_VISIT_STATUSES",
+  GET_LOCATIONS: "scheduleVisitReducer/GET_LOCATIONS",
+  GET_VISIT: "scheduleVisitReducer/GET_VISIT",
+  DELETE_VISIT: "scheduleVisitReducer/DELETE_VISIT",
+  UPDATE_VISIT: "scheduleVisitReducer/UPDATE_VISIT",
+  POST_VISIT: "scheduleVisitReducer/POST_VISIT",
+  RESET: "scheduleVisitReducer/RESET",
 };
 
 const initialState = {
@@ -41,7 +40,7 @@ const initialState = {
   visitTimes: [] as Array<string>,
   visitStatuses: [] as Array<string>,
   locations: [] as Array<ILocation>,
-  visitsPagesCount: 0
+  visitsPagesCount: 0,
 };
 
 export type ScheduleVisitState = Readonly<typeof initialState>;
@@ -64,48 +63,48 @@ export default (state = initialState, action) => {
     case REQUEST(ACTION_TYPES.DELETE_VISIT):
     case FAILURE(ACTION_TYPES.DELETE_VISIT):
       return {
-        ...state
+        ...state,
       };
     case REQUEST(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
-        visitsLoading: true
+        visitsLoading: true,
       };
     case FAILURE(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
-        visitsLoading: false
+        visitsLoading: false,
       };
     case SUCCESS(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
         visits: action.payload.data.content,
         visitsPagesCount: action.payload.data.pageCount,
-        visitsLoading: false
+        visitsLoading: false,
       };
     case SUCCESS(ACTION_TYPES.GET_VISITS_PAGES_COUNT):
       return {
         ...state,
-        visitsPagesCount: Math.ceil((action.payload.data.results.length / action.meta))
+        visitsPagesCount: Math.ceil(action.payload.data.results.length / action.meta),
       };
     case SUCCESS(ACTION_TYPES.GET_VISIT_TYPES):
       return {
         ...state,
-        visitTypes: action.payload.data.results
+        visitTypes: action.payload.data.results,
       };
     case SUCCESS(ACTION_TYPES.GET_VISIT):
       return {
         ...state,
-        visit: new VisitUI(action.payload.data)
+        visit: new VisitUI(action.payload.data),
       };
     case SUCCESS(ACTION_TYPES.DELETE_VISIT):
       return {
-        ...state
+        ...state,
       };
     case SUCCESS(ACTION_TYPES.GET_VISIT_TIMES):
       return {
         ...state,
-        visitTimes: action.payload.data
+        visitTimes: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.GET_VISIT_STATUSES):
       return {
@@ -115,18 +114,18 @@ export default (state = initialState, action) => {
     case SUCCESS(ACTION_TYPES.GET_LOCATIONS):
       return {
         ...state,
-        locations: action.payload.data.results
+        locations: action.payload.data.results,
       };
     case ACTION_TYPES.UPDATE_VISIT: {
       return {
         ...state,
-        visit: action.payload
+        visit: action.payload,
       };
     }
     case ACTION_TYPES.RESET:
       return {
         ...state,
-        visit: VisitUI.getNew()
+        visit: VisitUI.getNew(),
       };
     default:
       return state;
@@ -142,26 +141,26 @@ const locationUrl = `${restUrl}/location`;
 const visitsTimesUrl = `${moduleUrl}/times`;
 const visitsStatusesUrl = `${moduleUrl}/statuses`;
 
-const visitLocationTagName = 'Visit Location';
+const visitLocationTagName = "Visit Location";
 
 export const getVisitTypes = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT_TYPES,
-    payload: axiosInstance.get(visitTypeUrl)
+    payload: axiosInstance.get(visitTypeUrl),
   });
 };
 
 export const getVisitTimes = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT_TIMES,
-    payload: axiosInstance.get(visitsTimesUrl)
+    payload: axiosInstance.get(visitsTimesUrl),
   });
 };
 
 export const getVisitStatuses = () => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT_STATUSES,
-    payload: axiosInstance.get(visitsStatusesUrl)
+    payload: axiosInstance.get(visitsStatusesUrl),
   });
 };
 
@@ -170,39 +169,39 @@ export const getLocations = () => async (dispatch) => {
     type: ACTION_TYPES.GET_LOCATIONS,
     payload: axiosInstance.get(locationUrl, {
       params: {
-        tag: visitLocationTagName
-      }
-    })
+        tag: visitLocationTagName,
+      },
+    }),
   });
 };
 
 export const updateVisit = (visit: VisitUI, intl: any) => async (dispatch) => {
   dispatch({
     type: ACTION_TYPES.UPDATE_VISIT,
-    payload: await visit.validate(false, intl, true)
-  })
+    payload: await visit.validate(false, intl, true),
+  });
 };
 
 export const saveVisit = (visit: VisitUI, intl: any, successCallback?) => async (dispatch) => {
   const isEdit = !!visit.uuid;
   const validated = await visit.validate(true, intl, isEdit);
   if (_.isEmpty(validated.errors)) {
-    const payload = isEdit ?
-      axiosInstance.put(`${moduleUrl}/${visit.uuid}`, visit)
+    const payload = isEdit
+      ? axiosInstance.put(`${moduleUrl}/${visit.uuid}`, visit)
       : axiosInstance.post(`${moduleUrl}/create`, visit);
 
     const body = {
       type: ACTION_TYPES.POST_VISIT,
-      payload
+      payload,
     };
 
     await handleRequest(
       dispatch,
       body,
       intl.formatMessage({
-        id: isEdit ? "visits.genericSuccess" : "visits.scheduleVisitSuccess"
+        id: isEdit ? "visits.genericSuccess" : "visits.scheduleVisitSuccess",
       }),
-      intl.formatMessage({ id: "visits.genericFailure" })
+      intl.formatMessage({ id: "visits.genericFailure" }),
     );
     if (successCallback) {
       successCallback();
@@ -210,15 +209,15 @@ export const saveVisit = (visit: VisitUI, intl: any, successCallback?) => async 
   } else {
     dispatch({
       type: ACTION_TYPES.UPDATE_VISIT,
-      payload: validated
-    })
+      payload: validated,
+    });
   }
 };
 
 export const getVisit = (visitUuid: string) => async (dispatch) => {
   await dispatch({
     type: ACTION_TYPES.GET_VISIT,
-    payload: axiosInstance.get(`${moduleUrl}/${visitUuid}`)
+    payload: axiosInstance.get(`${moduleUrl}/${visitUuid}`),
   });
 };
 
@@ -230,8 +229,8 @@ export const getVisitsPage = (page: number, size: number, patientUuid: string) =
       params: {
         page: page + 1,
         rows: size,
-      }
-    })
+      },
+    }),
   });
 };
 
@@ -240,37 +239,44 @@ export const getVisitsPagesCount = (size: number, patientUuid: string) => async 
   await dispatch({
     type: ACTION_TYPES.GET_VISITS_PAGES_COUNT,
     payload: axiosInstance.get(url),
-    meta: size
+    meta: size,
   });
 };
 
-export const deleteVisit = (uuid: string, activePage: number, itemsPerPage: number, patientUuid: string, intl: any) => async (dispatch) => {
-  const url = `/ws/rest/v1/visit/${uuid}`;
-  const body = {
-    type: ACTION_TYPES.DELETE_VISIT,
-    payload: axiosInstance.delete(url)
+export const deleteVisit =
+  (uuid: string, activePage: number, itemsPerPage: number, patientUuid: string, intl: any) => async (dispatch) => {
+    const url = `/ws/rest/v1/visit/${uuid}`;
+    const body = {
+      type: ACTION_TYPES.DELETE_VISIT,
+      payload: axiosInstance.delete(url),
+    };
+    await handleRequest(
+      dispatch,
+      body,
+      intl.formatMessage({ id: "visits.genericSuccess" }),
+      intl.formatMessage({ id: "visits.genericFailure" }),
+    );
+    dispatch(getVisitsPage(activePage, itemsPerPage, patientUuid));
   };
-  await handleRequest(dispatch, body,
-    intl.formatMessage({ id: "visits.genericSuccess" }),
-    intl.formatMessage({ id: "visits.genericFailure" }));
-  dispatch(getVisitsPage(activePage, itemsPerPage, patientUuid));
-};
 
 export const deleteVisitWithCallback = (uuid: string, intl: any, callback: () => void) => async (dispatch) => {
   const url = `/ws/rest/v1/visit/${uuid}`;
   const body = {
     type: ACTION_TYPES.DELETE_VISIT,
-    payload: axiosInstance.delete(url)
+    payload: axiosInstance.delete(url),
   };
-  await handleRequest(dispatch, body,
+  await handleRequest(
+    dispatch,
+    body,
     intl.formatMessage({ id: "visits.genericSuccess" }),
-    intl.formatMessage({ id: "visits.genericFailure" }));
+    intl.formatMessage({ id: "visits.genericFailure" }),
+  );
   callback();
 };
 
 export const reset = (successCallback?) => async (dispatch) => {
   await dispatch({
-    type: ACTION_TYPES.RESET
+    type: ACTION_TYPES.RESET,
   });
   if (successCallback) {
     successCallback();

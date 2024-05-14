@@ -64,8 +64,8 @@ import org.openmrs.module.visits.api.util.DateUtils;
 import org.openmrs.module.visits.api.util.GlobalPropertiesConstants;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtil;
 import org.openmrs.module.visits.api.util.GlobalPropertyUtils;
+import org.openmrs.module.visits.api.util.LocationsAttributesUtil;
 import org.openmrs.module.visits.api.util.VisitsConstants;
-import org.openmrs.module.visits.api.util.VisitsUtil;
 import org.openmrs.module.visits.util.ComparatorsHelper;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
@@ -187,7 +187,8 @@ public class VisitsSectionFragmentController {
     addGlobalPropertiesToModel(generalConfig);
     generalConfig.put("allVisitDates", stringVisitDates);
     generalConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
-    generalConfig.put("locationAttributeDTOs", VisitsUtil.createLocationAttributeDTOs());
+    generalConfig.put(
+        "locationAttributeDTOs", LocationsAttributesUtil.getLocationsAttributes());
 
     addAttributesForEditVisitWidget(model);
 

@@ -8,23 +8,21 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import { combineReducers } from 'redux';
-import { reducers as openmrs } from '@openmrs/react-components';
-import patient, { PatientState } from './patient.reducer';
-import scheduleVisit, { ScheduleVisitState } from './schedule-visit.reducer';
-import overview, { OverviewVisitState } from './overview-visits.reducer';
-import notification, { NotificationState } from './notification.reducer';
-import customizeReducer, { CustomizeState } 
-  from '../components/customize/customize.reducer';
-import person, { PersonState }
-  from './person.reducer';
-import personStatus, { PersonStatusState } 
-  from '../components/person-status/person-status.reducer';
-import globalPropertyReducer, { GlobalPropertyState } from './global-property.reducer';
-import session from './session';
-import messages from './messages';
-import app from './app';
-import location from './location';
+import { combineReducers } from "redux";
+import { reducers as openmrs } from "@openmrs/react-components";
+import patient, { PatientState } from "./patient.reducer";
+import scheduleVisit, { ScheduleVisitState } from "./schedule-visit.reducer";
+import overview, { OverviewVisitState } from "./overview-visits.reducer";
+import notification, { NotificationState } from "./notification.reducer";
+import customizeReducer, { CustomizeState } from "../components/customize/customize.reducer";
+import person, { PersonState } from "./person.reducer";
+import personStatus, { PersonStatusState } from "../components/person-status/person-status.reducer";
+import globalPropertyReducer, { GlobalPropertyState } from "./global-property.reducer";
+import session from "./session";
+import messages from "./messages";
+import app from "./app";
+import location from "./location";
+import locationsAttributesReducer from "./locations-attributes.reducer";
 
 export interface IRootState {
   readonly openmrs: any;
@@ -40,6 +38,7 @@ export interface IRootState {
   readonly messages: any;
   readonly app: any;
   readonly location: any;
+  readonly locationsAttributesReducer: any;
 }
 
 export default combineReducers<IRootState>({
@@ -55,5 +54,6 @@ export default combineReducers<IRootState>({
   session,
   messages,
   app,
-  location
+  location,
+  locationsAttributesReducer,
 });

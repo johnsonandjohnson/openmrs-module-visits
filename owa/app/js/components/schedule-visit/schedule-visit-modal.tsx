@@ -54,6 +54,7 @@ import {
   VISIT_SAVE_DELAY_MS,
 } from "../../shared/global-constants";
 import moment from "moment";
+import { getLocationAttributes } from "../../reducers/locations-attributes.reducer";
 
 interface IProps extends DispatchProps, StateProps, RouteComponentProps {
   show: boolean;
@@ -113,6 +114,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     this.props.getExtraInfoModalEnabledGP();
     this.props.getOutsideDateWindowInfoModalEnabledGP();
     this.props.getVisitTypeUuidsWithTimeWindowGP();
+    this.props.getLocationAttributes();
 
     this.handleChange(this.props.patientUuid, "patientUuid");
   };
@@ -429,14 +431,14 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
     currentVisitDate.setHours(0, 0, 0, 0);
     const formattedCurrentVisitDate = formatDateIfDefined(MEDIUM_DATE_FORMAT, currentVisitDate);
 
-    const closedClinicWeekdays = visit?.locationAttributeDTOS?.find(
-      (locationDTO) => locationDTO?.locationUuid === visit.location,
+    const closedClinicWeekdays = this.props.locationsAttributes.find(
+      (locationAttribute) => locationAttribute?.locationUuid === visit.location,
     )?.locationAttributesMap?.[CLINIC_CLOSED_WEEKDAYS_ATTRIBUTE_TYPE_UUID];
     const currentVisitWeekday = currentVisitDate.toLocaleDateString("en-us", { weekday: "long" });
     const isClosedClinicWeekday = closedClinicWeekdays?.split(",").includes(currentVisitWeekday);
 
-    const closedClinicDates = visit?.locationAttributeDTOS?.find(
-      (locationDTO) => locationDTO?.locationUuid === visit.location,
+    const closedClinicDates = this.props.locationsAttributes.find(
+      (locationAttribute) => locationAttribute?.locationUuid === visit.location,
     )?.locationAttributesMap?.[CLINIC_CLOSED_DATES_ATTRIBUTE_TYPE_UUID];
     const isClosedClinicDate = closedClinicDates?.split(",").includes(formattedCurrentVisitDate);
     const isClosedClinic = isClosedClinicWeekday || isClosedClinicDate;
@@ -490,7 +492,13 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
   }
 }
 
-const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session, overview }: IRootState) => ({
+const mapStateToProps = ({
+  scheduleVisit,
+  globalPropertyReducer,
+  session,
+  overview,
+  locationsAttributesReducer,
+}: IRootState) => ({
   sessionLocation: session.session.sessionLocation,
   visit: scheduleVisit.visit,
   visitTypes: scheduleVisit.visitTypes,
@@ -501,6 +509,7 @@ const mapStateToProps = ({ scheduleVisit, globalPropertyReducer, session, overvi
   isExtraInformationEnabled: globalPropertyReducer.isExtraInfoModalEnabled,
   isOutsideDateWindowInformationEnabled: globalPropertyReducer.isOutsideDateWindowModalEnabled,
   visitTypesWithTimeWindow: globalPropertyReducer.visitTypesWithTimeWindow,
+  locationsAttributes: locationsAttributesReducer.locationsAttributes,
 });
 
 const mapDispatchToProps = {
@@ -516,6 +525,7 @@ const mapDispatchToProps = {
   getExtraInfoModalEnabledGP,
   getOutsideDateWindowInfoModalEnabledGP,
   getVisitTypeUuidsWithTimeWindowGP,
+  getLocationAttributes,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

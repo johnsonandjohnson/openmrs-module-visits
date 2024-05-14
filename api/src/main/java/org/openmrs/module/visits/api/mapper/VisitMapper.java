@@ -27,6 +27,7 @@ import org.openmrs.module.visits.api.dto.VisitDateDTO;
 import org.openmrs.module.visits.api.dto.VisitDetailsDTO;
 import org.openmrs.module.visits.api.exception.ValidationException;
 import org.openmrs.module.visits.api.service.ConfigService;
+import org.openmrs.module.visits.api.util.LocationsAttributesUtil;
 import org.openmrs.module.visits.api.util.VisitsUtil;
 
 /** Maps objects between the related visit types */
@@ -99,7 +100,7 @@ public class VisitMapper extends AbstractMapper<VisitDTO, Visit> {
         visit.getLocation() == null ? null : visit.getLocation().getName(),
         visit.getVisitType() == null ? null : visit.getVisitType().getName(),
         VisitsUtil.createVisitAttributesMap(visit),
-        VisitsUtil.createLocationAttributeDTOs());
+        LocationsAttributesUtil.getLocationsAttributes());
   }
 
   public List<VisitDetailsDTO> toDtosWithDetails(Collection<Visit> visits) {
