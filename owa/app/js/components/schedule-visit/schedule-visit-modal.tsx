@@ -51,7 +51,6 @@ import {
   LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME,
   ORIGINAL_VISIT_DATE_ATTRIBUTE_TYPE_NAME,
   UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME,
-  VISIT_SAVE_DELAY_MS,
 } from "../../shared/global-constants";
 import moment from "moment";
 import { getLocationAttributes } from "../../reducers/locations-attributes.reducer";
@@ -71,16 +70,20 @@ interface IState {
   isSaveButtonDisabled: boolean;
   showExtraInfoModal: boolean;
   saveInProgress: boolean;
+  attemptsNumber: number;
 }
 
 const FORM_CLASS = "form-control";
 const ERROR_FORM_CLASS = FORM_CLASS + " error-field";
+const MAX_FETCH_VISITS_ATTEMPTS_NUMBER = 2;
+const REFETCH_VISITS_INTERVAL_TIME_IN_MS = 1000;
 
 class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, IState> {
   state = {
     isSaveButtonDisabled: true,
     showExtraInfoModal: false,
     saveInProgress: false,
+    attemptsNumber: 0,
   };
 
   componentDidMount() {
@@ -135,17 +138,29 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
 
   handleSave = () => {
     this.setState({ isSaveButtonDisabled: true, saveInProgress: true });
-    this.props.saveVisit(this.props.visit, this.props.intl, () =>
-      setTimeout(this.saveVisitCallback, VISIT_SAVE_DELAY_MS),
-    );
+    this.props.saveVisit(this.props.visit, this.props.intl, this.saveVisitCallback);
   };
 
   saveVisitCallback = () => {
     this.setState({ saveInProgress: false }, () => {
       this.closeModal();
       this.closeExtraInfoModal();
-      this.props.refetchVisits();
+      this.fetchVisitsAfterSaving();
     });
+  };
+
+  //It uses pooling approach to fetch visits twice with delay to make sure that page shows correct number of visits
+  //it is workaround mainly for BE logic which triggers creating visits and cannot be handled by FE callback function
+  fetchVisitsAfterSaving = () => {
+    setTimeout(() => {
+      this.setState((prevState) => ({ attemptsNumber: prevState.attemptsNumber + 1 }));
+      if (this.state.attemptsNumber <= MAX_FETCH_VISITS_ATTEMPTS_NUMBER) {
+        this.props.refetchVisits();
+        this.fetchVisitsAfterSaving();
+      } else {
+        this.setState({ attemptsNumber: 0 });
+      }
+    }, REFETCH_VISITS_INTERVAL_TIME_IN_MS);
   };
 
   closeModal = () => {

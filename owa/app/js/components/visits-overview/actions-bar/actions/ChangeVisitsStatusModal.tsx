@@ -18,7 +18,6 @@ import { Button, Col, Form, FormControl, FormGroup, Modal, Row } from "react-boo
 import FormLabel from "../../../form-label/form-label";
 import { updateVisitStatuses } from "../../../../reducers/overview-visits.reducer";
 import "../../../schedule-visit/schedule-visit-modal.scss";
-import { VISIT_SAVE_DELAY_MS } from "../../../../shared/global-constants";
 
 interface IProps extends DispatchProps, StateProps {
   show: boolean;
@@ -51,8 +50,12 @@ class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>,
 
   handleSave = () => {
     this.setState({ saveInProgress: true });
-    this.props.updateVisitStatuses(this.props.visits, this.state.newVisitStatus, this.props.intl);
-    setTimeout(this.saveVisitCallback, VISIT_SAVE_DELAY_MS);
+    this.props.updateVisitStatuses(
+      this.props.visits,
+      this.state.newVisitStatus,
+      this.props.intl,
+      this.saveVisitCallback,
+    );
   };
 
   saveVisitCallback = () => {

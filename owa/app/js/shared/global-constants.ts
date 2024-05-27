@@ -1,6 +1,12 @@
-/** Delay in MS to apply to any refresh made after creation or an update of a Visit. It's workaround for asynchronous
- *  creation of future Visits by BE that FE has no way to know about. */
-export const VISIT_SAVE_DELAY_MS = 500;
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+ * <p>
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
+ */
 
 export const LOW_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME = "Low Window";
 export const UP_WINDOW_VISIT_ATTRIBUTE_TYPE_NAME = "Up Window";
