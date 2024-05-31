@@ -8,18 +8,18 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
-import { FAILURE, REQUEST, SUCCESS } from './action-type.util';
-import axios from 'axios';
-import axiosInstance from '../components/shared/axios'
-import IVisitOverview from '../shared/model/visit-overview.model';
-import { handleRequest } from '../components/request-toast-handler/request-toast-handler';
+import { FAILURE, REQUEST, SUCCESS } from "./action-type.util";
+import axios from "axios";
+import axiosInstance from "../components/shared/axios";
+import IVisitOverview from "../shared/model/visit-overview.model";
+import { handleRequest } from "../components/request-toast-handler/request-toast-handler";
 
 export const ACTION_TYPES = {
-  GET_VISITS: 'overviewVisitReducer/GET_VISITS',
-  RESET: 'overviewVisitReducer/RESET',
-  UPDATE_VISITS_STATUSES: 'overviewVisitReducer/UPDATE_VISITS_STATUSES'
+  GET_VISITS: "overviewVisitReducer/GET_VISITS",
+  RESET: "overviewVisitReducer/RESET",
+  UPDATE_VISITS_STATUSES: "overviewVisitReducer/UPDATE_VISITS_STATUSES",
 };
 
 const initialState = {
@@ -27,7 +27,7 @@ const initialState = {
   loading: false,
   pages: 0,
   totalCount: 0,
-  isVisitStatusesUpdateSuccess: false
+  isVisitStatusesUpdateSuccess: false,
 };
 
 export type OverviewVisitState = Readonly<typeof initialState>;
@@ -37,12 +37,12 @@ export default (state = initialState, action) => {
     case REQUEST(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case FAILURE(ACTION_TYPES.GET_VISITS):
       return {
         ...state,
-        loading: false
+        loading: false,
       };
     case SUCCESS(ACTION_TYPES.GET_VISITS):
       return {
@@ -50,26 +50,26 @@ export default (state = initialState, action) => {
         visits: action.payload.data.content,
         pages: action.payload.data.pageCount,
         totalCount: action.payload.data.totalRecords,
-        loading: false
+        loading: false,
       };
     case REQUEST(ACTION_TYPES.UPDATE_VISITS_STATUSES):
       return {
         ...state,
-        isVisitStatusesUpdateSuccess: false
+        isVisitStatusesUpdateSuccess: false,
       };
     case FAILURE(ACTION_TYPES.UPDATE_VISITS_STATUSES):
       return {
         ...state,
-        isVisitStatusesUpdateSuccess: false
+        isVisitStatusesUpdateSuccess: false,
       };
     case SUCCESS(ACTION_TYPES.UPDATE_VISITS_STATUSES):
       return {
         ...state,
-        isVisitStatusesUpdateSuccess: true
+        isVisitStatusesUpdateSuccess: true,
       };
     case ACTION_TYPES.RESET:
       return {
-        ..._.cloneDeep(initialState)
+        ..._.cloneDeep(initialState),
       };
     default:
       return state;
@@ -81,75 +81,82 @@ const moduleUrl = `/ws/visits`;
 const getPageParams = (page: number, size: number, filters?: {}, query?: string) => {
   const pageParams = {
     page: page + 1,
-    rows: size
+    rows: size,
   };
   // TODO: Move query out or don't add it if empty/undefined to let filters have it
   return {
     query: query,
     ...pageParams,
-    ...filters
+    ...filters,
   };
-}
-
-export const getOverviewPage = (page: number, size: number, locationUuid: string, filters?: {}, query?: string) => async (dispatch) => {
-  const url = `${moduleUrl}/overview/${locationUuid}`;
-  const params = getPageParams(page, size, filters, query);
-  await dispatch({
-    type: ACTION_TYPES.GET_VISITS,
-    payload: axiosInstance.get(url, { params })
-  });
 };
+
+export const getOverviewPage =
+  (page: number, size: number, locationUuid: string, filters?: {}, query?: string) => async (dispatch) => {
+    const url = `${moduleUrl}/overview/${locationUuid}`;
+    const params = getPageParams(page, size, filters, query);
+    await dispatch({
+      type: ACTION_TYPES.GET_VISITS,
+      payload: axiosInstance.get(url, { params }),
+    });
+  };
 
 const CancelToken = axios.CancelToken;
 let getVisitOverviewPageCancel;
 
-export const getVisitOverviewPage = (page: number, size: number, filters: {}, sorted: { field: string, order: 'DESC' | 'ASC' }[]) => async (dispatch) => {
-  if (!!getVisitOverviewPageCancel) {
-    getVisitOverviewPageCancel();
-  }
+export const getVisitOverviewPage =
+  (page: number, size: number, filters: {}, sorted: { field: string; order: "DESC" | "ASC" }[]) => async (dispatch) => {
+    if (!!getVisitOverviewPageCancel) {
+      getVisitOverviewPageCancel();
+    }
 
-  const sortedFilter = sorted.reduce((result, current) => {
-    const newResult = { ...result };
-    newResult[current.field + 'Sort'] = current.order;
-    return newResult;
-  }, {});
+    const sortedFilter = sorted.reduce((result, current) => {
+      const newResult = { ...result };
+      newResult[current.field + "Sort"] = current.order;
+      return newResult;
+    }, {});
 
-  const params = getPageParams(page, size, { ...filters, ...sortedFilter });
+    const params = getPageParams(page, size, { ...filters, ...sortedFilter });
 
-  const url = `${moduleUrl}/overview`;
-  await dispatch({
-    type: ACTION_TYPES.GET_VISITS,
-    payload: axiosInstance.get(url, {
-      params,
-      cancelToken: new CancelToken(cancel => {
-        getVisitOverviewPageCancel = cancel
-      })
-    })
-  });
-};
+    const url = `${moduleUrl}/overview`;
+    await dispatch({
+      type: ACTION_TYPES.GET_VISITS,
+      payload: axiosInstance.get(url, {
+        params,
+        cancelToken: new CancelToken((cancel) => {
+          getVisitOverviewPageCancel = cancel;
+        }),
+      }),
+    });
+  };
 
 export const reset = () => {
   return {
-    type: ACTION_TYPES.RESET
+    type: ACTION_TYPES.RESET,
   };
-}
-
-export const updateVisitStatuses = (visitUuids: string[], newVisitStatus: any, intl: any) => async (dispatch) => {
-  const url = `${moduleUrl}/overview/updateVisitStatuses`;
-
-  const body = {
-    type: ACTION_TYPES.UPDATE_VISITS_STATUSES,
-    payload: axiosInstance.post(url, visitUuids, {
-      params: {
-        newVisitStatus
-      }
-    })
-  }
-
-  await handleRequest(
-    dispatch,
-    body,
-    intl.formatMessage({ id: 'visits.overviewUpdateVisitStatusSuccessMessage' }),
-    intl.formatMessage({ id: 'visits.overviewUpdateVisitStatusSuccessMessage' })
-  );
 };
+
+export const updateVisitStatuses =
+  (visitUuids: string[], newVisitStatus: any, intl: any, successCallback?) => async (dispatch) => {
+    const url = `${moduleUrl}/overview/updateVisitStatuses`;
+
+    const body = {
+      type: ACTION_TYPES.UPDATE_VISITS_STATUSES,
+      payload: axiosInstance.post(url, visitUuids, {
+        params: {
+          newVisitStatus,
+        },
+      }),
+    };
+
+    await handleRequest(
+      dispatch,
+      body,
+      intl.formatMessage({ id: "visits.overviewUpdateVisitStatusSuccessMessage" }),
+      intl.formatMessage({ id: "visits.overviewUpdateVisitStatusSuccessMessage" }),
+    );
+
+    if (successCallback) {
+      successCallback();
+    }
+  };

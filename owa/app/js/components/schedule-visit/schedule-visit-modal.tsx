@@ -135,9 +135,7 @@ class ScheduleVisitModal extends React.PureComponent<PropsWithIntl<IProps>, ISta
 
   handleSave = () => {
     this.setState({ isSaveButtonDisabled: true, saveInProgress: true });
-    this.props.saveVisit(this.props.visit, this.props.intl, () =>
-      setTimeout(this.saveVisitCallback, VISIT_SAVE_DELAY_MS),
-    );
+    this.props.saveVisit(this.props.visit, this.props.intl, this.saveVisitCallback);
   };
 
   saveVisitCallback = () => {

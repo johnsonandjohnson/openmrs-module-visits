@@ -51,8 +51,12 @@ class ChangeVisitsStatusModal extends React.PureComponent<PropsWithIntl<IProps>,
 
   handleSave = () => {
     this.setState({ saveInProgress: true });
-    this.props.updateVisitStatuses(this.props.visits, this.state.newVisitStatus, this.props.intl);
-    setTimeout(this.saveVisitCallback, VISIT_SAVE_DELAY_MS);
+    this.props.updateVisitStatuses(
+      this.props.visits,
+      this.state.newVisitStatus,
+      this.props.intl,
+      this.saveVisitCallback,
+    );
   };
 
   saveVisitCallback = () => {

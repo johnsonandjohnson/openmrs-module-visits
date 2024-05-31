@@ -49,6 +49,14 @@
             <ref bean="transactionAttributeSource"/>
         </property>
     </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.visits.api.service.VisitService</value>
+                <ref bean="visits.visitService"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="visits.visitMapper" class="org.openmrs.module.visits.api.mapper.VisitMapper">
         <property name="visitService">
