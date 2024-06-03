@@ -66,7 +66,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
   }
 
   @Override
-  public void createVisit(VisitDTO visitDTO) {
+  public Visit createVisit(VisitDTO visitDTO) {
     VisitDTO clone = new VisitDTO(visitDTO);
     clone.setStatus(configService.getVisitInitialStatus());
 
@@ -75,7 +75,7 @@ public class VisitServiceImpl extends BaseOpenmrsDataService<Visit> implements V
       visitDateDTO.setStartDate(new Date());
     }
 
-    saveOrUpdate(visitMapper.fromDto(clone));
+    return saveOrUpdate(visitMapper.fromDto(clone));
   }
 
   @Override
