@@ -18,7 +18,6 @@ import org.openmrs.module.htmlformentry.CustomFormSubmissionAction;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.visits.api.decorator.VisitDecorator;
 import org.openmrs.module.visits.api.service.ConfigService;
-import org.openmrs.module.visits.api.service.VisitService;
 
 /**
  * The VisitStatusUpdateAction Class.
@@ -32,7 +31,6 @@ import org.openmrs.module.visits.api.service.VisitService;
  * class="org.openmrs.module.visits.api.htmlformentry.action.VisitStatusUpdateAction"/>}
  */
 public class VisitStatusUpdateAction implements CustomFormSubmissionAction {
-  private static final String VISIT_SERVICE = "visits.visitService";
   private static final String CONFIG_SERVICE = "visits.configService";
 
   private static final Log LOGGER = LogFactory.getLog(VisitStatusUpdateAction.class);
@@ -44,7 +42,7 @@ public class VisitStatusUpdateAction implements CustomFormSubmissionAction {
           new VisitDecorator((Visit) formEntrySession.getContext().getVisit());
       visitDecorator.setStatus(getConfigService().getOccurredVisitStatues().get(0));
       visitDecorator.setChanged();
-      getVisitService().saveOrUpdate(visitDecorator.getObject());
+      Context.getVisitService().saveVisit(visitDecorator.getObject());
       LOGGER.info(
           String.format(
               "Visit with uuid: %s has successfully changed the status.",
@@ -54,9 +52,5 @@ public class VisitStatusUpdateAction implements CustomFormSubmissionAction {
 
   private ConfigService getConfigService() {
     return Context.getRegisteredComponent(CONFIG_SERVICE, ConfigService.class);
-  }
-
-  private VisitService getVisitService() {
-    return Context.getRegisteredComponent(VISIT_SERVICE, VisitService.class);
   }
 }
