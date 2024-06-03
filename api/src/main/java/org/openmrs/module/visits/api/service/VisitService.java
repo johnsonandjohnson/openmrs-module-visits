@@ -58,8 +58,9 @@ public interface VisitService extends BaseOpenmrsCriteriaDataService<Visit> {
    * Creates a visit
    *
    * @param visit visit DTO object
+   * @return new Visit, never null
    */
-  void createVisit(VisitDTO visit);
+  Visit createVisit(VisitDTO visit);
 
   /**
    * Changes visits statuses with new provided visit status.

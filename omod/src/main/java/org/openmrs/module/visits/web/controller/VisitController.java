@@ -178,7 +178,7 @@ public class VisitController extends BaseRestController {
       })
   @RequestMapping(value = "/create", method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.OK)
-  public void createVisit(
+  public VisitDTO createVisit(
       @ApiParam(name = "visitDTO", value = "Visit Dto", required = true) @RequestBody
           VisitDTO visitDTO) {
     if (visitDTO.getUuid() != null) {
@@ -192,7 +192,8 @@ public class VisitController extends BaseRestController {
 
     visitDTO.setVisitDateDTO(
         new VisitDateDTO(visitDTO.getStartDate(), visitDTO.getTime(), visitDTO.getActualDate()));
-    visitService.createVisit(visitDTO);
+    final Visit newVisit = visitService.createVisit(visitDTO);
+    return visitMapper.toDto(newVisit);
   }
 
   /**
